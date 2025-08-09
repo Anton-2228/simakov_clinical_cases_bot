@@ -8,13 +8,7 @@ from environments import REDIS_HOST, REDIS_PORT, REDIS_PASSWORD
 T = TypeVar("T")
 
 class RedisStorage:
-    def __init__(self):
-        host = REDIS_HOST
-        assert host is not None, "Set enviroment variable 'REDIS_HOST'"
-
-        port = REDIS_PORT
-        assert port is not None, "Set enviroment variable 'REDIS_PORT'"
-
+    def __init__(self, host: str, port: int):
         self.redis = Redis(host=host, port=int(port), db=0, password=REDIS_PASSWORD)
 
     async def _get(self, key: str, return_type: Type[T]) -> Optional[T]:

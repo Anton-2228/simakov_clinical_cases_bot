@@ -12,6 +12,12 @@ class RedisUserService(AsyncUserService):
         self.redis_client = redis_client
 
     async def save_user(self, user: User) -> str:
+        all_users = await self.redis_client.get_list(key="all_users")
+        if all_users:
+            all_users.append(user.telegram_id)
+        else:
+            all_users = [user.telegram_id]
+        await self.redis_client.set_value(key="all_users", value=all_users)
         await self.redis_client.set_value(key=str(user.telegram_id), value=user)
         return str(user.telegram_id)
 

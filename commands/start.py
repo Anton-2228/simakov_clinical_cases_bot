@@ -18,6 +18,6 @@ class Start(BaseCommand):
         super().__init__(manager, db, aiogram_wrapper)
 
     async def execute(self, message: Message, state: FSMContext, command: Optional[CommandObject] = None):
-        await self.aiogram_wrapper.answer_massage(HELLO_MESSAGE)
+        await self.aiogram_wrapper.answer_massage(message=message, text=HELLO_MESSAGE)
         await self.aiogram_wrapper.set_state(state, States.MAIN_MENU)
-        # await self.manager.launch('main_menu', message, state, command)
+        await self.manager.launch('main_menu', message, state, command)
