@@ -7,27 +7,42 @@ from aiogram.types import Message
 from aiogram_wrapper import AiogramWrapper
 from commands.base_command import BaseCommand
 from db.service.services import Services
+from enums import USER_TYPE
 
 
 class Manager:
     def __init__(self, db: Services, aiogram_wrapper: AiogramWrapper):
-        self.commands: Dict[str, BaseCommand] = {}
+        self.commands_by_role: Dict[USER_TYPE, Dict[str, BaseCommand]] = {}
+        for user_type in iter(USER_TYPE):
+            self.commands_by_role[user_type] = {}
+
         self.db = db
         self.aiogram_wrapper = aiogram_wrapper
 
-    def get_commands(self) -> Dict[str, BaseCommand]:
-        return self.commands
+    def get_commands(self, role: USER_TYPE) -> Dict[str, BaseCommand]:
+        return self.commands_by_role[role]
 
-    def add(self, name: str, command: BaseCommand) -> None:
-        self.commands[name] = command
+    def add(self, role: USER_TYPE, name: str, command: BaseCommand) -> None:
+        self.commands_by_role[role][name] = command
 
-    def update(self, commands: dict[str, BaseCommand]) -> None:
+    def update(self, role: USER_TYPE, commands: dict[str, BaseCommand]) -> None:
         for name, command in commands.items():
-            self.add(name, command)
+            self.add(role, name, command)
+
+    async def _launch_command(self, role: USER_TYPE, name: str, message: Message, state: FSMContext, command: Optional[CommandObject] = None):
+        assert name in self.commands_by_role[role], (name, self.commands_by_role[role])
+        command_ = self.commands_by_role[role][name]
+        await command_.execute(message=message, state=state, command=command)
 
     async def launch(
         self, name: str, message: Message, state: FSMContext, command: Optional[CommandObject] = None
     ) -> None:
-        assert name in self.commands, (name, self.commands)
-        command_ = self.commands[name]
-        await command_.execute(message=message, state=state, command=command)
+        telegram_id = message.from_user.id
+        user_info = await self.db.user.get_user(telegram_id=telegram_id)
+        if not user_info:
+            await self._launch_command(role=USER_TYPE.CLIENT, name="registration", message=message,
+                                       state=state, command=command)
+            return
+
+        await self._launch_command(role=user_info.user_type, name=name, message=message,
+                                   state=state, command=command)

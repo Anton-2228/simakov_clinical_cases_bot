@@ -6,6 +6,11 @@ from commands.manager import Manager
 from commands.start import Start
 
 from db.service.services import Services
+from .add_clinical_case import AddClinicalCase
+from .admin_main_menu import AdminMainMenu
+from .edit_admin_list import EditAdminList
+from .registration import Registration
+from .user_main_menu import UserMainMenu
 
 if TYPE_CHECKING:
     from .manager import Manager
@@ -13,6 +18,17 @@ if TYPE_CHECKING:
 def get_user_commands(manager: "Manager", db: Services, aiogram_wrapper: AiogramWrapper) -> Dict[str, BaseCommand]:
     commands = {
         "start": Start(manager, db, aiogram_wrapper),
-        # "main_menu": MainMenu(manager, db, aiogram_wrapper),
+        "registration": Registration(manager, db, aiogram_wrapper),
+        "main_menu": UserMainMenu(manager, db, aiogram_wrapper),
+        "add_clinical_case": AddClinicalCase(manager, db, aiogram_wrapper)
+    }
+    return commands
+
+def get_admin_commands(manager: "Manager", db: Services, aiogram_wrapper: AiogramWrapper) -> Dict[str, BaseCommand]:
+    commands = {
+        "start": Start(manager, db, aiogram_wrapper),
+        "main_menu": AdminMainMenu(manager, db, aiogram_wrapper),
+        "add_clinical_case": AddClinicalCase(manager, db, aiogram_wrapper),
+        "edit_admin_list": EditAdminList(manager, db, aiogram_wrapper)
     }
     return commands
