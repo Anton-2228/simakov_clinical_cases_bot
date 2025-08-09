@@ -1,0 +1,40 @@
+version: '3.9'
+
+services:
+  # Redis Service
+  redis:
+    image: redis:7.2.4
+    networks:
+      - internal_network
+    env_file: .env
+    volumes:
+      - clinical_cases_bot_redis_data:/data
+    command: redis-server --requirepass ${REDIS_PASSWORD}
+    healthcheck:
+      test: [ "CMD", "redis-cli", "-a", "${REDIS_PASSWORD}", "ping" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  bot:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      - redis
+    env_file: .env
+    networks:
+      - internal_network
+      - external_network
+    volumes:
+      - ${LOGGING_DIR}:/log
+#    extra_hosts:
+#      - "db:172.17.0.1"
+
+networks:
+  internal_network:
+    internal: true
+  external_network:
+
+volumes:
+  clinical_cases_bot_redis_data:

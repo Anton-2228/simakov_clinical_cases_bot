@@ -1,0 +1,10 @@
+aiogram
+asyncpg
+psycopg
+psycopg-binary
+alembic
+sqlalchemy
+dotenv~=0.9.9
+requests
+redis
+pydantic
