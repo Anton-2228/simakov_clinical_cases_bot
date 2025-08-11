@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
-from typing import Optional
+from typing import Optional, List
 
+from enums import USER_TYPE
 from models import User
 
 
@@ -26,5 +27,13 @@ class UserService(ABC):
 
         :return:
             объект пользователя с метаинформацией
+        """
+        pass
+
+    def get_users_by_type(self, user_type: USER_TYPE) -> List[User]:
+        """
+        Метод для получения всех пользователей определенного типа
+        :param user_type: тип, пользователей которого будет возвращен
+        :return: список пользователей
         """
         pass

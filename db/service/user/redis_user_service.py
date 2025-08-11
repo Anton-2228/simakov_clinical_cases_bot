@@ -24,11 +24,11 @@ class RedisUserService(AsyncUserService):
         user = await self.redis_client.get_value(key=telegram_id, return_type=User)
         return user
 
-    async def get_admins(self) -> List[User]:
+    async def get_users_by_type(self, user_type: USER_TYPE) -> List[User]:
         users_id = await self.redis_client.get_list(key="all_users")
         admins = []
         for user_id in users_id:
             user = await self.redis_client.get_value(key=user_id, return_type=User)
-            if user.user_type == USER_TYPE.ADMIN:
+            if user.user_type == user_type:
                 admins.append(user)
         return admins
