@@ -1,10 +1,9 @@
-import uuid
-from typing import Optional
+from typing import Optional, List
 
 from db.redis import RedisStorage
 from db.service.user.async_user_service import AsyncUserService
+from enums import USER_TYPE
 from models import User
-from utils import get_uuid
 
 
 class RedisUserService(AsyncUserService):
@@ -24,3 +23,12 @@ class RedisUserService(AsyncUserService):
     async def get_user(self, telegram_id: str) -> Optional[User]:
         user = await self.redis_client.get_value(key=telegram_id, return_type=User)
         return user
+
+    async def get_admins(self) -> List[User]:
+        users_id = await self.redis_client.get_list(key="all_users")
+        admins = []
+        for user_id in users_id:
+            user = await self.redis_client.get_value(key=user_id, return_type=User)
+            if user.user_type == USER_TYPE.ADMIN:
+                admins.append(user)
+        return admins
