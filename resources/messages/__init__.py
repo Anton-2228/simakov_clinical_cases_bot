@@ -12,3 +12,4 @@ REQUEST_ENTER_NEW_ADMIN_MESSAGE = load_txt(Path(__file__).parent / "REQUEST_ENTE
 ENTER_NEW_ADMIN_NOT_VALID_TG_ID_MESSAGE = load_txt(Path(__file__).parent / "errors/ENTER_NEW_ADMIN_NOT_VALID_TG_ID.txt")
 ENTER_NEW_ADMIN_NOT_REGISTERED_USER_MESSAGE = load_txt(Path(__file__).parent / "errors/ENTER_NEW_ADMIN_NOT_REGISTERED_USER.txt")
 REMOVE_ADMIN_MESSAGE = load_txt(Path(__file__).parent / "REMOVE_ADMIN.txt")
+EDIT_CLINICAL_CASES_SURVEY_MESSAGE = load_txt(Path(__file__).parent / "EDIT_CLINICAL_CASES_SURVEY.txt")

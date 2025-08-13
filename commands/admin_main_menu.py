@@ -25,6 +25,7 @@ class AdminMainMenu(BaseCommand):
     def __init__(self, manager: "Manager", db: Services, aiogram_wrapper: AiogramWrapper) -> None:
         super().__init__(manager, db, aiogram_wrapper)
         self.aiogram_wrapper.register_callback(self._add_clinical_case, AdminMainMenuCallbackFactory.filter(F.action == ListAdminMainMenuActions.ADD_CLINICAL_CASE))
+        self.aiogram_wrapper.register_callback(self._edit_clinical_cases_survey, AdminMainMenuCallbackFactory.filter(F.action == ListAdminMainMenuActions.EDIT_CLINICAL_CASES_SURVEY))
         self.aiogram_wrapper.register_callback(self._edit_admin_list, AdminMainMenuCallbackFactory.filter(F.action == ListAdminMainMenuActions.EDIT_ADMIN_LIST))
 
     async def execute(self, message: Message, state: FSMContext, command: Optional[CommandObject] = None):
@@ -40,6 +41,16 @@ class AdminMainMenu(BaseCommand):
         await self.manager.aiogram_wrapper.delete_message(message_id=callback.message.message_id,
                                                           chat_id=callback.from_user.id)
         await self.manager.launch(name="add_clinical_case",
+                                  message=callback.message,
+                                  state=state)
+        await callback.answer()
+
+    async def _edit_clinical_cases_survey(self, callback: CallbackQuery, callback_data: AdminMainMenuCallbackFactory, state: FSMContext):
+        await self.aiogram_wrapper.set_state(state_context=state,
+                                             state=States.EDIT_CLINICAL_CASES_SURVEY_STEPS)
+        await self.manager.aiogram_wrapper.delete_message(message_id=callback.message.message_id,
+                                                          chat_id=callback.from_user.id)
+        await self.manager.launch(name="edit_clinical_cases_survey",
                                   message=callback.message,
                                   state=state)
         await callback.answer()
