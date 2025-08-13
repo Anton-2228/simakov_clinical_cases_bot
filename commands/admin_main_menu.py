@@ -37,6 +37,8 @@ class AdminMainMenu(BaseCommand):
     async def _add_clinical_case(self, callback: CallbackQuery, callback_data: AdminMainMenuCallbackFactory, state: FSMContext):
         await self.aiogram_wrapper.set_state(state_context=state,
                                              state=States.ADD_CLINICAL_CASE)
+        await self.manager.aiogram_wrapper.delete_message(message_id=callback.message.message_id,
+                                                          chat_id=callback.from_user.id)
         await self.manager.launch(name="add_clinical_case",
                                   message=callback.message,
                                   state=state)
@@ -45,6 +47,8 @@ class AdminMainMenu(BaseCommand):
     async def _edit_admin_list(self, callback: CallbackQuery, callback_data: AdminMainMenuCallbackFactory, state: FSMContext):
         await self.aiogram_wrapper.set_state(state_context=state,
                                              state=States.EDIT_ADMIN_LIST)
+        await self.manager.aiogram_wrapper.delete_message(message_id=callback.message.message_id,
+                                                          chat_id=callback.from_user.id)
         await self.manager.launch(name="edit_admin_list",
                                   message=callback.message,
                                   state=state)

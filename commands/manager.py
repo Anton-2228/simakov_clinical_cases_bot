@@ -1,3 +1,4 @@
+import logging
 from typing import Dict, Optional
 
 from aiogram.filters import CommandObject
@@ -8,6 +9,8 @@ from aiogram_wrapper import AiogramWrapper
 from commands.base_command import BaseCommand
 from db.service.services import Services
 from enums import USER_TYPE
+
+logger = logging.getLogger(__name__)
 
 
 class Manager:
@@ -37,7 +40,7 @@ class Manager:
     async def launch(
         self, name: str, message: Message, state: FSMContext, command: Optional[CommandObject] = None
     ) -> None:
-        telegram_id = message.from_user.id
+        telegram_id = message.chat.id
         user_info = await self.db.user.get_user(telegram_id=telegram_id)
         if not user_info:
             await self._launch_command(role=USER_TYPE.CLIENT, name="registration", message=message,

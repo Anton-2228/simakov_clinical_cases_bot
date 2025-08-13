@@ -62,6 +62,11 @@ class AiogramWrapper:
         send_message = await message.answer(*args, **kwargs)
         return send_message
 
+    async def edit_message_reply_markup(self, chat_id: int, message_id: int, reply_markup: Optional[InlineKeyboardMarkup]):
+        await self.bot.edit_message_reply_markup(chat_id=chat_id,
+                                                 message_id=message_id,
+                                                 reply_markup=reply_markup)
+
     # Пока что хуй забил, гемора много
     async def edit_message(self,
                            message_id: int,

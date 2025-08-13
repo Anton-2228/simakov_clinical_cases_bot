@@ -33,3 +33,11 @@ class AsyncUserService(ABC):
         :return: список пользователей
         """
         pass
+
+    async def update_user(self, user: User) -> None:
+        """
+        Метод для обновления информации о пользователе. Значение будет обновлено только если пользователь есть в базе
+        :param user: объект пользователя
+        :return:
+        """
+        pass

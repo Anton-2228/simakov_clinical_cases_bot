@@ -32,3 +32,8 @@ class RedisUserService(AsyncUserService):
             if user.user_type == user_type:
                 admins.append(user)
         return admins
+
+    async def update_user(self, user: User) -> None:
+        db_user = await self.redis_client.get_value(key=str(user.telegram_id), return_type=User)
+        if db_user:
+            await self.redis_client.set_value(key=str(user.telegram_id), value=user)

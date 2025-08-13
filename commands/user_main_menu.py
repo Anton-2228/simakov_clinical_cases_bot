@@ -36,6 +36,8 @@ class UserMainMenu(BaseCommand):
     async def _add_clinical_case(self, callback: CallbackQuery, callback_data: UserMainMenuCallbackFactory, state: FSMContext):
         await self.manager.aiogram_wrapper.set_state(state_context=state,
                                                      state=States.ADD_CLINICAL_CASE)
+        await self.manager.aiogram_wrapper.delete_message(message_id=callback.message.message_id,
+                                                          chat_id=callback.message.chat.id)
         await self.manager.launch(name="add_clinical_case",
                                   message=callback.message,
                                   state=state)

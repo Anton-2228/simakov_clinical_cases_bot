@@ -1,0 +1,2 @@
+*tg id*: {user_tg_id}
+*Имя*: {user_name}
