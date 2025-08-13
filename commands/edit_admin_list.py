@@ -29,14 +29,12 @@ class EditAdminList(BaseCommand):
         self.aiogram_wrapper.register_callback(self._return_to_main_menu, EditAdminListCallbackFactory.filter(F.action == ListEditAdminListActions.RETURN_TO_MAIN_MENU))
 
     async def execute(self, message: Message, state: FSMContext, command: Optional[CommandObject] = None):
-        current_state = await self.aiogram_wrapper.get_state(state_context=state)
-        if current_state == States.EDIT_ADMIN_LIST:
-            keyboard_builder = get_keyboard_for_edit_admin_list()
-            authorized_users = await self.db.user.get_users_by_type(user_type=USER_TYPE.ADMIN)
-            output = create_edit_admin_list_output(authorized_users)
-            send_message = await self.manager.aiogram_wrapper.answer_massage(message=message,
-                                                                             text=output,
-                                                                             reply_markup=keyboard_builder.as_markup())
+        keyboard_builder = get_keyboard_for_edit_admin_list()
+        authorized_users = await self.db.user.get_users_by_type(user_type=USER_TYPE.ADMIN)
+        output = create_edit_admin_list_output(authorized_users)
+        send_message = await self.manager.aiogram_wrapper.answer_massage(message=message,
+                                                                         text=output,
+                                                                         reply_markup=keyboard_builder.as_markup())
 
     async def _add_admin(self, callback: CallbackQuery, callback_data: EditAdminListCallbackFactory, state: FSMContext):
         await self.manager.aiogram_wrapper.set_state(state_context=state,
