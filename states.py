@@ -6,4 +6,6 @@ class States(StatesGroup):
     REGISTRATION = State()
     EDIT_ADMIN_LIST = State()
     ADD_CLINICAL_CASE = State()
+    ADD_USER_TO_ADMIN_LIST = State()
+    DELETE_USER_FROM_ADMIN_LIST = State()
     ENTER_NEW_ADMIN = State()

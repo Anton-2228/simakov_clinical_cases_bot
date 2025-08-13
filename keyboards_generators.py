@@ -2,9 +2,10 @@ from aiogram.types import InlineKeyboardButton
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
 from callbacks_factories import UserMainMenuCallbackFactory, AdminMainMenuCallbackFactory, EditAdminListCallbackFactory, \
-    AddUserToAdminListCallbackFactory
+    AddUserToAdminListCallbackFactory, DeleteUserFromAdminListCallbackFactory
 from enums import ListUserMainMenuActions, ListAdminMainMenuActions, ListEditAdminListActions, \
-    ListAddUserToAdminListActions
+    ListAddUserToAdminListActions, ListDeleteUserFromAdminListActions
+from models import User
 
 
 def get_keyboard_for_user_main_menu() -> InlineKeyboardBuilder:
@@ -32,4 +33,13 @@ def get_keyboard_for_add_user_to_admin_list() -> InlineKeyboardBuilder:
     builder = InlineKeyboardBuilder()
     builder.row(InlineKeyboardButton(text="Return", callback_data=AddUserToAdminListCallbackFactory(action=ListAddUserToAdminListActions.RETURN_TO_EDIT_ADMIN_LIST).pack()))
     builder.adjust(1)
+    return builder
+
+def get_keyboard_for_remove_admins(admins: list[User]) -> InlineKeyboardBuilder:
+    builder = InlineKeyboardBuilder()
+    for admin in admins:
+        builder.button(text=str(admin.telegram_id), callback_data=DeleteUserFromAdminListCallbackFactory(action=ListDeleteUserFromAdminListActions.DELETION_SELECTION,
+                                                                                                         user_id=admin.telegram_id))
+    builder.adjust(3, repeat=True)
+    builder.row(InlineKeyboardButton(text="Return", callback_data=DeleteUserFromAdminListCallbackFactory(action=ListDeleteUserFromAdminListActions.RETURN_TO_EDIT_ADMIN_LIST).pack()))
     return builder

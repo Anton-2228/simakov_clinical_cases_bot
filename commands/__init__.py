@@ -9,6 +9,7 @@ from db.service.services import Services
 from .add_clinical_case import AddClinicalCase
 from .add_user_to_admin_list import AddUserToAdminLit
 from .admin_main_menu import AdminMainMenu
+from .delete_user_from_admin_list import DeleteUserFromAdminLit
 from .edit_admin_list import EditAdminList
 from .registration import Registration
 from .user_main_menu import UserMainMenu
@@ -31,6 +32,7 @@ def get_admin_commands(manager: "Manager", db: Services, aiogram_wrapper: Aiogra
         "main_menu": AdminMainMenu(manager, db, aiogram_wrapper),
         "add_clinical_case": AddClinicalCase(manager, db, aiogram_wrapper),
         "edit_admin_list": EditAdminList(manager, db, aiogram_wrapper),
-        "add_user_to_admin_list": AddUserToAdminLit(manager, db, aiogram_wrapper)
+        "add_user_to_admin_list": AddUserToAdminLit(manager, db, aiogram_wrapper),
+        "delete_user_from_admin_list": DeleteUserFromAdminLit(manager, db, aiogram_wrapper)
     }
     return commands
