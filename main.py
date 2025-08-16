@@ -7,8 +7,11 @@ from aiogram.filters import CommandStart, CommandObject, Command
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message
 
-from enums import USER_TYPE
+from db.postgres import drop_tables, create_tables
+from dtos import Survey, SurveyStep
+from enums import USER_TYPE, SURVEY_STEP_TYPE
 from init import ROUTER, MANAGER, BOT, COMMANDS, STORAGE, DB
+from mappers.survey_mapper import SurveyMapper
 from states import States
 
 from tests_functions._add_user_to_redis import main as add_user_to_redis
@@ -49,6 +52,9 @@ async def main():
                             telegram_id=5613751001,
                             full_name="Абоба Хуй",
                             role=USER_TYPE.CLIENT)
+    await drop_tables()
+    await create_tables()
+
     await start_polling()
 
 if __name__ == "__main__":

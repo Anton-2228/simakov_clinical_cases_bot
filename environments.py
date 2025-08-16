@@ -13,3 +13,14 @@ REDIS_PORT=os.getenv("REDIS_PORT")
 assert REDIS_PORT is not None, "REDIS_PORT not initialized"
 REDIS_PASSWORD=os.getenv("REDIS_PASSWORD")
 assert REDIS_PASSWORD is not None, "REDIS_PASSWORD not initialized"
+
+POSTGRES_HOST=os.getenv("POSTGRES_HOST")
+assert POSTGRES_HOST is not None, "POSTGRES_HOST not initialized"
+POSTGRES_PORT=os.getenv("POSTGRES_PORT")
+assert POSTGRES_PORT is not None, "POSTGRES_PORT not initialized"
+POSTGRES_PASSWORD=os.getenv("POSTGRES_PASSWORD")
+assert POSTGRES_PASSWORD is not None, "POSTGRES_PASSWORD not initialized"
+POSTGRES_USER=os.getenv("POSTGRES_USER")
+assert POSTGRES_USER is not None, "POSTGRES_USER not initialized"
+POSTGRES_DB=os.getenv("POSTGRES_DB")
+assert POSTGRES_DB is not None, "POSTGRES_DB not initialized"
