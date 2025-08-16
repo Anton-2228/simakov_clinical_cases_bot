@@ -26,15 +26,15 @@ def get_keyboard_for_admin_main_menu() -> InlineKeyboardBuilder:
 
 def get_keyboard_for_edit_admin_list() -> InlineKeyboardBuilder:
     builder = InlineKeyboardBuilder()
-    builder.button(text="Add User", callback_data=EditAdminListCallbackFactory(action=ListEditAdminListActions.ADD_ADMIN))
-    builder.button(text="Remove User", callback_data=EditAdminListCallbackFactory(action=ListEditAdminListActions.REMOVE_ADMIN))
-    builder.button(text="Return to the main menu", callback_data=EditAdminListCallbackFactory(action=ListEditAdminListActions.RETURN_TO_MAIN_MENU))
+    builder.button(text="Добавить админа", callback_data=EditAdminListCallbackFactory(action=ListEditAdminListActions.ADD_ADMIN))
+    builder.button(text="Удалить админа", callback_data=EditAdminListCallbackFactory(action=ListEditAdminListActions.REMOVE_ADMIN))
+    builder.button(text="Вернуться в главное меню", callback_data=EditAdminListCallbackFactory(action=ListEditAdminListActions.RETURN_TO_MAIN_MENU))
     builder.adjust(2, 1)
     return builder
 
 def get_keyboard_for_add_user_to_admin_list() -> InlineKeyboardBuilder:
     builder = InlineKeyboardBuilder()
-    builder.row(InlineKeyboardButton(text="Return", callback_data=AddUserToAdminListCallbackFactory(action=ListAddUserToAdminListActions.RETURN_TO_EDIT_ADMIN_LIST).pack()))
+    builder.row(InlineKeyboardButton(text="Вернуться", callback_data=AddUserToAdminListCallbackFactory(action=ListAddUserToAdminListActions.RETURN_TO_EDIT_ADMIN_LIST).pack()))
     builder.adjust(1)
     return builder
 
@@ -44,7 +44,7 @@ def get_keyboard_for_remove_admins(admins: list[User]) -> InlineKeyboardBuilder:
         builder.button(text=str(admin.telegram_id), callback_data=DeleteUserFromAdminListCallbackFactory(action=ListDeleteUserFromAdminListActions.DELETION_SELECTION,
                                                                                                          user_id=admin.telegram_id))
     builder.adjust(3, repeat=True)
-    builder.row(InlineKeyboardButton(text="Return", callback_data=DeleteUserFromAdminListCallbackFactory(action=ListDeleteUserFromAdminListActions.RETURN_TO_EDIT_ADMIN_LIST).pack()))
+    builder.row(InlineKeyboardButton(text="Вернуться", callback_data=DeleteUserFromAdminListCallbackFactory(action=ListDeleteUserFromAdminListActions.RETURN_TO_EDIT_ADMIN_LIST).pack()))
     return builder
 
 def get_keyboard_for_edit_surveys(surveys: list[str], survey_idx_map: dict[int, str], page_status: PAGING_STATUS) -> InlineKeyboardBuilder:
@@ -69,23 +69,23 @@ def get_keyboard_for_edit_surveys(surveys: list[str], survey_idx_map: dict[int, 
     navigate_buttons = []
     if page_status not in [PAGING_STATUS.FIRST_PAGE, PAGING_STATUS.ONLY_PAGE, PAGING_STATUS.NO_PAGE]:
         previous_button = InlineKeyboardButton(
-            text="Previous",
+            text="Назад",
             callback_data=EditSurveysCallbackFactory(action=ListEditSurveysActions.PREVIOUS_SURVEYS).pack())
         navigate_buttons.append(previous_button)
     if page_status not in [PAGING_STATUS.LAST_PAGE, PAGING_STATUS.ONLY_PAGE, PAGING_STATUS.NO_PAGE]:
         next_button = InlineKeyboardButton(
-            text="Next",
+            text="Вперед",
             callback_data=EditSurveysCallbackFactory(action=ListEditSurveysActions.NEXT_SURVEYS).pack())
         navigate_buttons.append(next_button)
     builder.row(*navigate_buttons)
 
     add_new_survey_button = InlineKeyboardButton(
-        text="Add new survey",
+        text="Добавить новый опрос",
         callback_data=EditSurveysCallbackFactory(action=ListEditSurveysActions.ADD_SURVEY).pack()
     )
     builder.row(add_new_survey_button)
     return_to_main_menu_button = InlineKeyboardButton(
-        text="Return to main menu",
+        text="Вернуться в главное меню",
         callback_data=EditSurveysCallbackFactory(action=ListEditSurveysActions.RETURN_TO_MAIN_MENU).pack()
     )
     builder.row(return_to_main_menu_button)
@@ -107,28 +107,28 @@ def get_keyboard_for_edit_survey(steps_idx: list[int], page_status: PAGING_STATU
     navigate_buttons = []
     if page_status not in [PAGING_STATUS.FIRST_PAGE, PAGING_STATUS.ONLY_PAGE, PAGING_STATUS.NO_PAGE]:
         previous_button = InlineKeyboardButton(
-            text="Previous",
+            text="Назад",
             callback_data=EditSurveyCallbackFactory(action=ListEditSurveyActions.PREVIOUS_STEPS).pack())
         navigate_buttons.append(previous_button)
     if page_status not in [PAGING_STATUS.LAST_PAGE, PAGING_STATUS.ONLY_PAGE, PAGING_STATUS.NO_PAGE]:
         next_button = InlineKeyboardButton(
-            text="Next",
+            text="Вперед",
             callback_data=EditSurveyCallbackFactory(action=ListEditSurveyActions.NEXT_STEPS).pack())
         navigate_buttons.append(next_button)
     builder.row(*navigate_buttons)
 
     add_new_step_button = InlineKeyboardButton(
-        text="Add new step",
+        text="Добавить новый шаг опроса",
         callback_data=EditSurveyCallbackFactory(action=ListEditSurveyActions.ADD_NEW_STEP).pack()
     )
     builder.row(add_new_step_button)
     set_steps_order_button = InlineKeyboardButton(
-        text="Set steps order",
+        text="Изменить порядок шагов",
         callback_data=EditSurveyCallbackFactory(action=ListEditSurveyActions.SET_STEPS_ORDER).pack()
     )
     builder.row(set_steps_order_button)
     return_button = InlineKeyboardButton(
-        text="Return",
+        text="Вернуться",
         callback_data=EditSurveyCallbackFactory(action=ListEditSurveyActions.RETURN).pack()
     )
     builder.row(return_button)
