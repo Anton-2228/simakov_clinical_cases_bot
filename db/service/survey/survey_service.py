@@ -1,0 +1,45 @@
+from abc import ABC, abstractmethod
+from typing import Optional, List
+
+from dtos import Survey
+from enums import USER_TYPE
+from models import User
+
+
+class SurveyService(ABC):
+    @abstractmethod
+    def save_survey(self, survey: Survey) -> Survey:
+        """
+        Метод сохраняет опрос в базу данных
+
+        :param survey_step - объект опроса
+
+        :return:
+            id сохраненного опроса
+        """
+        pass
+
+    @abstractmethod
+    def get_survey(self, id: int) -> Optional[Survey]:
+        """
+        Метод получает опрос из базы данных
+
+        :param id - id опроса
+
+        :return:
+            объект опроса
+        """
+        pass
+
+
+    @abstractmethod
+    def update_survey(self, survey: Survey) -> Survey:
+        """
+        Метод обновляет опрос в базе данных
+
+        :param survey - объект опроса
+
+        :return:
+            объект опроса
+        """
+        pass
