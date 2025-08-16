@@ -26,7 +26,7 @@ class UserMainMenu(BaseCommand):
         super().__init__(manager, db, aiogram_wrapper)
         self.aiogram_wrapper.register_callback(self._add_clinical_case, UserMainMenuCallbackFactory.filter(F.action == ListUserMainMenuActions.ADD_CLINICAL_CASE))
 
-    async def execute(self, message: Message, state: FSMContext, command: Optional[CommandObject] = None):
+    async def execute(self, message: Message, state: FSMContext, command: Optional[CommandObject] = None, **kwargs):
         keyboard_builder = get_keyboard_for_user_main_menu()
         text_message = USER_MAIN_MENU_MESSAGE
         send_message = await self.manager.aiogram_wrapper.answer_massage(message=message,

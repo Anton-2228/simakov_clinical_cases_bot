@@ -28,7 +28,7 @@ class EditAdminList(BaseCommand):
         self.aiogram_wrapper.register_callback(self._remove_admin, EditAdminListCallbackFactory.filter(F.action == ListEditAdminListActions.REMOVE_ADMIN))
         self.aiogram_wrapper.register_callback(self._return_to_main_menu, EditAdminListCallbackFactory.filter(F.action == ListEditAdminListActions.RETURN_TO_MAIN_MENU))
 
-    async def execute(self, message: Message, state: FSMContext, command: Optional[CommandObject] = None):
+    async def execute(self, message: Message, state: FSMContext, command: Optional[CommandObject] = None, **kwargs):
         keyboard_builder = get_keyboard_for_edit_admin_list()
         authorized_users = await self.db.user.get_users_by_type(user_type=USER_TYPE.ADMIN)
         output = create_edit_admin_list_output(authorized_users)

@@ -19,6 +19,7 @@ def get_keyboard_for_user_main_menu() -> InlineKeyboardBuilder:
 def get_keyboard_for_admin_main_menu() -> InlineKeyboardBuilder:
     builder = InlineKeyboardBuilder()
     builder.button(text="Добавить клинический случай", callback_data=AdminMainMenuCallbackFactory(action=ListAdminMainMenuActions.ADD_CLINICAL_CASE))
+    builder.button(text="Отредактировать опросы", callback_data=AdminMainMenuCallbackFactory(action=ListAdminMainMenuActions.EDIT_SURVEYS))
     builder.button(text="Обновить список админов", callback_data=AdminMainMenuCallbackFactory(action=ListAdminMainMenuActions.EDIT_ADMIN_LIST))
     builder.adjust(1)
     return builder

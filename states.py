@@ -11,3 +11,4 @@ class States(StatesGroup):
     ENTER_NEW_ADMIN = State()
     EDIT_SURVEYS = State()
     ADD_SURVEY = State()
+    EDIT_SURVEY = State()

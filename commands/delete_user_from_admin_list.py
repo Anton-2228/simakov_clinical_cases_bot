@@ -27,7 +27,7 @@ class DeleteUserFromAdminLit(BaseCommand):
         self.aiogram_wrapper.register_callback(self._deletion_selection, DeleteUserFromAdminListCallbackFactory.filter(F.action == ListDeleteUserFromAdminListActions.DELETION_SELECTION))
         self.aiogram_wrapper.register_callback(self._return_to_edit_admin_list, DeleteUserFromAdminListCallbackFactory.filter(F.action == ListDeleteUserFromAdminListActions.RETURN_TO_EDIT_ADMIN_LIST))
 
-    async def execute(self, message: Message, state: FSMContext, command: Optional[CommandObject] = None):
+    async def execute(self, message: Message, state: FSMContext, command: Optional[CommandObject] = None, **kwargs):
         await self.manager.aiogram_wrapper.set_state(state_context=state,
                                                      state=States.DELETE_USER_FROM_ADMIN_LIST)
         admins = await self.db.user.get_users_by_type(user_type=USER_TYPE.ADMIN)

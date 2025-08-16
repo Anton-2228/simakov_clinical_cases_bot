@@ -32,20 +32,30 @@ class Manager:
         for name, command in commands.items():
             self.add(role, name, command)
 
-    async def _launch_command(self, role: USER_TYPE, name: str, message: Message, state: FSMContext, command: Optional[CommandObject] = None):
+    async def _launch_command(self,
+                              role: USER_TYPE,
+                              name: str,
+                              message: Message,
+                              state: FSMContext,
+                              command: Optional[CommandObject] = None,
+                              **kwargs):
         assert name in self.commands_by_role[role], (name, self.commands_by_role[role])
         command_ = self.commands_by_role[role][name]
-        await command_.execute(message=message, state=state, command=command)
+        await command_.execute(message=message, state=state, command=command, **kwargs)
 
     async def launch(
-        self, name: str, message: Message, state: FSMContext, command: Optional[CommandObject] = None
-    ) -> None:
+            self,
+            name: str,
+            message: Message,
+            state: FSMContext,
+            command: Optional[CommandObject] = None,
+            **kwargs) -> None:
         telegram_id = message.chat.id
         user_info = await self.db.user.get_user(telegram_id=telegram_id)
         if not user_info:
             await self._launch_command(role=USER_TYPE.CLIENT, name="registration", message=message,
-                                       state=state, command=command)
+                                       state=state, command=command, **kwargs)
             return
 
         await self._launch_command(role=user_info.user_type, name=name, message=message,
-                                   state=state, command=command)
+                                   state=state, command=command, **kwargs)

@@ -22,5 +22,5 @@ class BaseCommand:
         self.db = db
         self.aiogram_wrapper = aiogram_wrapper
 
-    async def execute(self, message: Message, state: FSMContext, command: Optional[CommandObject] = None):
+    async def execute(self, message: Message, state: FSMContext, command: Optional[CommandObject], **kwargs):
         pass

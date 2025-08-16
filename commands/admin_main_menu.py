@@ -28,7 +28,7 @@ class AdminMainMenu(BaseCommand):
         self.aiogram_wrapper.register_callback(self._edit_surveys, AdminMainMenuCallbackFactory.filter(F.action == ListAdminMainMenuActions.EDIT_SURVEYS))
         self.aiogram_wrapper.register_callback(self._edit_admin_list, AdminMainMenuCallbackFactory.filter(F.action == ListAdminMainMenuActions.EDIT_ADMIN_LIST))
 
-    async def execute(self, message: Message, state: FSMContext, command: Optional[CommandObject] = None):
+    async def execute(self, message: Message, state: FSMContext, command: Optional[CommandObject] = None, **kwargs):
         keyboard_builder = get_keyboard_for_admin_main_menu()
         text_message = ADMIN_MAIN_MENU_MESSAGE
         send_message = await self.aiogram_wrapper.answer_massage(message=message,

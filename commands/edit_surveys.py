@@ -23,7 +23,7 @@ logger = logging.getLogger(__name__)
 if TYPE_CHECKING:
     from commands import Manager
 
-class EditSurvey(BaseCommand):
+class EditSurveys(BaseCommand):
     def __init__(self, manager: "Manager", db: ABCServices, aiogram_wrapper: AiogramWrapper) -> None:
         super().__init__(manager, db, aiogram_wrapper)
         self.aiogram_wrapper.register_callback(self._edit_selection, EditSurveysCallbackFactory.filter(F.action == ListEditSurveysActions.EDIT_SELECTION))
@@ -34,7 +34,7 @@ class EditSurvey(BaseCommand):
         self.surveys_pager = AiogramPager(aiogram_wrapper=aiogram_wrapper,
                                           dump_field_name=RedisTmpFields.DUMP_EDIT_SURVEYS.value)
 
-    async def execute(self, message: Message, state: FSMContext, command: Optional[CommandObject] = None):
+    async def execute(self, message: Message, state: FSMContext, command: Optional[CommandObject] = None, **kwargs):
         surveys = await self.db.survey.get_all_surveys()
         surveys_names = [x.name for x in surveys]
         surveys_idx_map = {}
@@ -51,10 +51,19 @@ class EditSurvey(BaseCommand):
                                                                  text=EDIT_SURVEYS,
                                                                  reply_markup=keyboard.as_markup())
 
-    async def _edit_selection(self, callback: CallbackQuery, callback_data: EditSurveyCallbackFactory, state: FSMContext):
-        pass
+    async def _edit_selection(self, callback: CallbackQuery, callback_data: EditSurveysCallbackFactory, state: FSMContext):
+        survey_id = callback_data.survey_id
+        await self.manager.aiogram_wrapper.set_state(state_context=state,
+                                                     state=States.EDIT_SURVEY)
+        await self.manager.aiogram_wrapper.delete_message(message_id=callback.message.message_id,
+                                                          chat_id=callback.from_user.id)
+        await self.manager.launch(name="edit_survey",
+                                  message=callback.message,
+                                  state=state,
+                                  survey_id=survey_id)
+        await callback.answer()
 
-    async def _next_survey(self, callback: CallbackQuery, callback_data: EditSurveyCallbackFactory, state: FSMContext):
+    async def _next_survey(self, callback: CallbackQuery, callback_data: EditSurveysCallbackFactory, state: FSMContext):
         surveys_idx_map = await self.aiogram_wrapper.get_state_data(state_context=state, field_name=RedisTmpFields.EDIT_SURVEYS_IDX_MAP.value)
         page_number, page_status, current_page = await self.surveys_pager.get_next_page(state_context=state)
         keyboard = get_keyboard_for_edit_surveys(surveys=current_page, survey_idx_map=surveys_idx_map, page_status=page_status)
@@ -65,7 +74,7 @@ class EditSurvey(BaseCommand):
                                                                          reply_markup=keyboard.as_markup())
         await callback.answer()
 
-    async def _previous_survey(self, callback: CallbackQuery, callback_data: EditSurveyCallbackFactory, state: FSMContext):
+    async def _previous_survey(self, callback: CallbackQuery, callback_data: EditSurveysCallbackFactory, state: FSMContext):
         surveys_idx_map = await self.aiogram_wrapper.get_state_data(state_context=state, field_name=RedisTmpFields.EDIT_SURVEYS_IDX_MAP.value)
         page_number, page_status, current_page = await self.surveys_pager.get_previous_page(state_context=state)
         keyboard = get_keyboard_for_edit_surveys(surveys=current_page, survey_idx_map=surveys_idx_map, page_status=page_status)
@@ -76,7 +85,7 @@ class EditSurvey(BaseCommand):
                                                                          reply_markup=keyboard.as_markup())
         await callback.answer()
 
-    async def _add_survey(self, callback: CallbackQuery, callback_data: EditSurveyCallbackFactory, state: FSMContext):
+    async def _add_survey(self, callback: CallbackQuery, callback_data: EditSurveysCallbackFactory, state: FSMContext):
         await self.manager.aiogram_wrapper.set_state(state_context=state,
                                                      state=States.ADD_SURVEY)
         await self.manager.aiogram_wrapper.delete_message(message_id=callback.message.message_id,
@@ -86,7 +95,7 @@ class EditSurvey(BaseCommand):
                                   state=state)
         await callback.answer()
 
-    async def _return_to_main_menu(self, callback: CallbackQuery, callback_data: EditSurveyCallbackFactory, state: FSMContext):
+    async def _return_to_main_menu(self, callback: CallbackQuery, callback_data: EditSurveysCallbackFactory, state: FSMContext):
         await self.manager.aiogram_wrapper.set_state(state_context=state,
                                                      state=States.MAIN_MENU)
         await self.manager.aiogram_wrapper.delete_message(message_id=callback.message.message_id,

@@ -29,7 +29,7 @@ class AddUserToAdminLit(BaseCommand):
         self.aiogram_wrapper.register_message_handler(self._enter_admin_tg_id, States.ENTER_NEW_ADMIN)
         self.aiogram_wrapper.register_callback(self._return_to_edit_admin_list, AddUserToAdminListCallbackFactory.filter(F.action == ListAddUserToAdminListActions.RETURN_TO_EDIT_ADMIN_LIST))
 
-    async def execute(self, message: Message, state: FSMContext, command: Optional[CommandObject] = None):
+    async def execute(self, message: Message, state: FSMContext, command: Optional[CommandObject] = None, **kwargs):
         await self.manager.aiogram_wrapper.set_state(state_context=state,
                                                      state=States.ENTER_NEW_ADMIN)
         keyboard_builder = get_keyboard_for_add_user_to_admin_list()

@@ -27,7 +27,7 @@ class Registration(BaseCommand):
         super().__init__(manager, db, aiogram_wrapper)
         self.aiogram_wrapper.register_message_handler(self._enter_full_name, States.REGISTRATION)
 
-    async def execute(self, message: Message, state: FSMContext, command: Optional[CommandObject] = None):
+    async def execute(self, message: Message, state: FSMContext, command: Optional[CommandObject] = None, **kwargs):
         await self.aiogram_wrapper.set_state(state_context=state, state=States.REGISTRATION)
         text_message = REGISTRATION_MESSAGE
         send_message = await self.aiogram_wrapper.answer_massage(message=message,

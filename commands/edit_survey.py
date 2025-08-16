@@ -34,8 +34,14 @@ class EditSurvey(BaseCommand):
         self.products_pager = AiogramPager(aiogram_wrapper=aiogram_wrapper,
                                            dump_field_name=RedisTmpFields.DUMP_CLINICAL_CASES_SURVEY_STEPS.value)
 
-    async def execute(self, message: Message, state: FSMContext, command: Optional[CommandObject] = None):
-        keyboard = get_keyboard_for_edit_survey()
+    async def execute(self,
+                      message: Message,
+                      state: FSMContext,
+                      command: Optional[CommandObject] = None,
+                      survey_id: Optional[int] = None,
+                      **kwargs):
+        print(survey_id)
+        # keyboard = get_keyboard_for_edit_survey()
 
     async def _edit_selection(self, callback: CallbackQuery, callback_data: EditSurveyCallbackFactory, state: FSMContext):
         pass

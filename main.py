@@ -55,6 +55,11 @@ async def main():
     await drop_tables()
     await create_tables()
 
+    survey = Survey(name="clinical cases")
+    tmp_added_survey = await DB.survey.save_survey(survey=survey)
+    survey = Survey(name="another cases")
+    tmp_added_survey = await DB.survey.save_survey(survey=survey)
+
     await start_polling()
 
 if __name__ == "__main__":

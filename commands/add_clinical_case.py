@@ -25,5 +25,5 @@ class AddClinicalCase(BaseCommand):
     def __init__(self, manager: "Manager", db: ABCServices, aiogram_wrapper: AiogramWrapper) -> None:
         super().__init__(manager, db, aiogram_wrapper)
 
-    async def execute(self, message: Message, state: FSMContext, command: Optional[CommandObject] = None):
+    async def execute(self, message: Message, state: FSMContext, command: Optional[CommandObject] = None, **kwargs):
         pass
