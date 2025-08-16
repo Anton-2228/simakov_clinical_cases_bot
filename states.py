@@ -9,4 +9,5 @@ class States(StatesGroup):
     ADD_USER_TO_ADMIN_LIST = State()
     DELETE_USER_FROM_ADMIN_LIST = State()
     ENTER_NEW_ADMIN = State()
-    EDIT_CLINICAL_CASES_SURVEY_STEPS = State()
+    EDIT_SURVEYS = State()
+    ADD_SURVEY = State()

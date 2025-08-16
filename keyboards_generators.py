@@ -2,10 +2,12 @@ from aiogram.types import InlineKeyboardButton
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
 from callbacks_factories import UserMainMenuCallbackFactory, AdminMainMenuCallbackFactory, EditAdminListCallbackFactory, \
-    AddUserToAdminListCallbackFactory, DeleteUserFromAdminListCallbackFactory
+    AddUserToAdminListCallbackFactory, DeleteUserFromAdminListCallbackFactory, EditSurveyCallbackFactory, \
+    EditSurveysCallbackFactory
 from enums import ListUserMainMenuActions, ListAdminMainMenuActions, ListEditAdminListActions, \
-    ListAddUserToAdminListActions, ListDeleteUserFromAdminListActions
+    ListAddUserToAdminListActions, ListDeleteUserFromAdminListActions, ListEditSurveyActions, ListEditSurveysActions
 from models import User
+from pagers.pager import PAGING_STATUS
 
 
 def get_keyboard_for_user_main_menu() -> InlineKeyboardBuilder:
@@ -42,4 +44,91 @@ def get_keyboard_for_remove_admins(admins: list[User]) -> InlineKeyboardBuilder:
                                                                                                          user_id=admin.telegram_id))
     builder.adjust(3, repeat=True)
     builder.row(InlineKeyboardButton(text="Return", callback_data=DeleteUserFromAdminListCallbackFactory(action=ListDeleteUserFromAdminListActions.RETURN_TO_EDIT_ADMIN_LIST).pack()))
+    return builder
+
+def get_keyboard_for_edit_surveys(surveys: list[str], survey_idx_map: dict[int, str], page_status: PAGING_STATUS) -> InlineKeyboardBuilder:
+    def _get_survey_id(survey_name: str):
+        for id in survey_idx_map:
+            if survey_idx_map[id] == survey_name:
+                return id
+
+    builder = InlineKeyboardBuilder()
+    for survey in surveys:
+        survey_id = _get_survey_id(survey_name=survey)
+        builder.button(
+            text=survey,
+            callback_data=EditSurveysCallbackFactory(
+                action=ListEditSurveysActions.EDIT_SELECTION,
+                survey_id=survey_id
+            )
+        )
+
+    builder.adjust(1, repeat=True)
+
+    navigate_buttons = []
+    if page_status not in [PAGING_STATUS.FIRST_PAGE, PAGING_STATUS.ONLY_PAGE, PAGING_STATUS.NO_PAGE]:
+        previous_button = InlineKeyboardButton(
+            text="Previous",
+            callback_data=EditSurveysCallbackFactory(action=ListEditSurveysActions.PREVIOUS_SURVEYS).pack())
+        navigate_buttons.append(previous_button)
+    if page_status not in [PAGING_STATUS.LAST_PAGE, PAGING_STATUS.ONLY_PAGE, PAGING_STATUS.NO_PAGE]:
+        next_button = InlineKeyboardButton(
+            text="Next",
+            callback_data=EditSurveysCallbackFactory(action=ListEditSurveysActions.NEXT_SURVEYS).pack())
+        navigate_buttons.append(next_button)
+    builder.row(*navigate_buttons)
+
+    add_new_survey_button = InlineKeyboardButton(
+        text="Add new survey",
+        callback_data=EditSurveysCallbackFactory(action=ListEditSurveysActions.ADD_SURVEY).pack()
+    )
+    builder.row(add_new_survey_button)
+    return_to_main_menu_button = InlineKeyboardButton(
+        text="Return to main menu",
+        callback_data=EditSurveysCallbackFactory(action=ListEditSurveysActions.RETURN_TO_MAIN_MENU).pack()
+    )
+    builder.row(return_to_main_menu_button)
+    return builder
+
+def get_keyboard_for_edit_survey(steps_idx: list[int], page_status: PAGING_STATUS) -> InlineKeyboardBuilder:
+    builder = InlineKeyboardBuilder()
+    for step_id in enumerate(steps_idx):
+        builder.button(
+            text=str(step_id),
+            callback_data=EditSurveyCallbackFactory(
+                action=ListEditSurveyActions.EDIT_SELECTION,
+                step_id=step_id
+            )
+        )
+
+    builder.adjust(6, repeat=True)
+
+    navigate_buttons = []
+    if page_status not in [PAGING_STATUS.FIRST_PAGE, PAGING_STATUS.ONLY_PAGE, PAGING_STATUS.NO_PAGE]:
+        previous_button = InlineKeyboardButton(
+            text="Previous",
+            callback_data=EditSurveyCallbackFactory(action=ListEditSurveyActions.PREVIOUS_STEPS).pack())
+        navigate_buttons.append(previous_button)
+    if page_status not in [PAGING_STATUS.LAST_PAGE, PAGING_STATUS.ONLY_PAGE, PAGING_STATUS.NO_PAGE]:
+        next_button = InlineKeyboardButton(
+            text="Next",
+            callback_data=EditSurveyCallbackFactory(action=ListEditSurveyActions.NEXT_STEPS).pack())
+        navigate_buttons.append(next_button)
+    builder.row(*navigate_buttons)
+
+    add_new_step_button = InlineKeyboardButton(
+        text="Add new step",
+        callback_data=EditSurveyCallbackFactory(action=ListEditSurveyActions.ADD_NEW_STEP).pack()
+    )
+    builder.row(add_new_step_button)
+    set_steps_order_button = InlineKeyboardButton(
+        text="Set steps order",
+        callback_data=EditSurveyCallbackFactory(action=ListEditSurveyActions.SET_STEPS_ORDER).pack()
+    )
+    builder.row(set_steps_order_button)
+    return_button = InlineKeyboardButton(
+        text="Return",
+        callback_data=EditSurveyCallbackFactory(action=ListEditSurveyActions.RETURN).pack()
+    )
+    builder.row(return_button)
     return builder

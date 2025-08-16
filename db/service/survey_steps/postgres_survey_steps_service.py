@@ -35,10 +35,8 @@ class PostgresSurveyStepService(AsyncSurveyStepService):
 
     async def get_all_survey_steps(self, survey: Survey) -> List[SurveyStep]:
         async with SESSION_FACTORY() as session:
-            # survey_entity = SurveyMapper.to_entity(survey)
             result = await session.scalars(
                 select(SurveyStepORM)
-                # .where(SurveyStepORM.survey_id == 1)
                 .where(SurveyStepORM.survey_id == survey.id)
                 .options(selectinload(SurveyStepORM.survey))
             )

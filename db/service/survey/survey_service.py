@@ -20,6 +20,16 @@ class SurveyService(ABC):
         pass
 
     @abstractmethod
+    def get_all_surveys(self) -> List[Survey]:
+        """
+        Метод получает все опросы из базы данных
+
+        :return:
+            Список объектов опросов
+        """
+        pass
+
+    @abstractmethod
     def get_survey(self, id: int) -> Optional[Survey]:
         """
         Метод получает опрос из базы данных

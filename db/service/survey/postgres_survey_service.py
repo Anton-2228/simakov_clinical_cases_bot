@@ -23,6 +23,14 @@ class PostgresSurveyService(AsyncSurveyService):
             await session.refresh(added_survey)
             return SurveyMapper.to_dto(added_survey)
 
+    async def get_all_surveys(self) -> List[Survey]:
+        async with SESSION_FACTORY() as session:
+            result = await session.scalars(
+                select(SurveyORM)
+            )
+            surveys = result.all()
+            return [SurveyMapper.to_dto(survey) for survey in surveys]
+
     async def get_survey(self, id: int) -> Optional[Survey]:
         async with SESSION_FACTORY() as session:
             survey = await session.get(SurveyORM, id)

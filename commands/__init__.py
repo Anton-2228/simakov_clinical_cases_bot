@@ -7,11 +7,12 @@ from commands.start import Start
 
 from db.service.abc_services import ABCServices
 from .add_clinical_case import AddClinicalCase
+from .add_survey import AddSurvey
 from .add_user_to_admin_list import AddUserToAdminLit
 from .admin_main_menu import AdminMainMenu
 from .delete_user_from_admin_list import DeleteUserFromAdminLit
 from .edit_admin_list import EditAdminList
-from .edit_clinical_cases_survey import EditClinicalCasesSurvey
+from .edit_survey import EditSurvey
 from .registration import Registration
 from .user_main_menu import UserMainMenu
 
@@ -35,6 +36,7 @@ def get_admin_commands(manager: "Manager", db: ABCServices, aiogram_wrapper: Aio
         "edit_admin_list": EditAdminList(manager, db, aiogram_wrapper),
         "add_user_to_admin_list": AddUserToAdminLit(manager, db, aiogram_wrapper),
         "delete_user_from_admin_list": DeleteUserFromAdminLit(manager, db, aiogram_wrapper),
-        "edit_clinical_cases_survey": EditClinicalCasesSurvey(manager, db, aiogram_wrapper)
+        "add_survey": AddSurvey(manager, db, aiogram_wrapper),
+        "edit_surveys": EditSurvey(manager, db, aiogram_wrapper)
     }
     return commands
