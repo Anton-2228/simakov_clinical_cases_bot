@@ -10,7 +10,7 @@ from magic_filter import F
 from aiogram_wrapper import AiogramWrapper
 from callbacks_factories import UserMainMenuCallbackFactory, AddUserToAdminListCallbackFactory
 
-from db.service.services import Services
+from db.service.abc_services import ABCServices
 from enums import ListUserMainMenuActions, USER_TYPE, ListAddUserToAdminListActions, RedisTmpFields
 from keyboards_generators import get_keyboard_for_user_main_menu, get_keyboard_for_add_user_to_admin_list
 from resources.messages import USER_MAIN_MENU_MESSAGE, REQUEST_ENTER_NEW_ADMIN_MESSAGE, \
@@ -24,7 +24,7 @@ if TYPE_CHECKING:
     from .manager import Manager
 
 class AddUserToAdminLit(BaseCommand):
-    def __init__(self, manager: "Manager", db: Services, aiogram_wrapper: AiogramWrapper) -> None:
+    def __init__(self, manager: "Manager", db: ABCServices, aiogram_wrapper: AiogramWrapper) -> None:
         super().__init__(manager, db, aiogram_wrapper)
         self.aiogram_wrapper.register_message_handler(self._enter_admin_tg_id, States.ENTER_NEW_ADMIN)
         self.aiogram_wrapper.register_callback(self._return_to_edit_admin_list, AddUserToAdminListCallbackFactory.filter(F.action == ListAddUserToAdminListActions.RETURN_TO_EDIT_ADMIN_LIST))

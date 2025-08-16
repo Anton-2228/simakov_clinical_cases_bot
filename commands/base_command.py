@@ -7,7 +7,7 @@ from aiogram.types import Message
 
 from aiogram_wrapper import AiogramWrapper
 
-from db.service.services import Services
+from db.service.abc_services import ABCServices
 
 if TYPE_CHECKING:
     from commands import Manager
@@ -16,7 +16,7 @@ if TYPE_CHECKING:
 class BaseCommand:
     def __init__(self,
                  manager: "Manager",
-                 db: Services,
+                 db: ABCServices,
                  aiogram_wrapper: AiogramWrapper) -> None:
         self.manager = manager
         self.db = db

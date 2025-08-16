@@ -6,7 +6,7 @@ from aiogram.types import Message
 
 from aiogram_wrapper import AiogramWrapper
 from commands.base_command import BaseCommand
-from db.service.services import Services
+from db.service.abc_services import ABCServices
 from resources.messages import HELLO_MESSAGE
 from states import States
 
@@ -14,7 +14,7 @@ if TYPE_CHECKING:
     from .manager import Manager
 
 class Start(BaseCommand):
-    def __init__(self, manager: "Manager", db: Services, aiogram_wrapper: AiogramWrapper):
+    def __init__(self, manager: "Manager", db: ABCServices, aiogram_wrapper: AiogramWrapper):
         super().__init__(manager, db, aiogram_wrapper)
 
     async def execute(self, message: Message, state: FSMContext, command: Optional[CommandObject] = None):

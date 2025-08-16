@@ -5,7 +5,7 @@ from commands.base_command import BaseCommand
 from commands.manager import Manager
 from commands.start import Start
 
-from db.service.services import Services
+from db.service.abc_services import ABCServices
 from .add_clinical_case import AddClinicalCase
 from .add_user_to_admin_list import AddUserToAdminLit
 from .admin_main_menu import AdminMainMenu
@@ -18,7 +18,7 @@ from .user_main_menu import UserMainMenu
 if TYPE_CHECKING:
     from .manager import Manager
 
-def get_user_commands(manager: "Manager", db: Services, aiogram_wrapper: AiogramWrapper) -> Dict[str, BaseCommand]:
+def get_user_commands(manager: "Manager", db: ABCServices, aiogram_wrapper: AiogramWrapper) -> Dict[str, BaseCommand]:
     commands = {
         "start": Start(manager, db, aiogram_wrapper),
         "registration": Registration(manager, db, aiogram_wrapper),
@@ -27,7 +27,7 @@ def get_user_commands(manager: "Manager", db: Services, aiogram_wrapper: Aiogram
     }
     return commands
 
-def get_admin_commands(manager: "Manager", db: Services, aiogram_wrapper: AiogramWrapper) -> Dict[str, BaseCommand]:
+def get_admin_commands(manager: "Manager", db: ABCServices, aiogram_wrapper: AiogramWrapper) -> Dict[str, BaseCommand]:
     commands = {
         "start": Start(manager, db, aiogram_wrapper),
         "main_menu": AdminMainMenu(manager, db, aiogram_wrapper),

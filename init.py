@@ -11,7 +11,7 @@ from aiogram_wrapper import AiogramWrapper
 from commands import get_user_commands, get_admin_commands
 from commands.manager import Manager
 from db.redis import RedisStorage
-from db.service.redis_services import RedisServices
+from db.service.services import Services
 from enums import USER_TYPE
 from environments import TELEGRAM_BOT_TOKEN, REDIS_HOST, REDIS_PORT
 
@@ -22,7 +22,7 @@ BOT = Bot(token=TELEGRAM_BOT_TOKEN, default=DefaultBotProperties(parse_mode=Pars
 REDIS = RedisStorage(host=REDIS_HOST, port=REDIS_PORT)
 STORAGE = TGRedisStorage(redis=REDIS.redis)
 
-DB = RedisServices(redis_client=REDIS)
+DB = Services(redis_client=REDIS)
 
 AIOGRAM_WRAPPER = AiogramWrapper(bot=BOT,
                                  db=DB,

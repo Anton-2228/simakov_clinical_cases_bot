@@ -9,7 +9,7 @@ from magic_filter import F
 from aiogram_wrapper import AiogramWrapper
 from callbacks_factories import EditAdminListCallbackFactory
 from commands import BaseCommand
-from db.service.services import Services
+from db.service.abc_services import ABCServices
 from enums import ListEditAdminListActions, USER_TYPE
 from keyboards_generators import get_keyboard_for_edit_admin_list
 from output_generators import create_edit_admin_list_output
@@ -22,7 +22,7 @@ if TYPE_CHECKING:
     from commands import Manager
 
 class EditAdminList(BaseCommand):
-    def __init__(self, manager: "Manager", db: Services, aiogram_wrapper: AiogramWrapper) -> None:
+    def __init__(self, manager: "Manager", db: ABCServices, aiogram_wrapper: AiogramWrapper) -> None:
         super().__init__(manager, db, aiogram_wrapper)
         self.aiogram_wrapper.register_callback(self._add_admin, EditAdminListCallbackFactory.filter(F.action == ListEditAdminListActions.ADD_ADMIN))
         self.aiogram_wrapper.register_callback(self._remove_admin, EditAdminListCallbackFactory.filter(F.action == ListEditAdminListActions.REMOVE_ADMIN))

@@ -7,14 +7,14 @@ from aiogram.types import Message
 
 from aiogram_wrapper import AiogramWrapper
 from commands.base_command import BaseCommand
-from db.service.services import Services
+from db.service.abc_services import ABCServices
 from enums import USER_TYPE
 
 logger = logging.getLogger(__name__)
 
 
 class Manager:
-    def __init__(self, db: Services, aiogram_wrapper: AiogramWrapper):
+    def __init__(self, db: ABCServices, aiogram_wrapper: AiogramWrapper):
         self.commands_by_role: Dict[USER_TYPE, Dict[str, BaseCommand]] = {}
         for user_type in iter(USER_TYPE):
             self.commands_by_role[user_type] = {}

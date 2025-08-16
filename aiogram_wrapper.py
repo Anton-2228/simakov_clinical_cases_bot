@@ -9,14 +9,14 @@ from aiogram.methods import SendMessage
 from aiogram.types import Message, ReplyMarkupUnion, InputMediaPhoto, InputMediaVideo, InputMediaAudio, \
     InputMediaDocument, InlineKeyboardMarkup
 
-from db.service.services import Services
+from db.service.abc_services import ABCServices
 from states import States
 
 
 class AiogramWrapper:
     def __init__(self,
                  bot: Bot,
-                 db: Services,
+                 db: ABCServices,
                  router: Router):
         self.bot = bot
         self.db = db
