@@ -3,7 +3,8 @@ from typing import Optional
 from aiogram.filters.callback_data import CallbackData
 
 from enums import ListUserMainMenuActions, ListAdminMainMenuActions, ListEditAdminListActions, \
-    ListDeleteUserFromAdminListActions, ListAddUserToAdminListActions, ListEditSurveyActions, ListEditSurveysActions
+    ListDeleteUserFromAdminListActions, ListAddUserToAdminListActions, ListEditSurveyActions, ListEditSurveysActions, \
+    ListAddSurveyListActions
 
 
 class UserMainMenuCallbackFactory(CallbackData, prefix="umm"): # user_main_menu
@@ -29,3 +30,6 @@ class EditSurveysCallbackFactory(CallbackData, prefix="ess"): # edit_surveyS
 class EditSurveyCallbackFactory(CallbackData, prefix="es"): # edit_survey
     action: ListEditSurveyActions
     step_id: Optional[int] = None
+
+class AddSurveyCallbackFactory(CallbackData, prefix="as"): # add_survey
+    action: ListAddSurveyListActions

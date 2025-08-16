@@ -3,9 +3,10 @@ from aiogram.utils.keyboard import InlineKeyboardBuilder
 
 from callbacks_factories import UserMainMenuCallbackFactory, AdminMainMenuCallbackFactory, EditAdminListCallbackFactory, \
     AddUserToAdminListCallbackFactory, DeleteUserFromAdminListCallbackFactory, EditSurveyCallbackFactory, \
-    EditSurveysCallbackFactory
+    EditSurveysCallbackFactory, AddSurveyCallbackFactory
 from enums import ListUserMainMenuActions, ListAdminMainMenuActions, ListEditAdminListActions, \
-    ListAddUserToAdminListActions, ListDeleteUserFromAdminListActions, ListEditSurveyActions, ListEditSurveysActions
+    ListAddUserToAdminListActions, ListDeleteUserFromAdminListActions, ListEditSurveyActions, ListEditSurveysActions, \
+    ListAddSurveyListActions
 from models import User
 from pagers.pager import PAGING_STATUS
 
@@ -132,4 +133,10 @@ def get_keyboard_for_edit_survey(steps_idx: list[int], page_status: PAGING_STATU
         callback_data=EditSurveyCallbackFactory(action=ListEditSurveyActions.RETURN).pack()
     )
     builder.row(return_button)
+    return builder
+
+def get_keyboard_for_add_survey() -> InlineKeyboardBuilder:
+    builder = InlineKeyboardBuilder()
+    builder.row(InlineKeyboardButton(text="Вернуться", callback_data=AddSurveyCallbackFactory(action=ListAddSurveyListActions.RETURN_TO_EDIT_SURVEYS).pack()))
+    builder.adjust(1)
     return builder

@@ -14,3 +14,5 @@ ENTER_NEW_ADMIN_NOT_REGISTERED_USER_MESSAGE = load_txt(Path(__file__).parent / "
 REMOVE_ADMIN_MESSAGE = load_txt(Path(__file__).parent / "REMOVE_ADMIN.txt")
 EDIT_CLINICAL_CASES_SURVEY_MESSAGE = load_txt(Path(__file__).parent / "EDIT_CLINICAL_CASES_SURVEY.txt")
 EDIT_SURVEYS = load_txt(Path(__file__).parent / "EDIT_SURVEYS.txt")
+REQUEST_ENTER_NEW_SURVEY_NAME = load_txt(Path(__file__).parent / "REQUEST_ENTER_NEW_SURVEY_NAME.txt")
+ENTER_NEW_SURVEY_NAME_MAX_SIZE = load_txt(Path(__file__).parent / "errors/ENTER_NEW_SURVEY_NAME_MAX_SIZE.txt")

@@ -47,9 +47,14 @@ class ListEditSurveyActions(Enum):
 class RedisTmpFields(Enum):
     ENTER_NEW_ADMIN_TG_ID_REQUEST_MESSAGE_ID = "enter_new_admin_tg_id_request_message_id"
     ENTER_NEW_ADMIN_TG_ID_REQUEST_CHAT_ID = "enter_new_admin_tg_id_request_chat_id"
+    ENTER_NEW_SURVEY_NAME_REQUEST_MESSAGE_ID = "enter_new_survey_name_request_message_id"
+    ENTER_NEW_SURVEY_NAME_REQUEST_CHAT_ID = "enter_new_survey_name_request_chat_id"
 
     DUMP_EDIT_SURVEYS = "dump_edit_surveys"
     DUMP_CLINICAL_CASES_SURVEY_STEPS = "dump_clinical_cases_survey_steps"
 
     EDIT_SURVEYS_LIST_SURVEYS = "edit_surveys_current_surveys"
     EDIT_SURVEYS_IDX_MAP = "edit_surveys_idx_map"
+
+class ListAddSurveyListActions(Enum):
+    RETURN_TO_EDIT_SURVEYS = "return_to_edit_surveys"

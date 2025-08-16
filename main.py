@@ -57,8 +57,6 @@ async def main():
 
     survey = Survey(name="clinical cases")
     tmp_added_survey = await DB.survey.save_survey(survey=survey)
-    survey = Survey(name="another cases")
-    tmp_added_survey = await DB.survey.save_survey(survey=survey)
 
     await start_polling()
 
