@@ -56,7 +56,54 @@ async def main():
     await create_tables()
 
     survey = Survey(name="clinical cases")
-    tmp_added_survey = await DB.survey.save_survey(survey=survey)
+    added_survey = await DB.survey.save_survey(survey=survey)
+
+    survey_step = SurveyStep(survey=added_survey,
+                             name="aboba 0",
+                             position=0,
+                             type=SURVEY_STEP_TYPE.STRING)
+    await DB.survey_step.save_survey_step(survey_step=survey_step)
+    survey_step = SurveyStep(survey=added_survey,
+                             name="aboba 1",
+                             position=1,
+                             type=SURVEY_STEP_TYPE.STRING)
+    await DB.survey_step.save_survey_step(survey_step=survey_step)
+    survey_step = SurveyStep(survey=added_survey,
+                             name="aboba 2",
+                             position=2,
+                             type=SURVEY_STEP_TYPE.STRING)
+    await DB.survey_step.save_survey_step(survey_step=survey_step)
+    survey_step = SurveyStep(survey=added_survey,
+                             name="aboba 3",
+                             position=3,
+                             type=SURVEY_STEP_TYPE.STRING)
+    await DB.survey_step.save_survey_step(survey_step=survey_step)
+    survey_step = SurveyStep(survey=added_survey,
+                             name="aboba 4",
+                             position=4,
+                             type=SURVEY_STEP_TYPE.STRING)
+    await DB.survey_step.save_survey_step(survey_step=survey_step)
+    survey_step = SurveyStep(survey=added_survey,
+                             name="aboba 5",
+                             position=5,
+                             type=SURVEY_STEP_TYPE.STRING)
+    await DB.survey_step.save_survey_step(survey_step=survey_step)
+    survey_step = SurveyStep(survey=added_survey,
+                             name="aboba 6",
+                             position=6,
+                             type=SURVEY_STEP_TYPE.STRING)
+    await DB.survey_step.save_survey_step(survey_step=survey_step)
+    survey_step = SurveyStep(survey=added_survey,
+                             name="aboba 7",
+                             position=7,
+                             type=SURVEY_STEP_TYPE.STRING)
+    await DB.survey_step.save_survey_step(survey_step=survey_step)
+    survey_step = SurveyStep(survey=added_survey,
+                             name="aboba 8",
+                             position=8,
+                             type=SURVEY_STEP_TYPE.STRING)
+    await DB.survey_step.save_survey_step(survey_step=survey_step)
+
 
     await start_polling()
 

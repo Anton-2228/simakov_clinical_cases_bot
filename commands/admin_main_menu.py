@@ -24,7 +24,7 @@ if TYPE_CHECKING:
 class AdminMainMenu(BaseCommand):
     def __init__(self, manager: "Manager", db: ABCServices, aiogram_wrapper: AiogramWrapper) -> None:
         super().__init__(manager, db, aiogram_wrapper)
-        self.aiogram_wrapper.register_callback(self._add_clinical_case, AdminMainMenuCallbackFactory.filter(F.action == ListAdminMainMenuActions.ADD_CLINICAL_CASE))
+        self.aiogram_wrapper.register_callback(self._take_the_survey, AdminMainMenuCallbackFactory.filter(F.action == ListAdminMainMenuActions.TAKE_THE_SURVEY))
         self.aiogram_wrapper.register_callback(self._edit_surveys, AdminMainMenuCallbackFactory.filter(F.action == ListAdminMainMenuActions.EDIT_SURVEYS))
         self.aiogram_wrapper.register_callback(self._edit_admin_list, AdminMainMenuCallbackFactory.filter(F.action == ListAdminMainMenuActions.EDIT_ADMIN_LIST))
 
@@ -35,12 +35,12 @@ class AdminMainMenu(BaseCommand):
                                                                  text=text_message,
                                                                  reply_markup=keyboard_builder.as_markup())
 
-    async def _add_clinical_case(self, callback: CallbackQuery, callback_data: AdminMainMenuCallbackFactory, state: FSMContext):
+    async def _take_the_survey(self, callback: CallbackQuery, callback_data: AdminMainMenuCallbackFactory, state: FSMContext):
         await self.aiogram_wrapper.set_state(state_context=state,
-                                             state=States.ADD_CLINICAL_CASE)
+                                             state=States.TAKE_THE_SURVEY)
         await self.manager.aiogram_wrapper.delete_message(message_id=callback.message.message_id,
                                                           chat_id=callback.from_user.id)
-        await self.manager.launch(name="add_clinical_case",
+        await self.manager.launch(name="take_the_survey",
                                   message=callback.message,
                                   state=state)
         await callback.answer()

@@ -10,10 +10,10 @@ class SURVEY_STEP_TYPE(Enum):
     FILES = "files"
 
 class ListUserMainMenuActions(Enum):
-    ADD_CLINICAL_CASE = "add_clinical_case"
+    TAKE_THE_SURVEY = "take_the_survey"
 
 class ListAdminMainMenuActions(Enum):
-    ADD_CLINICAL_CASE = "add_clinical_case"
+    TAKE_THE_SURVEY = "take_the_survey"
     EDIT_SURVEYS = "edit_surveys"
     EDIT_ADMIN_LIST = "edit_admin_list"
 
@@ -51,10 +51,13 @@ class RedisTmpFields(Enum):
     ENTER_NEW_SURVEY_NAME_REQUEST_CHAT_ID = "enter_new_survey_name_request_chat_id"
 
     DUMP_EDIT_SURVEYS = "dump_edit_surveys"
+    DUMP_EDIT_SURVEY = "dump_edit_survey"
     DUMP_CLINICAL_CASES_SURVEY_STEPS = "dump_clinical_cases_survey_steps"
 
     EDIT_SURVEYS_LIST_SURVEYS = "edit_surveys_current_surveys"
     EDIT_SURVEYS_IDX_MAP = "edit_surveys_idx_map"
+    EDIT_SURVEY_LIST_STEPS = "edit_survey_list_steps"
+    EDIT_SURVEY_STEPS_IDXS = "edit_survey_steps_idxs"
 
 class ListAddSurveyListActions(Enum):
     RETURN_TO_EDIT_SURVEYS = "return_to_edit_surveys"

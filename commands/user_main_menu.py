@@ -24,7 +24,7 @@ if TYPE_CHECKING:
 class UserMainMenu(BaseCommand):
     def __init__(self, manager: "Manager", db: ABCServices, aiogram_wrapper: AiogramWrapper) -> None:
         super().__init__(manager, db, aiogram_wrapper)
-        self.aiogram_wrapper.register_callback(self._add_clinical_case, UserMainMenuCallbackFactory.filter(F.action == ListUserMainMenuActions.ADD_CLINICAL_CASE))
+        self.aiogram_wrapper.register_callback(self._take_the_survey, UserMainMenuCallbackFactory.filter(F.action == ListUserMainMenuActions.TAKE_THE_SURVEY))
 
     async def execute(self, message: Message, state: FSMContext, command: Optional[CommandObject] = None, **kwargs):
         keyboard_builder = get_keyboard_for_user_main_menu()
@@ -33,12 +33,12 @@ class UserMainMenu(BaseCommand):
                                                                          text=text_message,
                                                                          reply_markup=keyboard_builder.as_markup())
 
-    async def _add_clinical_case(self, callback: CallbackQuery, callback_data: UserMainMenuCallbackFactory, state: FSMContext):
+    async def _take_the_survey(self, callback: CallbackQuery, callback_data: UserMainMenuCallbackFactory, state: FSMContext):
         await self.manager.aiogram_wrapper.set_state(state_context=state,
-                                                     state=States.ADD_CLINICAL_CASE)
+                                                     state=States.TAKE_THE_SURVEY)
         await self.manager.aiogram_wrapper.delete_message(message_id=callback.message.message_id,
                                                           chat_id=callback.message.chat.id)
-        await self.manager.launch(name="add_clinical_case",
+        await self.manager.launch(name="take_the_survey",
                                   message=callback.message,
                                   state=state)
         await callback.answer()

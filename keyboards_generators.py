@@ -13,13 +13,13 @@ from pagers.pager import PAGING_STATUS
 
 def get_keyboard_for_user_main_menu() -> InlineKeyboardBuilder:
     builder = InlineKeyboardBuilder()
-    builder.button(text="Добавить клинический случай", callback_data=UserMainMenuCallbackFactory(action=ListUserMainMenuActions.ADD_CLINICAL_CASE))
+    builder.button(text="Пройти опрос", callback_data=UserMainMenuCallbackFactory(action=ListUserMainMenuActions.TAKE_THE_SURVEY))
     builder.adjust(1)
     return builder
 
 def get_keyboard_for_admin_main_menu() -> InlineKeyboardBuilder:
     builder = InlineKeyboardBuilder()
-    builder.button(text="Добавить клинический случай", callback_data=AdminMainMenuCallbackFactory(action=ListAdminMainMenuActions.ADD_CLINICAL_CASE))
+    builder.button(text="Пройти опрос", callback_data=AdminMainMenuCallbackFactory(action=ListAdminMainMenuActions.TAKE_THE_SURVEY))
     builder.button(text="Отредактировать опросы", callback_data=AdminMainMenuCallbackFactory(action=ListAdminMainMenuActions.EDIT_SURVEYS))
     builder.button(text="Обновить список админов", callback_data=AdminMainMenuCallbackFactory(action=ListAdminMainMenuActions.EDIT_ADMIN_LIST))
     builder.adjust(1)
@@ -94,7 +94,7 @@ def get_keyboard_for_edit_surveys(surveys: list[str], survey_idx_map: dict[int, 
 
 def get_keyboard_for_edit_survey(steps_idx: list[int], page_status: PAGING_STATUS) -> InlineKeyboardBuilder:
     builder = InlineKeyboardBuilder()
-    for step_id in enumerate(steps_idx):
+    for step_id in steps_idx:
         builder.button(
             text=str(step_id),
             callback_data=EditSurveyCallbackFactory(

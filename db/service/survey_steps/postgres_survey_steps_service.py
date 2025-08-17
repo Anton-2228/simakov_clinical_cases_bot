@@ -33,11 +33,11 @@ class PostgresSurveyStepService(AsyncSurveyStepService):
                                                .options(selectinload(SurveyStepORM.survey)))
             return SurveyStepMapper.to_dto(survey_step)
 
-    async def get_all_survey_steps(self, survey: Survey) -> List[SurveyStep]:
+    async def get_all_survey_steps(self, survey_id: int) -> List[SurveyStep]:
         async with SESSION_FACTORY() as session:
             result = await session.scalars(
                 select(SurveyStepORM)
-                .where(SurveyStepORM.survey_id == survey.id)
+                .where(SurveyStepORM.survey_id == survey_id)
                 .options(selectinload(SurveyStepORM.survey))
             )
             survey_steps = result.all()

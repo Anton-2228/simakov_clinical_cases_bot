@@ -21,7 +21,7 @@ logger = logging.getLogger(__name__)
 if TYPE_CHECKING:
     from .manager import Manager
 
-class AddClinicalCase(BaseCommand):
+class SetStepsOrder(BaseCommand):
     def __init__(self, manager: "Manager", db: ABCServices, aiogram_wrapper: AiogramWrapper) -> None:
         super().__init__(manager, db, aiogram_wrapper)
 

@@ -16,3 +16,4 @@ EDIT_CLINICAL_CASES_SURVEY_MESSAGE = load_txt(Path(__file__).parent / "EDIT_CLIN
 EDIT_SURVEYS = load_txt(Path(__file__).parent / "EDIT_SURVEYS.txt")
 REQUEST_ENTER_NEW_SURVEY_NAME = load_txt(Path(__file__).parent / "REQUEST_ENTER_NEW_SURVEY_NAME.txt")
 ENTER_NEW_SURVEY_NAME_MAX_SIZE = load_txt(Path(__file__).parent / "errors/ENTER_NEW_SURVEY_NAME_MAX_SIZE.txt")
+EDIT_SURVEY = load_txt(Path(__file__).parent / "EDIT_SURVEY.txt")

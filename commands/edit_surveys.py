@@ -36,10 +36,11 @@ class EditSurveys(BaseCommand):
 
     async def execute(self, message: Message, state: FSMContext, command: Optional[CommandObject] = None, **kwargs):
         surveys = await self.db.survey.get_all_surveys()
-        surveys_names = [x.name for x in surveys]
+        surveys_names = []
         surveys_idx_map = {}
-        for i in range(len(surveys_names)):
-            surveys_idx_map[i] = surveys_names[i]
+        for survey in surveys:
+            surveys_names.append(survey.name)
+            surveys_idx_map[survey.id] = survey.name
         await self.aiogram_wrapper.set_state_data(state_context=state, field_name=RedisTmpFields.EDIT_SURVEYS_LIST_SURVEYS.value,
                                                   value=[x.model_dump() for x in surveys])
         await self.aiogram_wrapper.set_state_data(state_context=state, field_name=RedisTmpFields.EDIT_SURVEYS_IDX_MAP.value,
