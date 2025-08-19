@@ -1,6 +1,29 @@
 from enum import Enum
 
 
+class RedisTmpFields(Enum):
+    ENTER_NEW_ADMIN_TG_ID_REQUEST_MESSAGE_ID = "enter_new_admin_tg_id_request_message_id"
+    ENTER_NEW_ADMIN_TG_ID_REQUEST_CHAT_ID = "enter_new_admin_tg_id_request_chat_id"
+    ENTER_NEW_SURVEY_NAME_REQUEST_MESSAGE_ID = "enter_new_survey_name_request_message_id"
+    ENTER_NEW_SURVEY_NAME_REQUEST_CHAT_ID = "enter_new_survey_name_request_chat_id"
+    ENTER_NEW_SURVEY_STEP_FIELD_VALUE_REQUEST_MESSAGE_ID = "enter_new_survey_step_field_value_request_message_id"
+    ENTER_NEW_SURVEY_STEP_FIELD_VALUE_REQUEST_CHAT_ID = "enter_new_survey_step_field_value_request_chat_id"
+
+    DUMP_EDIT_SURVEYS = "dump_edit_surveys"
+    DUMP_EDIT_SURVEY = "dump_edit_survey"
+    DUMP_SET_STEPS_ORDER = "dump_set_steps_order"
+    DUMP_CLINICAL_CASES_SURVEY_STEPS = "dump_clinical_cases_survey_steps"
+
+    EDIT_SURVEYS_LIST_SURVEYS = "edit_surveys_current_surveys"
+    EDIT_SURVEYS_IDX_MAP = "edit_surveys_idx_map"
+    EDIT_SURVEY_LIST_STEPS = "edit_survey_list_steps"
+    EDIT_SURVEY_SURVEY_ID = "edit_survey_survey_id"
+    EDIT_SURVEY_STEPS_SURVEY_ID = "edit_survey_steps_survey_id"
+    EDIT_SURVEY_STEPS_STEP_ID = "edit_survey_steps_step_id"
+    EDIT_SURVEY_STEPS_CURRENT_FIELD_ID = "edit_survey_steps_current_field"
+    SET_STEPS_ORDER_SURVEY_ID = "set_steps_order_survey_id"
+    SET_STEPS_ORDER_LIST_STEPS = "set_steps_order_list_steps"
+
 class USER_TYPE(Enum):
     ADMIN = "admin"
     CLIENT = "client"
@@ -8,6 +31,11 @@ class USER_TYPE(Enum):
 class SURVEY_STEP_TYPE(Enum):
     STRING = "string"
     FILES = "files"
+
+class SURVEY_STEP_VARIABLE_FILEDS(Enum):
+    NAME = "name"
+    TEXT = "text"
+    TYPE = "type"
 
 class ListUserMainMenuActions(Enum):
     TAKE_THE_SURVEY = "take_the_survey"
@@ -44,20 +72,14 @@ class ListEditSurveyActions(Enum):
     SET_STEPS_ORDER = "set_steps_order"
     RETURN = "return"
 
-class RedisTmpFields(Enum):
-    ENTER_NEW_ADMIN_TG_ID_REQUEST_MESSAGE_ID = "enter_new_admin_tg_id_request_message_id"
-    ENTER_NEW_ADMIN_TG_ID_REQUEST_CHAT_ID = "enter_new_admin_tg_id_request_chat_id"
-    ENTER_NEW_SURVEY_NAME_REQUEST_MESSAGE_ID = "enter_new_survey_name_request_message_id"
-    ENTER_NEW_SURVEY_NAME_REQUEST_CHAT_ID = "enter_new_survey_name_request_chat_id"
-
-    DUMP_EDIT_SURVEYS = "dump_edit_surveys"
-    DUMP_EDIT_SURVEY = "dump_edit_survey"
-    DUMP_CLINICAL_CASES_SURVEY_STEPS = "dump_clinical_cases_survey_steps"
-
-    EDIT_SURVEYS_LIST_SURVEYS = "edit_surveys_current_surveys"
-    EDIT_SURVEYS_IDX_MAP = "edit_surveys_idx_map"
-    EDIT_SURVEY_LIST_STEPS = "edit_survey_list_steps"
-    EDIT_SURVEY_STEPS_IDXS = "edit_survey_steps_idxs"
-
 class ListAddSurveyListActions(Enum):
     RETURN_TO_EDIT_SURVEYS = "return_to_edit_surveys"
+
+class ListEditSurveyStepsActions(Enum):
+    KEEP_CURRENT_VALUE = "keep_current_value"
+    SELECT_STEP_TYPE = "select_step_type"
+
+class ListSetStepsOrderActions(Enum):
+    NEXT_STEPS = "next_steps"
+    PREVIOUS_STEPS = "previous_steps"
+    KEEP_CURRENT_VALUE = "keep_current_value"

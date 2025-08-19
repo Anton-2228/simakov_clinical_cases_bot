@@ -4,7 +4,8 @@ from aiogram.filters.callback_data import CallbackData
 
 from enums import ListUserMainMenuActions, ListAdminMainMenuActions, ListEditAdminListActions, \
     ListDeleteUserFromAdminListActions, ListAddUserToAdminListActions, ListEditSurveyActions, ListEditSurveysActions, \
-    ListAddSurveyListActions
+    ListAddSurveyListActions, SURVEY_STEP_VARIABLE_FILEDS, ListEditSurveyStepsActions, SURVEY_STEP_TYPE, \
+    ListSetStepsOrderActions
 
 
 class UserMainMenuCallbackFactory(CallbackData, prefix="umm"): # user_main_menu
@@ -33,3 +34,10 @@ class EditSurveyCallbackFactory(CallbackData, prefix="es"): # edit_survey
 
 class AddSurveyCallbackFactory(CallbackData, prefix="as"): # add_survey
     action: ListAddSurveyListActions
+
+class EditSurveyStepsCallbackFactory(CallbackData, prefix="esst"): # edit_survey_steps
+    action: ListEditSurveyStepsActions
+    step_type: Optional[SURVEY_STEP_TYPE] = None
+
+class SetStepsOrderCallbackFactory(CallbackData, prefix="sso"): # set_steps_order
+    action: ListSetStepsOrderActions

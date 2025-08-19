@@ -43,11 +43,16 @@ class EditSurvey(BaseCommand):
                       **kwargs):
         survey_steps = await self.db.survey_step.get_all_survey_steps(survey_id=survey_id)
         survey_steps = [json.loads(x.model_dump_json()) for x in survey_steps]
-        await self.aiogram_wrapper.set_state_data(state_context=state, field_name=RedisTmpFields.EDIT_SURVEY_LIST_STEPS.value,
+        survey_steps = sorted(survey_steps, key=lambda x: x["position"])
+        await self.aiogram_wrapper.set_state_data(state_context=state,
+                                                  field_name=RedisTmpFields.EDIT_SURVEY_SURVEY_ID.value,
+                                                  value=survey_id)
+        await self.aiogram_wrapper.set_state_data(state_context=state,
+                                                  field_name=RedisTmpFields.EDIT_SURVEY_LIST_STEPS.value,
                                                   value=survey_steps)
         await self.steps_pager.init(state_context=state, elements=survey_steps, page_count=6)
         page_number, page_status, current_page = await self.steps_pager.get_start_page(state_context=state)
-        current_page = sorted(current_page, key=lambda x: x["id"])
+        # current_page = sorted(current_page, key=lambda x: x["id"])
         current_page_idxs = [x["id"] for x in current_page]
         keyboard = get_keyboard_for_edit_survey(steps_idx=current_page_idxs, page_status=page_status)
         text_message = create_edit_survey_output(survey_steps=current_page)
@@ -55,21 +60,24 @@ class EditSurvey(BaseCommand):
                                                                  text=text_message,
                                                                  reply_markup=keyboard.as_markup())
 
-
     async def _edit_selection(self, callback: CallbackQuery, callback_data: EditSurveyCallbackFactory, state: FSMContext):
+        survey_id = await self.aiogram_wrapper.get_state_data(state_context=state,
+                                                              field_name=RedisTmpFields.EDIT_SURVEY_SURVEY_ID.value)
+
         await self.manager.aiogram_wrapper.set_state(state_context=state,
                                                      state=States.EDIT_SURVEY_STEP)
         await self.manager.aiogram_wrapper.delete_message(message_id=callback.message.message_id,
                                                           chat_id=callback.from_user.id)
         await self.manager.launch(name="edit_survey_step",
                                   message=callback.message,
-                                  state=state)
+                                  state=state,
+                                  survey_id=survey_id,
+                                  step_id=callback_data.step_id)
         await callback.answer()
 
     async def _next_steps(self, callback: CallbackQuery, callback_data: EditSurveyCallbackFactory, state: FSMContext):
-        survey_steps = await self.aiogram_wrapper.get_state_data(state_context=state, field_name=RedisTmpFields.EDIT_SURVEY_LIST_STEPS.value)
         page_number, page_status, current_page = await self.steps_pager.get_next_page(state_context=state)
-        current_page = sorted(current_page, key=lambda x: x["id"])
+        # current_page = sorted(current_page, key=lambda x: x["id"])
         current_page_idxs = [x["id"] for x in current_page]
         keyboard = get_keyboard_for_edit_survey(steps_idx=current_page_idxs, page_status=page_status)
         text_message = create_edit_survey_output(survey_steps=current_page)
@@ -81,9 +89,8 @@ class EditSurvey(BaseCommand):
         await callback.answer()
 
     async def _previous_steps(self, callback: CallbackQuery, callback_data: EditSurveyCallbackFactory, state: FSMContext):
-        survey_steps = await self.aiogram_wrapper.get_state_data(state_context=state, field_name=RedisTmpFields.EDIT_SURVEY_LIST_STEPS.value)
         page_number, page_status, current_page = await self.steps_pager.get_previous_page(state_context=state)
-        current_page = sorted(current_page, key=lambda x: x["id"])
+        # current_page = sorted(current_page, key=lambda x: x["id"])
         current_page_idxs = [x["id"] for x in current_page]
         keyboard = get_keyboard_for_edit_survey(steps_idx=current_page_idxs, page_status=page_status)
         text_message = create_edit_survey_output(survey_steps=current_page)
@@ -109,9 +116,12 @@ class EditSurvey(BaseCommand):
                                                      state=States.SET_STEPS_ORDER)
         await self.manager.aiogram_wrapper.delete_message(message_id=callback.message.message_id,
                                                           chat_id=callback.from_user.id)
+        survey_id = await self.aiogram_wrapper.get_state_data(state_context=state,
+                                                              field_name=RedisTmpFields.EDIT_SURVEY_SURVEY_ID.value)
         await self.manager.launch(name="set_steps_order",
                                   message=callback.message,
-                                  state=state)
+                                  state=state,
+                                  survey_id=survey_id)
         await callback.answer()
 
     async def _return(self, callback: CallbackQuery, callback_data: EditSurveyCallbackFactory, state: FSMContext):

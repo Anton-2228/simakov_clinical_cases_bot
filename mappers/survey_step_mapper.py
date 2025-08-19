@@ -15,6 +15,7 @@ class SurveyStepMapper(ABCMapper):
             name=entity.name,
             position=entity.position,
             type=entity.type,
+            text=entity.text,
             # survey_id=entity.survey_id
             survey=SurveyMapper.to_dto(entity.survey)
         )
@@ -26,6 +27,7 @@ class SurveyStepMapper(ABCMapper):
             name=dto.name,
             position=dto.position,
             type=dto.type,
+            text=dto.text,
             survey_id=dto.survey.id
             # survey=SurveyMapper.to_entity(dto.survey)
         )

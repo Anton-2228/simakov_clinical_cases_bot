@@ -23,6 +23,7 @@ class PostgresSurveyStepService(AsyncSurveyStepService):
             await session.commit()
             await session.refresh(added_step)
             added_step = await session.scalar(select(SurveyStepORM)
+                                              .where(SurveyStepORM.id == added_step.id)
                                               .options(selectinload(SurveyStepORM.survey)))
             return SurveyStepMapper.to_dto(added_step)
 
@@ -30,6 +31,7 @@ class PostgresSurveyStepService(AsyncSurveyStepService):
         async with SESSION_FACTORY() as session:
             # survey_step = await session.get(SurveyStepORM, id)
             survey_step = await session.scalar(select(SurveyStepORM)
+                                               .where(SurveyStepORM.id == id)
                                                .options(selectinload(SurveyStepORM.survey)))
             return SurveyStepMapper.to_dto(survey_step)
 
@@ -49,4 +51,7 @@ class PostgresSurveyStepService(AsyncSurveyStepService):
             updated_step = await session.merge(updated_step)
             await session.commit()
             await session.refresh(updated_step)
+            updated_step = await session.scalar(select(SurveyStepORM)
+                                                .where(SurveyStepORM.id == updated_step.id)
+                                                .options(selectinload(SurveyStepORM.survey)))
             return SurveyStepMapper.to_dto(updated_step)

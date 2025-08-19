@@ -3,10 +3,11 @@ from aiogram.utils.keyboard import InlineKeyboardBuilder
 
 from callbacks_factories import UserMainMenuCallbackFactory, AdminMainMenuCallbackFactory, EditAdminListCallbackFactory, \
     AddUserToAdminListCallbackFactory, DeleteUserFromAdminListCallbackFactory, EditSurveyCallbackFactory, \
-    EditSurveysCallbackFactory, AddSurveyCallbackFactory
+    EditSurveysCallbackFactory, AddSurveyCallbackFactory, EditSurveyStepsCallbackFactory, SetStepsOrderCallbackFactory
 from enums import ListUserMainMenuActions, ListAdminMainMenuActions, ListEditAdminListActions, \
     ListAddUserToAdminListActions, ListDeleteUserFromAdminListActions, ListEditSurveyActions, ListEditSurveysActions, \
-    ListAddSurveyListActions
+    ListAddSurveyListActions, ListEditSurveyStepsActions, SURVEY_STEP_VARIABLE_FILEDS, SURVEY_STEP_TYPE, \
+    ListSetStepsOrderActions
 from models import User
 from pagers.pager import PAGING_STATUS
 
@@ -139,4 +140,45 @@ def get_keyboard_for_add_survey() -> InlineKeyboardBuilder:
     builder = InlineKeyboardBuilder()
     builder.row(InlineKeyboardButton(text="Вернуться", callback_data=AddSurveyCallbackFactory(action=ListAddSurveyListActions.RETURN_TO_EDIT_SURVEYS).pack()))
     builder.adjust(1)
+    return builder
+
+def get_keyboard_for_edit_survey_steps(field: SURVEY_STEP_VARIABLE_FILEDS) -> InlineKeyboardBuilder:
+    builder = InlineKeyboardBuilder()
+    if field == SURVEY_STEP_VARIABLE_FILEDS.TYPE:
+        str_button = InlineKeyboardButton(text="Текст",
+                                          callback_data=EditSurveyStepsCallbackFactory(
+                                              action=ListEditSurveyStepsActions.SELECT_STEP_TYPE,
+                                              step_type=SURVEY_STEP_TYPE.STRING).pack()
+                                          )
+        files_button = InlineKeyboardButton(text="Файлы",
+                                            callback_data=EditSurveyStepsCallbackFactory(
+                                                action=ListEditSurveyStepsActions.SELECT_STEP_TYPE,
+                                                step_type=SURVEY_STEP_TYPE.FILES).pack()
+                                            )
+
+        builder.row(str_button, files_button)
+    builder.row(InlineKeyboardButton(text="Оставить текущее", callback_data=EditSurveyStepsCallbackFactory(action=ListEditSurveyStepsActions.KEEP_CURRENT_VALUE).pack()))
+    return builder
+
+def get_keyboard_for_set_steps_order(page_status: PAGING_STATUS) -> InlineKeyboardBuilder:
+    builder = InlineKeyboardBuilder()
+
+    navigate_buttons = []
+    if page_status not in [PAGING_STATUS.FIRST_PAGE, PAGING_STATUS.ONLY_PAGE, PAGING_STATUS.NO_PAGE]:
+        previous_button = InlineKeyboardButton(
+            text="Назад",
+            callback_data=SetStepsOrderCallbackFactory(action=ListSetStepsOrderActions.PREVIOUS_STEPS).pack())
+        navigate_buttons.append(previous_button)
+    if page_status not in [PAGING_STATUS.LAST_PAGE, PAGING_STATUS.ONLY_PAGE, PAGING_STATUS.NO_PAGE]:
+        next_button = InlineKeyboardButton(
+            text="Вперед",
+            callback_data=SetStepsOrderCallbackFactory(action=ListSetStepsOrderActions.NEXT_STEPS).pack())
+        navigate_buttons.append(next_button)
+    builder.row(*navigate_buttons)
+
+    keep_current_value_button = InlineKeyboardButton(
+        text="Оставить текущий порядок",
+        callback_data=SetStepsOrderCallbackFactory(action=ListSetStepsOrderActions.KEEP_CURRENT_VALUE).pack()
+    )
+    builder.row(keep_current_value_button)
     return builder

@@ -15,4 +15,5 @@ class SurveyStep(BaseModel):
     survey: Survey
     name: str
     position: int
+    text: str
     type: SURVEY_STEP_TYPE

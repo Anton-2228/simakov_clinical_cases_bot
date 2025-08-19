@@ -15,3 +15,5 @@ class States(StatesGroup):
     EDIT_SURVEY_STEP = State()
     ADD_STEP = State()
     SET_STEPS_ORDER = State()
+    ENTER_SURVEY_STEP_NEW_VALUE = State()
+    ENTER_NEW_STEPS_ORDER = State()
