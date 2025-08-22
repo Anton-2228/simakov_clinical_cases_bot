@@ -8,6 +8,8 @@ class RedisTmpFields(Enum):
     ENTER_NEW_SURVEY_NAME_REQUEST_CHAT_ID = "enter_new_survey_name_request_chat_id"
     ENTER_NEW_SURVEY_STEP_FIELD_VALUE_REQUEST_MESSAGE_ID = "enter_new_survey_step_field_value_request_message_id"
     ENTER_NEW_SURVEY_STEP_FIELD_VALUE_REQUEST_CHAT_ID = "enter_new_survey_step_field_value_request_chat_id"
+    ENTER_SURVEY_STEP_FIELD_VALUE_REQUEST_MESSAGE_ID = "enter_survey_step_field_value_request_message_id"
+    ENTER_SURVEY_STEP_FIELD_VALUE_REQUEST_CHAT_ID = "enter_survey_step_field_value_request_chat_id"
 
     DUMP_EDIT_SURVEYS = "dump_edit_surveys"
     DUMP_EDIT_SURVEY = "dump_edit_survey"
@@ -23,6 +25,9 @@ class RedisTmpFields(Enum):
     EDIT_SURVEY_STEPS_CURRENT_FIELD_ID = "edit_survey_steps_current_field"
     SET_STEPS_ORDER_SURVEY_ID = "set_steps_order_survey_id"
     SET_STEPS_ORDER_LIST_STEPS = "set_steps_order_list_steps"
+    ADD_SURVEY_STEP_SURVEY_ID = "add_survey_step_survey_id"
+    ADD_SURVEY_STEP_CURRENT_FIELD_ID = "add_survey_step_current_field"
+    ADD_SURVEY_STEP_TEMPLATE_ADDED_STEP = "add_survey_step_template_added_step"
 
 class USER_TYPE(Enum):
     ADMIN = "admin"
@@ -83,3 +88,6 @@ class ListSetStepsOrderActions(Enum):
     NEXT_STEPS = "next_steps"
     PREVIOUS_STEPS = "previous_steps"
     KEEP_CURRENT_VALUE = "keep_current_value"
+
+class ListAddSurveyStepActions(Enum):
+    SELECT_STEP_TYPE = "select_step_type"

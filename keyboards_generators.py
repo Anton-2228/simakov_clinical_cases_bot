@@ -3,11 +3,12 @@ from aiogram.utils.keyboard import InlineKeyboardBuilder
 
 from callbacks_factories import UserMainMenuCallbackFactory, AdminMainMenuCallbackFactory, EditAdminListCallbackFactory, \
     AddUserToAdminListCallbackFactory, DeleteUserFromAdminListCallbackFactory, EditSurveyCallbackFactory, \
-    EditSurveysCallbackFactory, AddSurveyCallbackFactory, EditSurveyStepsCallbackFactory, SetStepsOrderCallbackFactory
+    EditSurveysCallbackFactory, AddSurveyCallbackFactory, EditSurveyStepsCallbackFactory, SetStepsOrderCallbackFactory, \
+    AddSurveyStepCallbackFactory
 from enums import ListUserMainMenuActions, ListAdminMainMenuActions, ListEditAdminListActions, \
     ListAddUserToAdminListActions, ListDeleteUserFromAdminListActions, ListEditSurveyActions, ListEditSurveysActions, \
     ListAddSurveyListActions, ListEditSurveyStepsActions, SURVEY_STEP_VARIABLE_FILEDS, SURVEY_STEP_TYPE, \
-    ListSetStepsOrderActions
+    ListSetStepsOrderActions, ListAddSurveyStepActions
 from models import User
 from pagers.pager import PAGING_STATUS
 
@@ -181,4 +182,21 @@ def get_keyboard_for_set_steps_order(page_status: PAGING_STATUS) -> InlineKeyboa
         callback_data=SetStepsOrderCallbackFactory(action=ListSetStepsOrderActions.KEEP_CURRENT_VALUE).pack()
     )
     builder.row(keep_current_value_button)
+    return builder
+
+def get_keyboard_for_add_survey_steps(field: SURVEY_STEP_VARIABLE_FILEDS) -> InlineKeyboardBuilder:
+    builder = InlineKeyboardBuilder()
+    if field == SURVEY_STEP_VARIABLE_FILEDS.TYPE:
+        str_button = InlineKeyboardButton(text="Текст",
+                                          callback_data=AddSurveyStepCallbackFactory(
+                                              action=ListAddSurveyStepActions.SELECT_STEP_TYPE,
+                                              step_type=SURVEY_STEP_TYPE.STRING).pack()
+                                          )
+        files_button = InlineKeyboardButton(text="Файлы",
+                                            callback_data=AddSurveyStepCallbackFactory(
+                                                action=ListAddSurveyStepActions.SELECT_STEP_TYPE,
+                                                step_type=SURVEY_STEP_TYPE.FILES).pack()
+                                            )
+
+        builder.row(str_button, files_button)
     return builder

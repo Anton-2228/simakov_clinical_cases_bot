@@ -17,3 +17,4 @@ class States(StatesGroup):
     SET_STEPS_ORDER = State()
     ENTER_SURVEY_STEP_NEW_VALUE = State()
     ENTER_NEW_STEPS_ORDER = State()
+    ENTER_SURVEY_STEP_VALUE = State()

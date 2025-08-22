@@ -6,8 +6,8 @@ from commands.manager import Manager
 from commands.start import Start
 
 from db.service.abc_services import ABCServices
-from .add_step import AddStep
 from .add_survey import AddSurvey
+from .add_survey_step import AddSurveyStep
 from .add_user_to_admin_list import AddUserToAdminLit
 from .admin_main_menu import AdminMainMenu
 from .delete_user_from_admin_list import DeleteUserFromAdminLit
@@ -44,7 +44,7 @@ def get_admin_commands(manager: "Manager", db: ABCServices, aiogram_wrapper: Aio
         "add_survey": AddSurvey(manager, db, aiogram_wrapper),
         "edit_survey": EditSurvey(manager, db, aiogram_wrapper),
         "edit_survey_step": EditSurveyStep(manager, db, aiogram_wrapper),
-        "add_step": AddStep(manager, db, aiogram_wrapper),
+        "add_survey_step": AddSurveyStep(manager, db, aiogram_wrapper),
         "set_steps_order": SetStepsOrder(manager, db, aiogram_wrapper)
     }
     return commands

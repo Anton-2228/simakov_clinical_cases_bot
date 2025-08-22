@@ -106,9 +106,12 @@ class EditSurvey(BaseCommand):
                                                      state=States.ADD_STEP)
         await self.manager.aiogram_wrapper.delete_message(message_id=callback.message.message_id,
                                                           chat_id=callback.from_user.id)
-        await self.manager.launch(name="add_step",
+        survey_id = await self.aiogram_wrapper.get_state_data(state_context=state,
+                                                              field_name=RedisTmpFields.EDIT_SURVEY_SURVEY_ID.value)
+        await self.manager.launch(name="add_survey_step",
                                   message=callback.message,
-                                  state=state)
+                                  state=state,
+                                  survey_id=survey_id)
         await callback.answer()
 
     async def _set_steps_order(self, callback: CallbackQuery, callback_data: EditSurveyCallbackFactory, state: FSMContext):

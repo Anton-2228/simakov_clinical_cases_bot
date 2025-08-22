@@ -1,5 +1,6 @@
 from models import User
-from resources.messages import EDIT_ADMIN_LIST_MESSAGE, EDIT_SURVEY, EDIT_SURVEY_STEP_CURRENT_STEP_DATA, SET_STEPS_ORDER
+from resources.messages import EDIT_ADMIN_LIST_MESSAGE, EDIT_SURVEY, EDIT_SURVEY_STEP_CURRENT_STEP_DATA, \
+    SET_STEPS_ORDER, ADD_SURVEY_STEP
 
 
 def create_edit_admin_list_output(admins: list[User]) -> str:
@@ -45,4 +46,8 @@ def create_set_steps_order_output(survey_steps: list[dict]) -> str:
         if x + 1 != len(survey_steps):
             text_message += "------------------\n"
 
+    return text_message
+
+def create_add_survey_step_output() -> str:
+    text_message = ADD_SURVEY_STEP
     return text_message
