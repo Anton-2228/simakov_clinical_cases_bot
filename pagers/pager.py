@@ -62,6 +62,17 @@ class Pager:
     def get_page(self, page_num: int):
         return self.elements_by_page[page_num]
 
+    def get_current_page(self):
+        if len(self.elements_by_page) == 0:
+            return None, PAGING_STATUS.NO_PAGE, []
+        if self.number_of_page == 1:
+            return self.current_page, PAGING_STATUS.ONLY_PAGE, self._get_page(self.current_page)
+        if self.current_page == 0:
+            return self.current_page, PAGING_STATUS.FIRST_PAGE, self._get_page(self.current_page)
+        if self.current_page + 1 == self.number_of_page:
+            return self.current_page, PAGING_STATUS.LAST_PAGE, self._get_page(self.current_page)
+        return self.current_page, PAGING_STATUS.INTERMEDIATE_PAGE, self._get_page(self.current_page)
+
     def get_start_page(self):
         if len(self.elements_by_page) == 0:
             return None, PAGING_STATUS.NO_PAGE, []

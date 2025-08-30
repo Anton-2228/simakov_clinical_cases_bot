@@ -114,6 +114,33 @@ async def main():
     await DB.survey_step.save_survey_step(survey_step=survey_step)
 
 
+
+
+
+
+    survey = Survey(name="test survey")
+    added_survey = await DB.survey.save_survey(survey=survey)
+
+    survey_step = SurveyStep(survey=added_survey,
+                             name="aboba 0",
+                             text="aboba 0 text",
+                             position=0,
+                             type=SURVEY_STEP_TYPE.STRING)
+    await DB.survey_step.save_survey_step(survey_step=survey_step)
+    survey_step = SurveyStep(survey=added_survey,
+                             name="aboba 1",
+                             text="aboba 1 text",
+                             position=1,
+                             type=SURVEY_STEP_TYPE.STRING)
+    await DB.survey_step.save_survey_step(survey_step=survey_step)
+    survey_step = SurveyStep(survey=added_survey,
+                             name="aboba 2",
+                             text="aboba 2 text",
+                             position=2,
+                             type=SURVEY_STEP_TYPE.FILES)
+    await DB.survey_step.save_survey_step(survey_step=survey_step)
+
+
     await start_polling()
 
 if __name__ == "__main__":

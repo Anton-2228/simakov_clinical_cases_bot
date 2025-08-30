@@ -13,9 +13,9 @@ from callbacks_factories import AddSurveyStepCallbackFactory
 
 from db.service.abc_services import ABCServices
 from dtos import SurveyStep
-from enums import ListUserMainMenuActions, ListEditSurveyStepsActions, SURVEY_STEP_VARIABLE_FILEDS, RedisTmpFields, \
+from enums import ListUserMainMenuActions, ListChangeSurveyStepsActions, SURVEY_STEP_VARIABLE_FILEDS, RedisTmpFields, \
     ListAddSurveyStepActions
-from keyboards_generators import get_keyboard_for_user_main_menu, get_keyboard_for_edit_survey_steps, \
+from keyboards_generators import get_keyboard_for_user_main_menu, get_keyboard_for_change_survey_steps, \
     get_keyboard_for_add_survey_steps
 from output_generators import create_edit_survey_step_output, create_add_survey_step_output
 from resources.messages import USER_MAIN_MENU_MESSAGE, REQUEST_ENTER_NEW_STEP_NAME, REQUEST_ENTER_NEW_STEP_TEXT, \
@@ -194,6 +194,7 @@ class AddSurveyStep(BaseCommand):
         current_field_id = await self._set_next_field_id(state_context=state)
         if current_field_id == -1:
             await self._end_processing(message=callback.message, state_context=state)
+            await callback.answer()
             return
         await self._send_field_request(state_context=state, message=callback.message, field_id=current_field_id)
         await callback.answer()

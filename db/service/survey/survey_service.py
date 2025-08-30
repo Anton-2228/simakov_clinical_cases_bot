@@ -53,3 +53,11 @@ class SurveyService(ABC):
             объект опроса
         """
         pass
+
+    @abstractmethod
+    def delete_survey(self, id: int) -> None:
+        """
+        Метод удаляет указанный опрос
+        :param id: id опроса, который надо удалить
+        :return:
+        """

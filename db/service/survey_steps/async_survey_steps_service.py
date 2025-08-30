@@ -54,3 +54,11 @@ class AsyncSurveyStepService(ABC):
             объект шага опроса
         """
         pass
+
+    @abstractmethod
+    async def delete_step(self, id: int) -> None:
+        """
+        Метод удаляет указанный шаг
+        :param id: id шага, который надо удалить
+        :return:
+        """

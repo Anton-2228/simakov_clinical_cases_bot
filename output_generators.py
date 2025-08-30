@@ -1,6 +1,7 @@
+from enums import SURVEY_STEP_TYPE
 from models import User
-from resources.messages import EDIT_ADMIN_LIST_MESSAGE, EDIT_SURVEY, EDIT_SURVEY_STEP_CURRENT_STEP_DATA, \
-    SET_STEPS_ORDER, ADD_SURVEY_STEP
+from resources.messages import EDIT_ADMIN_LIST_MESSAGE, EDIT_SURVEY, CHANGE_SURVEY_STEP_CURRENT_STEP_DATA, \
+    SET_STEPS_ORDER, ADD_SURVEY_STEP, TAKE_SURVEY_ENTER_STRING, TAKE_SURVEY_ENTER_FILES, TAKE_SURVEY_COUNT_FILES
 
 
 def create_edit_admin_list_output(admins: list[User]) -> str:
@@ -29,7 +30,7 @@ def create_edit_survey_output(survey_steps: list[dict]) -> str:
     return text_message
 
 def create_edit_survey_step_output(step: dict) -> str:
-    text_message = EDIT_SURVEY_STEP_CURRENT_STEP_DATA.format(id=step["id"],
+    text_message = CHANGE_SURVEY_STEP_CURRENT_STEP_DATA.format(id=step["id"],
                                                              name=step["name"],
                                                              text=step["text"],
                                                              type=step["type"])
@@ -50,4 +51,17 @@ def create_set_steps_order_output(survey_steps: list[dict]) -> str:
 
 def create_add_survey_step_output() -> str:
     text_message = ADD_SURVEY_STEP
+    return text_message
+
+def create_take_survey_step_output(step_type: SURVEY_STEP_TYPE, step_text: str) -> str:
+    text_message = None
+    if step_type == SURVEY_STEP_TYPE.STRING:
+        text_message = TAKE_SURVEY_ENTER_STRING.format(step_text=step_text)
+    elif step_type == SURVEY_STEP_TYPE.FILES:
+        text_message = TAKE_SURVEY_ENTER_FILES.format(step_text=step_text)
+    assert text_message is not None, f"Нет генератора сообщения для типа ответа {step_type}"
+    return text_message
+
+def create_take_survey_file_count_output(file_count) -> str:
+    text_message = TAKE_SURVEY_COUNT_FILES.format(file_count=file_count)
     return text_message

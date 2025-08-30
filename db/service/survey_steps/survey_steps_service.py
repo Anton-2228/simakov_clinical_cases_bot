@@ -54,3 +54,11 @@ class SurveyStepService(ABC):
             объект шага опроса
         """
         pass
+
+    @abstractmethod
+    def delete_step(self, id: int) -> None:
+        """
+        Метод удаляет указанный шаг
+        :param id: id шага, который надо удалить
+        :return:
+        """

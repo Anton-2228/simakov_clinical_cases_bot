@@ -43,3 +43,9 @@ class PostgresSurveyService(AsyncSurveyService):
             await session.commit()
             await session.refresh(updated_survey)
             return SurveyMapper.to_dto(updated_survey)
+
+    async def delete_survey(self, id: int) -> None:
+        async with SESSION_FACTORY() as session:
+            survey = await session.get(SurveyORM, id)
+            await session.delete(survey)
+            await session.commit()

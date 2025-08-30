@@ -40,7 +40,7 @@ class AdminMainMenu(BaseCommand):
                                              state=States.TAKE_THE_SURVEY)
         await self.manager.aiogram_wrapper.delete_message(message_id=callback.message.message_id,
                                                           chat_id=callback.from_user.id)
-        await self.manager.launch(name="take_the_survey",
+        await self.manager.launch(name="select_take_survey",
                                   message=callback.message,
                                   state=state)
         await callback.answer()

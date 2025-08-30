@@ -55,3 +55,9 @@ class PostgresSurveyStepService(AsyncSurveyStepService):
                                                 .where(SurveyStepORM.id == updated_step.id)
                                                 .options(selectinload(SurveyStepORM.survey)))
             return SurveyStepMapper.to_dto(updated_step)
+
+    async def delete_step(self, id: int) -> None:
+        async with SESSION_FACTORY() as session:
+            step = await session.get(SurveyStepORM, id)
+            await session.delete(step)
+            await session.commit()

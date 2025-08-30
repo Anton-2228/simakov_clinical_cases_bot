@@ -13,10 +13,12 @@ from .admin_main_menu import AdminMainMenu
 from .delete_user_from_admin_list import DeleteUserFromAdminLit
 from .edit_admin_list import EditAdminList
 from .edit_survey import EditSurvey
+from .change_survey_step import ChangeSurveyStep
 from .edit_survey_step import EditSurveyStep
 from .edit_surveys import EditSurveys
 from .registration import Registration
-from .take_the_survey import TakeTheSurvey
+from .select_take_survey import SelectTakeSurvey
+from .take_survey import TakeSurvey
 from .user_main_menu import UserMainMenu
 from .set_steps_order import SetStepsOrder
 
@@ -28,7 +30,8 @@ def get_user_commands(manager: "Manager", db: ABCServices, aiogram_wrapper: Aiog
         "start": Start(manager, db, aiogram_wrapper),
         "registration": Registration(manager, db, aiogram_wrapper),
         "main_menu": UserMainMenu(manager, db, aiogram_wrapper),
-        "take_the_survey": TakeTheSurvey(manager, db, aiogram_wrapper)
+        "select_take_survey": SelectTakeSurvey(manager, db, aiogram_wrapper),
+        "take_survey": TakeSurvey(manager, db, aiogram_wrapper)
     }
     return commands
 
@@ -36,7 +39,7 @@ def get_admin_commands(manager: "Manager", db: ABCServices, aiogram_wrapper: Aio
     commands = {
         "start": Start(manager, db, aiogram_wrapper),
         "main_menu": AdminMainMenu(manager, db, aiogram_wrapper),
-        "take_the_survey": TakeTheSurvey(manager, db, aiogram_wrapper),
+        "select_take_survey": SelectTakeSurvey(manager, db, aiogram_wrapper),
         "edit_admin_list": EditAdminList(manager, db, aiogram_wrapper),
         "add_user_to_admin_list": AddUserToAdminLit(manager, db, aiogram_wrapper),
         "delete_user_from_admin_list": DeleteUserFromAdminLit(manager, db, aiogram_wrapper),
@@ -44,7 +47,9 @@ def get_admin_commands(manager: "Manager", db: ABCServices, aiogram_wrapper: Aio
         "add_survey": AddSurvey(manager, db, aiogram_wrapper),
         "edit_survey": EditSurvey(manager, db, aiogram_wrapper),
         "edit_survey_step": EditSurveyStep(manager, db, aiogram_wrapper),
+        "change_survey_step": ChangeSurveyStep(manager, db, aiogram_wrapper),
         "add_survey_step": AddSurveyStep(manager, db, aiogram_wrapper),
-        "set_steps_order": SetStepsOrder(manager, db, aiogram_wrapper)
+        "set_steps_order": SetStepsOrder(manager, db, aiogram_wrapper),
+        "take_survey": TakeSurvey(manager, db, aiogram_wrapper)
     }
     return commands

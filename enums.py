@@ -15,6 +15,8 @@ class RedisTmpFields(Enum):
     DUMP_EDIT_SURVEY = "dump_edit_survey"
     DUMP_SET_STEPS_ORDER = "dump_set_steps_order"
     DUMP_CLINICAL_CASES_SURVEY_STEPS = "dump_clinical_cases_survey_steps"
+    DUMP_SELECT_TAKE_SURVEY = "dump_select_take_survey"
+    DUMP_TAKE_SURVEY = "dump_take_survey"
 
     EDIT_SURVEYS_LIST_SURVEYS = "edit_surveys_current_surveys"
     EDIT_SURVEYS_IDX_MAP = "edit_surveys_idx_map"
@@ -23,11 +25,17 @@ class RedisTmpFields(Enum):
     EDIT_SURVEY_STEPS_SURVEY_ID = "edit_survey_steps_survey_id"
     EDIT_SURVEY_STEPS_STEP_ID = "edit_survey_steps_step_id"
     EDIT_SURVEY_STEPS_CURRENT_FIELD_ID = "edit_survey_steps_current_field"
+    CHANGE_SURVEY_STEPS_SURVEY_ID = "change_survey_steps_survey_id"
+    CHANGE_SURVEY_STEPS_STEP_ID = "change_survey_steps_step_id"
+    CHANGE_SURVEY_STEPS_CURRENT_FIELD_ID = "change_survey_steps_current_field"
     SET_STEPS_ORDER_SURVEY_ID = "set_steps_order_survey_id"
     SET_STEPS_ORDER_LIST_STEPS = "set_steps_order_list_steps"
     ADD_SURVEY_STEP_SURVEY_ID = "add_survey_step_survey_id"
     ADD_SURVEY_STEP_CURRENT_FIELD_ID = "add_survey_step_current_field"
     ADD_SURVEY_STEP_TEMPLATE_ADDED_STEP = "add_survey_step_template_added_step"
+    SELECT_TAKE_SURVEY_LIST_SURVEYS = "select_take_survey_list_surveys"
+    SELECT_TAKE_SURVEY_IDX_MAP = "select_take_survey_idx_map"
+    TAKE_SURVEY_SURVEY_ANSWER = "take_survey_survey_answer"
 
 class USER_TYPE(Enum):
     ADMIN = "admin"
@@ -75,12 +83,22 @@ class ListEditSurveyActions(Enum):
     PREVIOUS_STEPS = "previous_steps"
     ADD_NEW_STEP = "add_new_step"
     SET_STEPS_ORDER = "set_steps_order"
+    DELETE_SURVEY = "delete_survey"
+    CONFIRM_DELETE_SURVEY = "confirm_delete_survey"
+    REJECT_DELETE_SURVEY = "reject_delete_survey"
     RETURN = "return"
 
 class ListAddSurveyListActions(Enum):
     RETURN_TO_EDIT_SURVEYS = "return_to_edit_surveys"
 
 class ListEditSurveyStepsActions(Enum):
+    CHANGE_STEP = "change_step"
+    DELETE_STEP = "delete_step"
+    CONFIRM_DELETE_STEP = "confirm_delete_step"
+    REJECT_DELETE_STEP = "reject_delete_step"
+    RETURN_TO_EDIT_SURVEY = "return_to_edit_survey"
+
+class ListChangeSurveyStepsActions(Enum):
     KEEP_CURRENT_VALUE = "keep_current_value"
     SELECT_STEP_TYPE = "select_step_type"
 
@@ -91,3 +109,14 @@ class ListSetStepsOrderActions(Enum):
 
 class ListAddSurveyStepActions(Enum):
     SELECT_STEP_TYPE = "select_step_type"
+
+class ListSelectTakeSurveyActions(Enum):
+    TAKE_SELECTION = "take_selection"
+    NEXT_SURVEYS = "next_surveys"
+    PREVIOUS_SURVEYS = "previous_surveys"
+    RETURN_TO_MAIN_MENU = "return_to_main_menu"
+
+class ListTakeSurveyActions(Enum):
+    RETURN_TO_SELECT_TAKE_SURVEY = "return_to_select_take_survey"
+    START_SURVEY = "start_survey"
+    FINISH_SEND_FILES = "finish_send_files"

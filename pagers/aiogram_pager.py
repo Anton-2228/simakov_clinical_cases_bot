@@ -63,6 +63,10 @@ class AiogramPager(Pager):
         return super().get_page(page_num=page_num)
 
     @check_initialized
+    async def get_current_page(self, state_context: FSMContext):
+        return super().get_current_page()
+
+    @check_initialized
     @dump_pager
     async def get_start_page(self, state_context: FSMContext):
         return super().get_start_page()
