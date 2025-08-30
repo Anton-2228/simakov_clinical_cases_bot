@@ -1,26 +1,26 @@
-from typing import Dict, TYPE_CHECKING
+from typing import TYPE_CHECKING, Dict
 
 from aiogram_wrapper import AiogramWrapper
 from commands.base_command import BaseCommand
 from commands.manager import Manager
 from commands.start import Start
-
 from db.service.abc_services import ABCServices
+
 from .add_survey import AddSurvey
 from .add_survey_step import AddSurveyStep
 from .add_user_to_admin_list import AddUserToAdminLit
 from .admin_main_menu import AdminMainMenu
+from .change_survey_step import ChangeSurveyStep
 from .delete_user_from_admin_list import DeleteUserFromAdminLit
 from .edit_admin_list import EditAdminList
 from .edit_survey import EditSurvey
-from .change_survey_step import ChangeSurveyStep
 from .edit_survey_step import EditSurveyStep
 from .edit_surveys import EditSurveys
 from .registration import Registration
 from .select_take_survey import SelectTakeSurvey
+from .set_steps_order import SetStepsOrder
 from .take_survey import TakeSurvey
 from .user_main_menu import UserMainMenu
-from .set_steps_order import SetStepsOrder
 
 if TYPE_CHECKING:
     from .manager import Manager

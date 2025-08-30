@@ -1,17 +1,29 @@
 from aiogram.types import InlineKeyboardButton
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
-from callbacks_factories import UserMainMenuCallbackFactory, AdminMainMenuCallbackFactory, EditAdminListCallbackFactory, \
-    AddUserToAdminListCallbackFactory, DeleteUserFromAdminListCallbackFactory, EditSurveyCallbackFactory, \
-    EditSurveysCallbackFactory, AddSurveyCallbackFactory, ChangeSurveyStepsCallbackFactory, \
-    SetStepsOrderCallbackFactory, \
-    AddSurveyStepCallbackFactory, SelectTakeSurveyCallbackFactory, EditSurveyStepsCallbackFactory, \
-    TakeSurveyCallbackFactory
-from enums import ListUserMainMenuActions, ListAdminMainMenuActions, ListEditAdminListActions, \
-    ListAddUserToAdminListActions, ListDeleteUserFromAdminListActions, ListEditSurveyActions, ListEditSurveysActions, \
-    ListAddSurveyListActions, ListChangeSurveyStepsActions, SURVEY_STEP_VARIABLE_FILEDS, SURVEY_STEP_TYPE, \
-    ListSetStepsOrderActions, ListAddSurveyStepActions, ListSelectTakeSurveyActions, ListTakeSurveyActions, \
-    ListEditSurveyStepsActions
+from callbacks_factories import (AddSurveyCallbackFactory,
+                                 AddSurveyStepCallbackFactory,
+                                 AddUserToAdminListCallbackFactory,
+                                 AdminMainMenuCallbackFactory,
+                                 ChangeSurveyStepsCallbackFactory,
+                                 DeleteUserFromAdminListCallbackFactory,
+                                 EditAdminListCallbackFactory,
+                                 EditSurveyCallbackFactory,
+                                 EditSurveysCallbackFactory,
+                                 EditSurveyStepsCallbackFactory,
+                                 SelectTakeSurveyCallbackFactory,
+                                 SetStepsOrderCallbackFactory,
+                                 TakeSurveyCallbackFactory,
+                                 UserMainMenuCallbackFactory)
+from enums import (SURVEY_STEP_TYPE, SURVEY_STEP_VARIABLE_FILEDS,
+                   ListAddSurveyListActions, ListAddSurveyStepActions,
+                   ListAddUserToAdminListActions, ListAdminMainMenuActions,
+                   ListChangeSurveyStepsActions,
+                   ListDeleteUserFromAdminListActions,
+                   ListEditAdminListActions, ListEditSurveyActions,
+                   ListEditSurveysActions, ListEditSurveyStepsActions,
+                   ListSelectTakeSurveyActions, ListSetStepsOrderActions,
+                   ListTakeSurveyActions, ListUserMainMenuActions)
 from models import User
 from pagers.pager import PAGING_STATUS
 

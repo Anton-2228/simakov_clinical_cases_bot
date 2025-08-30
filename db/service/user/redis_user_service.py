@@ -1,4 +1,4 @@
-from typing import Optional, List
+from typing import List, Optional
 
 from db.redis import RedisStorage
 from db.service.user.async_user_service import AsyncUserService

@@ -1,7 +1,11 @@
 from enums import SURVEY_STEP_TYPE
 from models import User
-from resources.messages import EDIT_ADMIN_LIST_MESSAGE, EDIT_SURVEY, CHANGE_SURVEY_STEP_CURRENT_STEP_DATA, \
-    SET_STEPS_ORDER, ADD_SURVEY_STEP, TAKE_SURVEY_ENTER_STRING, TAKE_SURVEY_ENTER_FILES, TAKE_SURVEY_COUNT_FILES
+from resources.messages import (ADD_SURVEY_STEP,
+                                CHANGE_SURVEY_STEP_CURRENT_STEP_DATA,
+                                EDIT_ADMIN_LIST_MESSAGE, EDIT_SURVEY,
+                                SET_STEPS_ORDER, TAKE_SURVEY_COUNT_FILES,
+                                TAKE_SURVEY_ENTER_FILES,
+                                TAKE_SURVEY_ENTER_STRING)
 
 
 def create_edit_admin_list_output(admins: list[User]) -> str:

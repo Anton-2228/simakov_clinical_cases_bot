@@ -3,7 +3,7 @@ import re
 import uuid
 from os import PathLike
 from pathlib import Path
-from typing import Dict, Any
+from typing import Any, Dict
 
 
 def load_json(path: PathLike) -> Dict[str, Any]:

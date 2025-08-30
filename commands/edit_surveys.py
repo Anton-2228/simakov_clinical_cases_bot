@@ -1,21 +1,19 @@
 import logging
-from typing import Optional, TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional
 
 from aiogram.filters import CommandObject
 from aiogram.fsm.context import FSMContext
-from aiogram.types import Message, CallbackQuery
+from aiogram.types import CallbackQuery, Message
 from magic_filter import F
 
 from aiogram_wrapper import AiogramWrapper
-from callbacks_factories import EditAdminListCallbackFactory, EditSurveyCallbackFactory, EditSurveysCallbackFactory
+from callbacks_factories import EditSurveysCallbackFactory
 from commands import BaseCommand
 from db.service.abc_services import ABCServices
-from enums import ListEditAdminListActions, USER_TYPE, ListEditSurveyActions, RedisTmpFields, ListEditSurveysActions
-from keyboards_generators import get_keyboard_for_edit_admin_list, get_keyboard_for_edit_survey, \
-    get_keyboard_for_edit_surveys
-from output_generators import create_edit_admin_list_output
+from enums import (ListEditSurveysActions, RedisTmpFields)
+from keyboards_generators import get_keyboard_for_edit_surveys
 from pagers.aiogram_pager import AiogramPager
-from resources.messages import REQUEST_ENTER_NEW_ADMIN_MESSAGE, EDIT_SURVEYS
+from resources.messages import EDIT_SURVEYS
 from states import States
 
 logger = logging.getLogger(__name__)

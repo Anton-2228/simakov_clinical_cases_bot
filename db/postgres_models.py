@@ -1,11 +1,10 @@
-from db.postgres import Base
-from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy.dialects.postgresql import ENUM as PgEnum
+
 from sqlalchemy import ForeignKey
+from sqlalchemy.dialects.postgresql import ENUM as PgEnum
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
+from db.postgres import Base
 from enums import SURVEY_STEP_TYPE
-
-from typing import TYPE_CHECKING
 
 
 class SurveyORM(Base):

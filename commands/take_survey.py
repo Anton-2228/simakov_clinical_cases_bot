@@ -1,26 +1,28 @@
 import logging
-from typing import Optional, TYPE_CHECKING, Callable, Coroutine
+from typing import TYPE_CHECKING, Callable, Optional
 
 from aiogram.filters import CommandObject
 from aiogram.fsm.context import FSMContext
-from aiogram.types import Message, CallbackQuery
+from aiogram.types import CallbackQuery, Message
 from magic_filter import F
 
 from aiogram_wrapper import AiogramWrapper
-from callbacks_factories import UserMainMenuCallbackFactory, SelectTakeSurveyCallbackFactory, TakeSurveyCallbackFactory
-
+from callbacks_factories import TakeSurveyCallbackFactory
 from db.service.abc_services import ABCServices
 from dtos import SurveyStep
-from enums import ListUserMainMenuActions, ListSelectTakeSurveyActions, RedisTmpFields, ListTakeSurveyActions, \
-    SURVEY_STEP_TYPE
-from keyboards_generators import get_keyboard_for_user_main_menu, get_keyboard_for_select_take_survey, \
-    get_keyboard_for_take_survey, get_keyboard_for_take_survey_step
-from output_generators import create_take_survey_step_output, create_take_survey_file_count_output
+from enums import (SURVEY_STEP_TYPE, ListTakeSurveyActions,
+                   RedisTmpFields)
+from keyboards_generators import (get_keyboard_for_take_survey,
+                                  get_keyboard_for_take_survey_step)
+from output_generators import (create_take_survey_file_count_output,
+                               create_take_survey_step_output)
 from pagers.aiogram_pager import AiogramPager
 from pagers.pager import PAGING_STATUS
-from resources.messages import USER_MAIN_MENU_MESSAGE, SELECT_TAKE_SURVEY, TAKE_SURVEY_START, TAKE_SURVEY_SEND_NOT_FILE, \
-    TAKE_SURVEY_MAXIMUM_NUMBER_FILES
+from resources.messages import (TAKE_SURVEY_MAXIMUM_NUMBER_FILES,
+                                TAKE_SURVEY_SEND_NOT_FILE,
+                                TAKE_SURVEY_START)
 from states import States
+
 from .base_command import BaseCommand
 
 logger = logging.getLogger(__name__)

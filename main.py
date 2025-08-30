@@ -3,19 +3,16 @@ import logging
 from typing import Optional
 
 from aiogram import Dispatcher
-from aiogram.filters import CommandStart, CommandObject, Command
+from aiogram.filters import Command, CommandObject, CommandStart
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message
 
-from db.postgres import drop_tables, create_tables
+from db.postgres import create_tables, drop_tables
 from dtos import Survey, SurveyStep
-from enums import USER_TYPE, SURVEY_STEP_TYPE
-from init import ROUTER, MANAGER, BOT, COMMANDS, STORAGE, DB
-from mappers.survey_mapper import SurveyMapper
+from enums import SURVEY_STEP_TYPE, USER_TYPE
+from init import BOT, COMMANDS, DB, MANAGER, ROUTER, STORAGE
 from states import States
-
 from tests_functions._add_user_to_redis import main as add_user_to_redis
-
 
 logging.basicConfig(filename="/log/bot.log", filemode="a", level=logging.INFO, force=True)
 logger = logging.getLogger(__name__)

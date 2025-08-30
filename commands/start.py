@@ -1,4 +1,4 @@
-from typing import Optional, TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional
 
 from aiogram.filters import CommandObject
 from aiogram.fsm.context import FSMContext

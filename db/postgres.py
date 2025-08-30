@@ -1,9 +1,9 @@
-import os
 
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 from sqlalchemy.orm import DeclarativeBase
 
-from environments import POSTGRES_HOST, POSTGRES_PORT, POSTGRES_USER, POSTGRES_PASSWORD, POSTGRES_DB
+from environments import (POSTGRES_DB, POSTGRES_HOST, POSTGRES_PASSWORD,
+                          POSTGRES_PORT, POSTGRES_USER)
 
 
 def create_url() -> str:

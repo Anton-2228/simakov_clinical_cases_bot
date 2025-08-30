@@ -1,9 +1,7 @@
 from abc import ABC, abstractmethod
-from typing import Optional, List
+from typing import List, Optional
 
 from dtos import Survey
-from enums import USER_TYPE
-from models import User
 
 
 class SurveyService(ABC):
@@ -17,7 +15,6 @@ class SurveyService(ABC):
         :return:
             id сохраненного опроса
         """
-        pass
 
     @abstractmethod
     def get_all_surveys(self) -> List[Survey]:
@@ -27,7 +24,6 @@ class SurveyService(ABC):
         :return:
             Список объектов опросов
         """
-        pass
 
     @abstractmethod
     def get_survey(self, id: int) -> Optional[Survey]:
@@ -39,7 +35,6 @@ class SurveyService(ABC):
         :return:
             объект опроса
         """
-        pass
 
 
     @abstractmethod
@@ -52,7 +47,6 @@ class SurveyService(ABC):
         :return:
             объект опроса
         """
-        pass
 
     @abstractmethod
     def delete_survey(self, id: int) -> None:

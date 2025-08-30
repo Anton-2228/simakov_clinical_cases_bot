@@ -3,7 +3,6 @@ from typing import Type, TypeVar
 
 from db.redis import RedisStorage
 from db.service.services import Services
-from enums import USER_TYPE
 from models import User
 
 T = TypeVar("T")

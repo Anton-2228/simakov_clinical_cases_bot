@@ -1,18 +1,14 @@
-from typing import Optional, List
+from typing import List, Optional
 
-from sqlalchemy import select, update
+from sqlalchemy import select
 from sqlalchemy.orm import selectinload
 
 from db.postgres import SESSION_FACTORY
 from db.postgres_models import SurveyStepORM
-from db.redis import RedisStorage
-from db.service.survey_steps.async_survey_steps_service import AsyncSurveyStepService
-from db.service.user.async_user_service import AsyncUserService
-from dtos import SurveyStep, Survey
-from enums import USER_TYPE
-from mappers.survey_mapper import SurveyMapper
+from db.service.survey_steps.async_survey_steps_service import \
+    AsyncSurveyStepService
+from dtos import SurveyStep
 from mappers.survey_step_mapper import SurveyStepMapper
-from models import User
 
 
 class PostgresSurveyStepService(AsyncSurveyStepService):

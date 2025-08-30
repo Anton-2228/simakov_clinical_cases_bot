@@ -1,6 +1,4 @@
-from pydantic import BaseModel
 
-from db.postgres import Base
 from db.postgres_models import SurveyORM
 from dtos import Survey
 from mappers.abc_mapper import ABCMapper

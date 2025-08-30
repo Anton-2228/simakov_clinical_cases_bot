@@ -1,21 +1,23 @@
 import logging
-from typing import Optional, TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional
 
 from aiogram.filters import CommandObject
 from aiogram.fsm.context import FSMContext
-from aiogram.types import Message, CallbackQuery
 from aiogram.methods import SendMessage
+from aiogram.types import CallbackQuery, Message
 from magic_filter import F
 
 from aiogram_wrapper import AiogramWrapper
-from callbacks_factories import UserMainMenuCallbackFactory, AddUserToAdminListCallbackFactory
-
+from callbacks_factories import AddUserToAdminListCallbackFactory
 from db.service.abc_services import ABCServices
-from enums import ListUserMainMenuActions, USER_TYPE, ListAddUserToAdminListActions, RedisTmpFields
-from keyboards_generators import get_keyboard_for_user_main_menu, get_keyboard_for_add_user_to_admin_list
-from resources.messages import USER_MAIN_MENU_MESSAGE, REQUEST_ENTER_NEW_ADMIN_MESSAGE, \
-    ENTER_NEW_ADMIN_NOT_VALID_TG_ID_MESSAGE, ENTER_NEW_ADMIN_NOT_REGISTERED_USER_MESSAGE
+from enums import (USER_TYPE, ListAddUserToAdminListActions,
+                   RedisTmpFields)
+from keyboards_generators import get_keyboard_for_add_user_to_admin_list
+from resources.messages import (ENTER_NEW_ADMIN_NOT_REGISTERED_USER_MESSAGE,
+                                ENTER_NEW_ADMIN_NOT_VALID_TG_ID_MESSAGE,
+                                REQUEST_ENTER_NEW_ADMIN_MESSAGE)
 from states import States
+
 from .base_command import BaseCommand
 
 logger = logging.getLogger(__name__)

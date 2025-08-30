@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Optional, List
+from typing import List, Optional
 
 from enums import USER_TYPE
 from models import User
@@ -14,7 +14,6 @@ class AsyncUserService(ABC):
         :return:
             uuid сохраненного пользователя
         """
-        pass
 
     @abstractmethod
     async def get_user(self, telegram_id: int) -> Optional[User]:
@@ -24,7 +23,6 @@ class AsyncUserService(ABC):
         :return:
             объект пользователя с метаинформацией
         """
-        pass
 
     async def get_users_by_type(self, user_type: USER_TYPE) -> List[User]:
         """
@@ -32,7 +30,6 @@ class AsyncUserService(ABC):
         :param user_type: тип, пользователей которого будет возвращен
         :return: список пользователей
         """
-        pass
 
     async def update_user(self, user: User) -> None:
         """
@@ -40,4 +37,3 @@ class AsyncUserService(ABC):
         :param user: объект пользователя
         :return:
         """
-        pass

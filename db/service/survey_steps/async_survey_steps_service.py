@@ -1,9 +1,7 @@
 from abc import ABC, abstractmethod
-from typing import Optional, List
+from typing import List, Optional
 
 from dtos import SurveyStep
-from enums import USER_TYPE
-from models import User
 
 
 class AsyncSurveyStepService(ABC):
@@ -17,7 +15,6 @@ class AsyncSurveyStepService(ABC):
         :return:
             id сохраненного шага
         """
-        pass
 
     @abstractmethod
     async def get_survey_step(self, id: int) -> Optional[SurveyStep]:
@@ -29,7 +26,6 @@ class AsyncSurveyStepService(ABC):
         :return:
             объект шага с метаинформацией
         """
-        pass
 
     @abstractmethod
     async def get_all_survey_steps(self, survey_id: int) -> List[SurveyStep]:
@@ -41,7 +37,6 @@ class AsyncSurveyStepService(ABC):
         :return:
             список всех объектов шагов с метаинформацией
         """
-        pass
 
     @abstractmethod
     async def update_survey_step(self, survey_step: SurveyStep) -> SurveyStep:
@@ -53,7 +48,6 @@ class AsyncSurveyStepService(ABC):
         :return:
             объект шага опроса
         """
-        pass
 
     @abstractmethod
     async def delete_step(self, id: int) -> None:

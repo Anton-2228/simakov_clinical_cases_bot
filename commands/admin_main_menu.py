@@ -1,19 +1,19 @@
 import logging
-from typing import Optional, TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional
 
 from aiogram.filters import CommandObject
 from aiogram.fsm.context import FSMContext
-from aiogram.types import Message, CallbackQuery
+from aiogram.types import CallbackQuery, Message
 from magic_filter import F
 
 from aiogram_wrapper import AiogramWrapper
-from callbacks_factories import UserMainMenuCallbackFactory, AdminMainMenuCallbackFactory
-
+from callbacks_factories import AdminMainMenuCallbackFactory
 from db.service.abc_services import ABCServices
-from enums import ListUserMainMenuActions, ListAdminMainMenuActions
-from keyboards_generators import get_keyboard_for_user_main_menu, get_keyboard_for_admin_main_menu
-from resources.messages import USER_MAIN_MENU_MESSAGE, ADMIN_MAIN_MENU_MESSAGE
+from enums import ListAdminMainMenuActions
+from keyboards_generators import get_keyboard_for_admin_main_menu
+from resources.messages import ADMIN_MAIN_MENU_MESSAGE
 from states import States
+
 from .base_command import BaseCommand
 
 logger = logging.getLogger(__name__)

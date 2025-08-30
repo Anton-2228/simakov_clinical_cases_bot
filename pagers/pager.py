@@ -41,7 +41,6 @@ class Pager:
             state_context: объект контекста
             dump_field_name: название поля, в котором лежит дамп pager-а
         """
-        pass
 
     async def dump(self, *args, **kwargs):
         """
@@ -54,7 +53,6 @@ class Pager:
             self.number_of_page: int: число страниц
             self.current_page: int: текущая страница
         """
-        pass
 
     def _get_page(self, page_num: int):
         return self.elements_by_page[page_num]

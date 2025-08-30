@@ -1,20 +1,20 @@
 import logging
-from typing import Optional, TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional
 
 from aiogram.filters import CommandObject
 from aiogram.fsm.context import FSMContext
-from aiogram.types import Message, CallbackQuery
+from aiogram.types import CallbackQuery, Message
 from magic_filter import F
 
 from aiogram_wrapper import AiogramWrapper
-from callbacks_factories import UserMainMenuCallbackFactory, SelectTakeSurveyCallbackFactory
-
+from callbacks_factories import SelectTakeSurveyCallbackFactory
 from db.service.abc_services import ABCServices
-from enums import ListUserMainMenuActions, ListSelectTakeSurveyActions, RedisTmpFields
-from keyboards_generators import get_keyboard_for_user_main_menu, get_keyboard_for_select_take_survey
+from enums import (ListSelectTakeSurveyActions, RedisTmpFields)
+from keyboards_generators import get_keyboard_for_select_take_survey
 from pagers.aiogram_pager import AiogramPager
-from resources.messages import USER_MAIN_MENU_MESSAGE, SELECT_TAKE_SURVEY
+from resources.messages import SELECT_TAKE_SURVEY
 from states import States
+
 from .base_command import BaseCommand
 
 logger = logging.getLogger(__name__)

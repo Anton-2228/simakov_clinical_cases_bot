@@ -1,12 +1,10 @@
 from typing import TYPE_CHECKING, Optional
 
-from aiogram import Router, Bot
 from aiogram.filters import CommandObject
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message
 
 from aiogram_wrapper import AiogramWrapper
-
 from db.service.abc_services import ABCServices
 
 if TYPE_CHECKING:

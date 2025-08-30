@@ -1,23 +1,24 @@
 import json
 import logging
-from typing import Optional, TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional
 
 from aiogram.filters import CommandObject
 from aiogram.fsm.context import FSMContext
-from aiogram.types import Message, CallbackQuery
+from aiogram.types import CallbackQuery, Message
 from magic_filter import F
 
 from aiogram_wrapper import AiogramWrapper
-from callbacks_factories import UserMainMenuCallbackFactory, SetStepsOrderCallbackFactory
-
+from callbacks_factories import SetStepsOrderCallbackFactory
 from db.service.abc_services import ABCServices
-from enums import ListUserMainMenuActions, RedisTmpFields, ListSetStepsOrderActions
-from keyboards_generators import get_keyboard_for_user_main_menu, get_keyboard_for_set_steps_order
+from enums import (ListSetStepsOrderActions, RedisTmpFields)
+from keyboards_generators import get_keyboard_for_set_steps_order
 from output_generators import create_set_steps_order_output
 from pagers.aiogram_pager import AiogramPager
-from resources.messages import USER_MAIN_MENU_MESSAGE, ENTER_NEW_STEPS_ORDER_WRONG_NUMBERS_IDX, \
-    ENTER_NEW_STEPS_ORDER_ID_NOT_NUMBER, ENTER_NEW_STEPS_ORDER_ID_NOT_EXIST
+from resources.messages import (ENTER_NEW_STEPS_ORDER_ID_NOT_EXIST,
+                                ENTER_NEW_STEPS_ORDER_ID_NOT_NUMBER,
+                                ENTER_NEW_STEPS_ORDER_WRONG_NUMBERS_IDX)
 from states import States
+
 from .base_command import BaseCommand
 
 logger = logging.getLogger(__name__)

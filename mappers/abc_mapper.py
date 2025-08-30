@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 
 from pydantic import BaseModel
+
 from db.postgres import Base
 
 

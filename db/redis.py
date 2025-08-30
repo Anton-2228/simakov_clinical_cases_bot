@@ -1,9 +1,9 @@
 import pickle
-from typing import Optional, Type, TypeVar, Any
+from typing import Any, Optional, Type, TypeVar
 
 from redis.asyncio import Redis
 
-from environments import REDIS_HOST, REDIS_PORT, REDIS_PASSWORD
+from environments import REDIS_PASSWORD
 
 T = TypeVar("T")
 

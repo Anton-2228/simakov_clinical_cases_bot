@@ -1,26 +1,25 @@
-import json
 import logging
-from typing import Optional, TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, Optional
 
 from aiogram.filters import CommandObject
 from aiogram.fsm.context import FSMContext
-from aiogram.types import Message, CallbackQuery
 from aiogram.methods import SendMessage
+from aiogram.types import CallbackQuery, Message
 from magic_filter import F
 
 from aiogram_wrapper import AiogramWrapper
 from callbacks_factories import AddSurveyStepCallbackFactory
-
 from db.service.abc_services import ABCServices
 from dtos import SurveyStep
-from enums import ListUserMainMenuActions, ListChangeSurveyStepsActions, SURVEY_STEP_VARIABLE_FILEDS, RedisTmpFields, \
-    ListAddSurveyStepActions
-from keyboards_generators import get_keyboard_for_user_main_menu, get_keyboard_for_change_survey_steps, \
-    get_keyboard_for_add_survey_steps
-from output_generators import create_edit_survey_step_output, create_add_survey_step_output
-from resources.messages import USER_MAIN_MENU_MESSAGE, REQUEST_ENTER_NEW_STEP_NAME, REQUEST_ENTER_NEW_STEP_TEXT, \
-    REQUEST_ENTER_NEW_STEP_TYPE, REQUEST_ENTER_STEP_NAME, REQUEST_ENTER_STEP_TEXT, REQUEST_ENTER_STEP_TYPE
+from enums import (SURVEY_STEP_VARIABLE_FILEDS, ListAddSurveyStepActions,
+                   RedisTmpFields)
+from keyboards_generators import get_keyboard_for_add_survey_steps
+from output_generators import create_add_survey_step_output
+from resources.messages import (REQUEST_ENTER_STEP_NAME,
+                                REQUEST_ENTER_STEP_TEXT,
+                                REQUEST_ENTER_STEP_TYPE)
 from states import States
+
 from .base_command import BaseCommand
 
 logger = logging.getLogger(__name__)
