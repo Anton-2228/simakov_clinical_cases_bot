@@ -58,7 +58,7 @@ class EditSurveyStep(BaseCommand):
                                                      state=States.CHANGE_SURVEY_STEP)
         await self.manager.aiogram_wrapper.delete_message(message_id=callback.message.message_id,
                                                           chat_id=callback.from_user.id)
-        await self.manager.launch(name="change_survey",
+        await self.manager.launch(name="change_survey_step",
                                   message=callback.message,
                                   state=state,
                                   survey_id=survey_id,
