@@ -20,7 +20,7 @@ from pagers.aiogram_pager import AiogramPager
 from pagers.pager import PAGING_STATUS
 from resources.messages import (TAKE_SURVEY_MAXIMUM_NUMBER_FILES,
                                 TAKE_SURVEY_SEND_NOT_FILE,
-                                TAKE_SURVEY_START)
+                                TAKE_SURVEY_START, TAKE_SURVEY_SEND_NOT_TEXT)
 from states import States
 
 from .base_command import BaseCommand
@@ -101,6 +101,11 @@ class TakeSurvey(BaseCommand):
 
     async def _processed_string_answer(self, message: Message, state_context: FSMContext, step: SurveyStep):
         answer = message.text
+        if not answer:
+            send_message = await self.aiogram_wrapper.answer_massage(message=message,
+                                                                     text=TAKE_SURVEY_SEND_NOT_TEXT)
+            return
+
         survey_answer = await self.aiogram_wrapper.get_state_data(state_context=state_context,
                                                                   field_name=RedisTmpFields.TAKE_SURVEY_SURVEY_ANSWER.value)
         survey_answer[step.id] = answer

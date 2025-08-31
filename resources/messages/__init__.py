@@ -39,3 +39,4 @@ EDIT_SURVEY_DELETE_SURVEY = load_txt(Path(__file__).parent / "EDIT_SURVEY_DELETE
 TAKE_SURVEY_SEND_NOT_FILE = load_txt(Path(__file__).parent / "errors/TAKE_SURVEY_SEND_NOT_FILE.txt")
 TAKE_SURVEY_COUNT_FILES = load_txt(Path(__file__).parent / "TAKE_SURVEY_COUNT_FILES.txt")
 TAKE_SURVEY_MAXIMUM_NUMBER_FILES = load_txt(Path(__file__).parent / "errors/TAKE_SURVEY_MAXIMUM_NUMBER_FILES.txt")
+TAKE_SURVEY_SEND_NOT_TEXT = load_txt(Path(__file__).parent / "errors/TAKE_SURVEY_SEND_NOT_TEXT.txt")
