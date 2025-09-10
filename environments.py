@@ -24,3 +24,16 @@ POSTGRES_USER=os.getenv("POSTGRES_USER")
 assert POSTGRES_USER is not None, "POSTGRES_USER not initialized"
 POSTGRES_DB=os.getenv("POSTGRES_DB")
 assert POSTGRES_DB is not None, "POSTGRES_DB not initialized"
+
+MINIO_ENDPOINT=os.getenv("MINIO_ENDPOINT")
+assert MINIO_ENDPOINT is not None, "MINIO_ENDPOINT not initialized"
+MINIO_ROOT_USER=os.getenv("MINIO_ROOT_USER")
+assert MINIO_ROOT_USER is not None, "MINIO_ROOT_USER not initialized"
+MINIO_ROOT_PASSWORD=os.getenv("MINIO_ROOT_PASSWORD")
+assert MINIO_ROOT_PASSWORD is not None, "MINIO_ROOT_PASSWORD not initialized"
+MINIO_USER=os.getenv("MINIO_USER")
+assert MINIO_USER is not None, "MINIO_USER not initialized"
+MINIO_PASSWORD=os.getenv("MINIO_PASSWORD")
+assert MINIO_PASSWORD is not None, "MINIO_PASSWORD not initialized"
+MINIO_PROD_BUCKET=os.getenv("MINIO_PROD_BUCKET")
+assert MINIO_PROD_BUCKET is not None, "MINIO_PROD_BUCKET not initialized"

@@ -1,3 +1,4 @@
+import json
 import logging
 from typing import TYPE_CHECKING, Callable, Optional
 
@@ -9,7 +10,7 @@ from magic_filter import F
 from aiogram_wrapper import AiogramWrapper
 from callbacks_factories import TakeSurveyCallbackFactory
 from db.service.abc_services import ABCServices
-from dtos import SurveyStep
+from dtos import SurveyStep, SurveyStepResult, SurveyResult
 from enums import (SURVEY_STEP_TYPE, ListTakeSurveyActions,
                    RedisTmpFields)
 from keyboards_generators import (get_keyboard_for_take_survey,
@@ -53,6 +54,9 @@ class TakeSurvey(BaseCommand):
         steps = [{"id": x.id, "position": x.position} for x in steps]
         await self.aiogram_wrapper.set_state_data(state_context=state, field_name=RedisTmpFields.TAKE_SURVEY_SURVEY_ANSWER.value,
                                                   value={})
+        await self.aiogram_wrapper.set_state_data(state_context=state,
+                                                  field_name=RedisTmpFields.TAKE_SURVEY_SURVEY_ID.value,
+                                                  value=survey_id)
         await self.steps_pager.init(state_context=state, elements=steps, page_count=1)
         keyboard = get_keyboard_for_take_survey()
         send_message = await self.aiogram_wrapper.answer_massage(message=message,
@@ -108,7 +112,7 @@ class TakeSurvey(BaseCommand):
 
         survey_answer = await self.aiogram_wrapper.get_state_data(state_context=state_context,
                                                                   field_name=RedisTmpFields.TAKE_SURVEY_SURVEY_ANSWER.value)
-        survey_answer[step.id] = answer
+        survey_answer[step.id] = {"answer": answer}
         await self.aiogram_wrapper.set_state_data(state_context=state_context, field_name=RedisTmpFields.TAKE_SURVEY_SURVEY_ANSWER.value,
                                                   value=survey_answer)
         await self._send_next_ask(message=message, state_context=state_context)
@@ -118,7 +122,7 @@ class TakeSurvey(BaseCommand):
             await self.aiogram_wrapper.set_state_data(state_context=state_context,
                                                       field_name=RedisTmpFields.TAKE_SURVEY_SURVEY_ANSWER.value,
                                                       value=survey_answer)
-            text = create_take_survey_file_count_output(len(survey_answer[step_id]))
+            text = create_take_survey_file_count_output(len(survey_answer[step_id]["answer"]))
             send_message = await self.aiogram_wrapper.answer_massage(message=message,
                                                                      text=text)
 
@@ -130,20 +134,24 @@ class TakeSurvey(BaseCommand):
 
         survey_answer = await self.aiogram_wrapper.get_state_data(state_context=state_context,
                                                                   field_name=RedisTmpFields.TAKE_SURVEY_SURVEY_ANSWER.value)
-        print(survey_answer)
         step_id = str(step.id)
         if step_id not in survey_answer:
-            survey_answer[step_id] = [doc.file_name]
-            await _end_processed(survey_answer=survey_answer)
-            return
+            survey_answer[step_id] = {"answer": []}
 
-        if len(survey_answer[step_id]) >= self.max_files_count:
+        if len(survey_answer[step_id]["answer"]) >= self.max_files_count:
             send_message = await self.aiogram_wrapper.answer_massage(message=message,
                                                                      text=TAKE_SURVEY_MAXIMUM_NUMBER_FILES)
             return
 
-        survey_answer[step_id].append(doc.file_name)
-        print(survey_answer)
+        survey_id = await self.aiogram_wrapper.get_state_data(state_context=state_context,
+                                                              field_name=RedisTmpFields.TAKE_SURVEY_SURVEY_ID.value)
+        file_s3_path = self.db.files_storage.key_builder.key_survey_file(user_id=str(message.chat.id),
+                                                                         survey_id=str(survey_id),
+                                                                         filename=doc.file_name)
+        tmp_file_path = await self.aiogram_wrapper.download_file(message=message)
+        await self.db.files_storage.upload_file(object_name=file_s3_path, file_path=tmp_file_path)
+        survey_answer[step_id]["answer"].append(file_s3_path)
+
         await _end_processed(survey_answer=survey_answer)
 
     async def _enter_value(self, message: Message, state: FSMContext, command: Optional[CommandObject] = None):
@@ -159,11 +167,17 @@ class TakeSurvey(BaseCommand):
     async def _finish_take_survey(self, message: Message, state_context: FSMContext):
         survey_answer = await self.aiogram_wrapper.get_state_data(state_context=state_context,
                                                                   field_name=RedisTmpFields.TAKE_SURVEY_SURVEY_ANSWER.value)
-        text = ""
-        for step in survey_answer:
-            text += f"Шаг {step}:\nРезультат: {survey_answer[step]}\n\n"
-        await self.aiogram_wrapper.answer_massage(message=message,
-                                                  text=text)
+        survey_id = await self.aiogram_wrapper.get_state_data(state_context=state_context,
+                                                              field_name=RedisTmpFields.TAKE_SURVEY_SURVEY_ID.value)
+        survey_result = SurveyResult(survey_id=int(survey_id),
+                                     user_id=message.chat.id)
+        survey_result = await self.db.survey_result.save_survey_result(survey_result=survey_result)
+        for step_id in survey_answer:
+            step_answer = json.dumps(survey_answer[step_id])
+            step_result = SurveyStepResult(survey_step_id=int(step_id),
+                                           result=step_answer,
+                                           survey_result_id=survey_result.id)
+            step_result = await self.db.survey_step_result.save_survey_step_result(survey_step_result=step_result)
 
         await self.manager.aiogram_wrapper.set_state(state_context=state_context,
                                                      state=States.MAIN_MENU)

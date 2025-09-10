@@ -10,7 +10,8 @@ from aiogram.types import Message
 from db.postgres import create_tables, drop_tables
 from dtos import Survey, SurveyStep
 from enums import SURVEY_STEP_TYPE, USER_TYPE
-from init import BOT, COMMANDS, DB, MANAGER, ROUTER, STORAGE
+from init import BOT, COMMANDS, DB, MANAGER, ROUTER, STORAGE, MINIO
+from models import User
 from states import States
 from tests_functions._add_user_to_redis import main as add_user_to_redis
 
@@ -41,19 +42,29 @@ async def start_polling():
 
 async def main():
     await STORAGE.redis.client().flushdb()
-    await add_user_to_redis(db=DB,
-                            telegram_id=173202775,
-                            full_name="Зинченко Антон Андреевич",
-                            role=USER_TYPE.ADMIN)
-    await add_user_to_redis(db=DB,
-                            telegram_id=5613751001,
-                            full_name="Абоба Хуй",
-                            role=USER_TYPE.CLIENT)
+    await DB.minio_client.ensure_bucket(bucket=DB.minio_client.default_bucket)
+    user = User(telegram_id=173202775,
+                full_name="Зинченко Антон Андреевич",
+                user_type=USER_TYPE.ADMIN)
+    user_id = await DB.user.save_user(user=user)
+    # user = User(telegram_id=5613751001,
+    #             full_name="Абоба Хуй",
+    #             user_type=USER_TYPE.CLIENT)
+    # user_id = await DB.user.save_user(user=user)
+
     await drop_tables()
     await create_tables()
 
     survey = Survey(name="clinical cases")
     added_survey = await DB.survey.save_survey(survey=survey)
+
+    minio_file_path = MINIO.key_builder.key_survey_file(user_id=user_id, survey_id=str(added_survey.id), filename="aboba")
+    await DB.minio_client.upload_file(object_name=minio_file_path,
+                                      file_path="./Dockerfile")
+    minio_file_path = MINIO.key_builder.key_survey_file(user_id=user_id, survey_id=str(added_survey.id), filename="aboba1")
+    await DB.minio_client.upload_file(object_name=minio_file_path,
+                                      file_path="./Dockerfile")
+
 
     survey_step = SurveyStep(survey=added_survey,
                              name="aboba 0",

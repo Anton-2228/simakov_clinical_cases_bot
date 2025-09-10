@@ -1,4 +1,7 @@
 from typing import Optional, Union
+import tempfile
+import os
+import secrets
 
 from aiogram import Bot, Router
 from aiogram.dispatcher.event.handler import CallbackType
@@ -101,6 +104,48 @@ class AiogramWrapper:
                 reply_markup=reply_markup,
             )
         return
+
+    async def download_file(self, message: Message) -> str:
+        """
+        Загружает файл из сообщения во временную директорию.
+        Возвращает путь к сохраненному файлу с случайным hex-названием.
+        """
+        if not message.document and not message.photo and not message.video and not message.audio:
+            raise ValueError("Сообщение не содержит файл")
+        
+        # Получаем информацию о файле
+        if message.document:
+            file_info = message.document
+        elif message.photo:
+            # Берем фото с максимальным разрешением
+            file_info = message.photo[-1]
+        elif message.video:
+            file_info = message.video
+        elif message.audio:
+            file_info = message.audio
+        else:
+            raise ValueError("Неподдерживаемый тип файла")
+        
+        # Получаем файл от Telegram
+        file = await self.bot.get_file(file_info.file_id)
+        
+        # Создаем временную директорию
+        temp_dir = tempfile.mkdtemp()
+        
+        # Генерируем случайный hex
+        random_hex = secrets.token_hex(16)  # 32 символа hex
+        
+        # Получаем расширение файла из оригинального имени
+        original_filename = getattr(file_info, 'file_name', 'file')
+        file_extension = os.path.splitext(original_filename)[1] if original_filename else ''
+        
+        # Формируем путь к файлу
+        temp_file_path = os.path.join(temp_dir, f"{random_hex}{file_extension}")
+        
+        # Скачиваем файл
+        await self.bot.download_file(file.file_path, temp_file_path)
+        
+        return temp_file_path
 
     def register_callback(self, callback: CallbackType, *filters: CallbackType):
         self.router.callback_query.register(callback, *filters)

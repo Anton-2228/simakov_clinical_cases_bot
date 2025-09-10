@@ -41,12 +41,32 @@ services:
       timeout: 5s
       retries: 5
 
+  minio:
+    image: minio/minio:RELEASE.2025-05-24T17-08-30Z
+    networks:
+      - internal_network
+      - external_network
+    env_file: .env
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    command: server /data --console-address ":9001"
+    volumes:
+      - minio_data:/data
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:9000/minio/health/live" ]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+
   bot:
     build:
       context: .
       dockerfile: Dockerfile
     depends_on:
       - redis
+      - postgres
+      - minio
     env_file: .env
     networks:
       - internal_network
@@ -64,3 +84,4 @@ networks:
 volumes:
   clinical_cases_bot_redis_data:
   clinical_cases_bot_postgres_data:
+  minio_data:

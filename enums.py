@@ -36,6 +36,7 @@ class RedisTmpFields(Enum):
     SELECT_TAKE_SURVEY_LIST_SURVEYS = "select_take_survey_list_surveys"
     SELECT_TAKE_SURVEY_IDX_MAP = "select_take_survey_idx_map"
     TAKE_SURVEY_SURVEY_ANSWER = "take_survey_survey_answer"
+    TAKE_SURVEY_SURVEY_ID = "take_survey_survey_id"
 
 class USER_TYPE(Enum):
     ADMIN = "admin"
