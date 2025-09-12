@@ -22,7 +22,7 @@ from pagers.aiogram_pager import AiogramPager
 from pagers.pager import PAGING_STATUS
 from resources.messages import (TAKE_SURVEY_MAXIMUM_NUMBER_FILES,
                                 TAKE_SURVEY_SEND_NOT_FILE,
-                                TAKE_SURVEY_START, TAKE_SURVEY_SEND_NOT_TEXT)
+                                TAKE_SURVEY_START, TAKE_SURVEY_SEND_NOT_TEXT, TAKE_SURVEY_ENTER_FILES_DIRECTION_END)
 from states import States
 
 from .base_command import BaseCommand
@@ -36,10 +36,11 @@ class TakeSurvey(BaseCommand):
     def __init__(self, manager: "Manager", db: ABCServices, aiogram_wrapper: AiogramWrapper) -> None:
         self.max_files_count = 20
         super().__init__(manager, db, aiogram_wrapper)
+        self.aiogram_wrapper.register_message_handler(self._finish_send_files, States.PROCESSED_SURVEY,
+                                                      F.text.lower() == "✅готово")
         self.aiogram_wrapper.register_message_handler(self._enter_value, States.PROCESSED_SURVEY)
         self.aiogram_wrapper.register_callback(self._return_to_select_take_survey, TakeSurveyCallbackFactory.filter(F.action == ListTakeSurveyActions.RETURN_TO_SELECT_TAKE_SURVEY))
         self.aiogram_wrapper.register_callback(self._start_survey, TakeSurveyCallbackFactory.filter(F.action == ListTakeSurveyActions.START_SURVEY))
-        self.aiogram_wrapper.register_callback(self._finish_send_files, TakeSurveyCallbackFactory.filter(F.action == ListTakeSurveyActions.FINISH_SEND_FILES))
         self.steps_pager = AiogramPager(aiogram_wrapper=aiogram_wrapper,
                                         dump_field_name=RedisTmpFields.DUMP_TAKE_SURVEY.value)
         self.processed_answer = {SURVEY_STEP_TYPE.STRING: self._processed_string_answer,
@@ -86,10 +87,14 @@ class TakeSurvey(BaseCommand):
     async def _send_current_ask(self, message: Message, state_context: FSMContext):
         step = await self._get_current_step(state_context=state_context)
         text = create_take_survey_step_output(step_type=step.type, step_text=step.text)
-        keyboard = get_keyboard_for_take_survey_step(step_type=step.type)
+        inline_keyboard, reply_keyboard = get_keyboard_for_take_survey_step(step_type=step.type)
         send_message = await self.aiogram_wrapper.answer_massage(message=message,
                                                                  text=text,
-                                                                 reply_markup=keyboard.as_markup())
+                                                                 reply_markup=inline_keyboard.as_markup())
+        if step.type == SURVEY_STEP_TYPE.FILES:
+            send_message = await self.aiogram_wrapper.answer_massage(message=message,
+                                                                     text=TAKE_SURVEY_ENTER_FILES_DIRECTION_END,
+                                                                     reply_markup=reply_keyboard)
 
     async def _send_next_ask(self, message: Message, state_context: FSMContext):
         page_number, page_status, current_page = await self.steps_pager.get_current_page(state_context=state_context)
@@ -99,10 +104,14 @@ class TakeSurvey(BaseCommand):
 
         step = await self._get_next_step(state_context=state_context)
         text = create_take_survey_step_output(step_type=step.type, step_text=step.text)
-        keyboard = get_keyboard_for_take_survey_step(step_type=step.type)
+        inline_keyboard, reply_keyboard = get_keyboard_for_take_survey_step(step_type=step.type)
         send_message = await self.aiogram_wrapper.answer_massage(message=message,
                                                                  text=text,
-                                                                 reply_markup=keyboard.as_markup())
+                                                                 reply_markup=inline_keyboard.as_markup())
+        if step.type == SURVEY_STEP_TYPE.FILES:
+            send_message = await self.aiogram_wrapper.answer_massage(message=message,
+                                                                     text=TAKE_SURVEY_ENTER_FILES_DIRECTION_END,
+                                                                     reply_markup=reply_keyboard)
 
     async def _processed_string_answer(self, message: Message, state_context: FSMContext, step: SurveyStep):
         answer = message.text
@@ -163,9 +172,8 @@ class TakeSurvey(BaseCommand):
         assert processed_answer_method is not None, f"Нет обработчика для ответов типа {current_step.type}"
         await processed_answer_method(message=message, state_context=state, step=current_step)
 
-    async def _finish_send_files(self, callback: CallbackQuery, callback_data: TakeSurveyCallbackFactory, state: FSMContext):
-        await self._send_next_ask(message=callback.message, state_context=state)
-        await callback.answer()
+    async def _finish_send_files(self, message: Message, state: FSMContext, command: Optional[CommandObject] = None):
+        await self._send_next_ask(message=message, state_context=state)
 
     async def _finish_take_survey(self, message: Message, state_context: FSMContext):
         survey_answer = await self.aiogram_wrapper.get_state_data(state_context=state_context,

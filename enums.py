@@ -118,4 +118,3 @@ class ListSelectTakeSurveyActions(Enum):
 class ListTakeSurveyActions(Enum):
     RETURN_TO_SELECT_TAKE_SURVEY = "return_to_select_take_survey"
     START_SURVEY = "start_survey"
-    FINISH_SEND_FILES = "finish_send_files"

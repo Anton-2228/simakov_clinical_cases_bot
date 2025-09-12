@@ -1,5 +1,5 @@
-from aiogram.types import InlineKeyboardButton
-from aiogram.utils.keyboard import InlineKeyboardBuilder
+from aiogram.types import InlineKeyboardButton, KeyboardButton
+from aiogram.utils.keyboard import InlineKeyboardBuilder, ReplyKeyboardBuilder
 
 from callbacks_factories import (AddSurveyCallbackFactory,
                                  AddSurveyStepCallbackFactory,
@@ -274,20 +274,21 @@ def get_keyboard_for_take_survey() -> InlineKeyboardBuilder:
     builder.row(return_to_select_take_survey_button)
     return builder
 
-def get_keyboard_for_take_survey_step(step_type: SURVEY_STEP_TYPE) -> InlineKeyboardBuilder:
+def get_keyboard_for_take_survey_step(step_type: SURVEY_STEP_TYPE) -> tuple[InlineKeyboardBuilder, ReplyKeyboardBuilder | None]:
     builder = InlineKeyboardBuilder()
-    if step_type == SURVEY_STEP_TYPE.FILES:
-        finish_send_files_button = InlineKeyboardButton(
-            text="Все файлы отправлены",
-            callback_data=TakeSurveyCallbackFactory(action=ListTakeSurveyActions.FINISH_SEND_FILES).pack()
-        )
-        builder.row(finish_send_files_button)
     return_to_select_take_survey_button = InlineKeyboardButton(
         text="Преждевременно завершить опрос",
         callback_data=TakeSurveyCallbackFactory(action=ListTakeSurveyActions.RETURN_TO_SELECT_TAKE_SURVEY).pack()
     )
     builder.row(return_to_select_take_survey_button)
-    return builder
+
+    reply_kb = None
+    if step_type == SURVEY_STEP_TYPE.FILES:
+        reply_builder = ReplyKeyboardBuilder()
+        reply_builder.row(KeyboardButton(text="✅готово"))
+        reply_kb = reply_builder.as_markup(resize_keyboard=True, one_time_keyboard=True)
+
+    return builder, reply_kb
 
 def get_keyboard_for_confirm_delete_survey() -> InlineKeyboardBuilder:
     builder = InlineKeyboardBuilder()
