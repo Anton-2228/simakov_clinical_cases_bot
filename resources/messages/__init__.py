@@ -48,3 +48,5 @@ TAKE_SURVEY_COUNT_FILES = load_txt(Path(__file__).parent / "TAKE_SURVEY_COUNT_FI
 TAKE_SURVEY_MAXIMUM_NUMBER_FILES = load_txt(Path(__file__).parent / "errors/TAKE_SURVEY_MAXIMUM_NUMBER_FILES.txt")
 TAKE_SURVEY_SEND_NOT_TEXT = load_txt(Path(__file__).parent / "errors/TAKE_SURVEY_SEND_NOT_TEXT.txt")
 TAKE_SURVEY_SENDED_NOT_ENOUGH_FILES = load_txt(Path(__file__).parent / "errors/TAKE_SURVEY_SENDED_NOT_ENOUGH_FILES.txt")
+SEND_MESSAGE_TO_ADMIN = load_txt(Path(__file__).parent / "send_messages/SEND_MESSAGE_TO_ADMIN.txt")
+SEND_MESSAGE_TO_ADMIN_FINISH = load_txt(Path(__file__).parent / "send_messages/SEND_MESSAGE_TO_ADMIN_FINISH.txt")

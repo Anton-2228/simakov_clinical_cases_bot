@@ -4,6 +4,7 @@ from typing import Optional
 from pydantic import BaseModel
 
 from enums import SURVEY_STEP_TYPE
+from db.postgres_models import MessageStatus, MESSAGE_TYPE
 
 
 class Survey(BaseModel):
@@ -38,3 +39,12 @@ class SurveyStepResult(BaseModel):
     result: str
     survey_result_id: int
     created_at: Optional[datetime] = None
+
+
+class Message(BaseModel):
+    id: Optional[int] = None
+    text: str
+    from_user_id: int
+    to_user_id: Optional[int] = None
+    status: MessageStatus
+    type: MESSAGE_TYPE

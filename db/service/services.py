@@ -18,6 +18,9 @@ from db.service.survey_steps.survey_steps_service import SurveyStepService
 from db.service.user.async_user_service import AsyncUserService
 from db.service.user.redis_user_service import RedisUserService
 from db.service.user.user_service import UserService
+from db.service.message.async_message_service import AsyncMessageService
+from db.service.message.postgres_message_service import PostgresMessageService
+from db.service.message.message_service import MessageService
 
 
 class Services(ABCServices):
@@ -31,6 +34,7 @@ class Services(ABCServices):
         self.survey_service = PostgresSurveyService()
         self.survey_result_service = PostgresSurveyResultService()
         self.survey_step_result_service = PostgresSurveyStepResultService()
+        self.message_service = PostgresMessageService()
 
     @property
     def user(self) -> UserService | AsyncUserService:
@@ -51,6 +55,10 @@ class Services(ABCServices):
     @property
     def survey_step_result(self) -> SurveyStepResultService | AsyncSurveyStepResultService:
         return self.survey_step_result_service
+
+    @property
+    def message(self) -> MessageService | AsyncMessageService:
+        return self.message_service
 
     @property
     def files_storage(self) -> AsyncMinioClient:

@@ -62,6 +62,7 @@ class SURVEY_VARIABLE_FIELDS(Enum):
 
 class ListUserMainMenuActions(Enum):
     TAKE_THE_SURVEY = "take_the_survey"
+    SEND_MESSAGE_TO_ADMIN = "send_message_to_admin"
 
 class ListAdminMainMenuActions(Enum):
     TAKE_THE_SURVEY = "take_the_survey"
@@ -134,3 +135,6 @@ class ListSelectTakeSurveyActions(Enum):
 class ListTakeSurveyActions(Enum):
     RETURN_TO_SELECT_TAKE_SURVEY = "return_to_select_take_survey"
     START_SURVEY = "start_survey"
+
+class ListSendMessageToAdminActions(Enum):
+    RETURN_TO_MAIN_MENU = "return_to_main_menu"

@@ -25,6 +25,7 @@ class UserMainMenu(BaseCommand):
     def __init__(self, manager: "Manager", db: ABCServices, aiogram_wrapper: AiogramWrapper) -> None:
         super().__init__(manager, db, aiogram_wrapper)
         self.aiogram_wrapper.register_callback(self._take_the_survey, UserMainMenuCallbackFactory.filter(F.action == ListUserMainMenuActions.TAKE_THE_SURVEY))
+        self.aiogram_wrapper.register_callback(self._send_message_to_admin, UserMainMenuCallbackFactory.filter(F.action == ListUserMainMenuActions.SEND_MESSAGE_TO_ADMIN))
 
     async def execute(self, message: Message, state: FSMContext, command: Optional[CommandObject] = None, **kwargs):
         keyboard_builder = get_keyboard_for_user_main_menu()
@@ -39,6 +40,16 @@ class UserMainMenu(BaseCommand):
         await self.manager.aiogram_wrapper.delete_message(message_id=callback.message.message_id,
                                                           chat_id=callback.message.chat.id)
         await self.manager.launch(name="select_take_survey",
+                                  message=callback.message,
+                                  state=state)
+        await callback.answer()
+
+    async def _send_message_to_admin(self, callback: CallbackQuery, callback_data: UserMainMenuCallbackFactory, state: FSMContext):
+        await self.manager.aiogram_wrapper.set_state(state_context=state,
+                                                     state=States.SEND_MESSAGE_TO_ADMIN)
+        await self.manager.aiogram_wrapper.delete_message(message_id=callback.message.message_id,
+                                                          chat_id=callback.message.chat.id)
+        await self.manager.launch(name="send_message_to_admin",
                                   message=callback.message,
                                   state=state)
         await callback.answer()

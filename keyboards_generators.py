@@ -15,7 +15,7 @@ from callbacks_factories import (AddSurveyCallbackFactory,
                                  SelectTakeSurveyCallbackFactory,
                                  SetStepsOrderCallbackFactory,
                                  TakeSurveyCallbackFactory,
-                                 UserMainMenuCallbackFactory)
+                                 UserMainMenuCallbackFactory, SendMessageToAdminCallbackFactory)
 from enums import (SURVEY_STEP_TYPE, SURVEY_STEP_VARIABLE_FILEDS, SURVEY_VARIABLE_FIELDS,
                    ListAddSurveyListActions, ListAddSurveyStepActions,
                    ListAddUserToAdminListActions, ListAdminMainMenuActions,
@@ -24,7 +24,8 @@ from enums import (SURVEY_STEP_TYPE, SURVEY_STEP_VARIABLE_FILEDS, SURVEY_VARIABL
                    ListEditAdminListActions, ListEditSurveyActions,
                    ListEditSurveysActions, ListEditSurveyStepsActions,
                    ListSelectTakeSurveyActions, ListSetStepsOrderActions,
-                   ListTakeSurveyActions, ListUserMainMenuActions, ListChangeSurveyActions)
+                   ListTakeSurveyActions, ListUserMainMenuActions, ListChangeSurveyActions,
+                   ListSendMessageToAdminActions)
 from models import User
 from pagers.pager import PAGING_STATUS
 
@@ -32,6 +33,7 @@ from pagers.pager import PAGING_STATUS
 def get_keyboard_for_user_main_menu() -> InlineKeyboardBuilder:
     builder = InlineKeyboardBuilder()
     builder.button(text="Пройти опрос", callback_data=UserMainMenuCallbackFactory(action=ListUserMainMenuActions.TAKE_THE_SURVEY))
+    builder.button(text="Отправить вопрос администратору", callback_data=UserMainMenuCallbackFactory(action=ListUserMainMenuActions.SEND_MESSAGE_TO_ADMIN))
     builder.adjust(1)
     return builder
 
@@ -231,7 +233,7 @@ def get_keyboard_for_add_survey_steps(field: SURVEY_STEP_VARIABLE_FILEDS) -> Inl
 def get_keyboard_for_add_survey_field(field: SURVEY_VARIABLE_FIELDS) -> InlineKeyboardBuilder:
     builder = InlineKeyboardBuilder()
     # Для полей опроса не нужны специальные кнопки, только кнопка "Вернуться"
-    builder.row(InlineKeyboardButton(text="Вернуться", callback_data=AddSurveyCallbackFactory(action=ListAddSurveyListActions.RETURN_TO_EDIT_SURVEYS).pack()))
+    builder.row(InlineKeyboardButton(text="Прекратить создание опроса", callback_data=AddSurveyCallbackFactory(action=ListAddSurveyListActions.RETURN_TO_EDIT_SURVEYS).pack()))
     return builder
 
 def get_keyboard_for_select_take_survey(surveys: list[str], survey_idx_map: dict[int, str], page_status: PAGING_STATUS) -> InlineKeyboardBuilder:
@@ -353,4 +355,9 @@ def get_keyboard_for_confirm_delete_step() -> InlineKeyboardBuilder:
 def get_keyboard_for_change_survey(field: SURVEY_VARIABLE_FIELDS) -> InlineKeyboardBuilder:
     builder = InlineKeyboardBuilder()
     builder.row(InlineKeyboardButton(text="Оставить текущее", callback_data=ChangeSurveyCallbackFactory(action=ListChangeSurveyActions.KEEP_CURRENT_VALUE).pack()))
+    return builder
+
+def get_keyboard_for_send_message_to_admin() -> InlineKeyboardBuilder:
+    builder = InlineKeyboardBuilder()
+    builder.row(InlineKeyboardButton(text="Вернуться в главное меню", callback_data=SendMessageToAdminCallbackFactory(action=ListSendMessageToAdminActions.RETURN_TO_MAIN_MENU).pack()))
     return builder

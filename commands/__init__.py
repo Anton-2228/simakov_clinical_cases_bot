@@ -19,6 +19,7 @@ from .edit_survey_step import EditSurveyStep
 from .edit_surveys import EditSurveys
 from .registration import Registration
 from .select_take_survey import SelectTakeSurvey
+from .send_message_to_admin import SendMessageToAdmin
 from .set_steps_order import SetStepsOrder
 from .take_survey import TakeSurvey
 from .user_main_menu import UserMainMenu
@@ -32,7 +33,8 @@ def get_user_commands(manager: "Manager", db: ABCServices, aiogram_wrapper: Aiog
         "registration": Registration(manager, db, aiogram_wrapper),
         "main_menu": UserMainMenu(manager, db, aiogram_wrapper),
         "select_take_survey": SelectTakeSurvey(manager, db, aiogram_wrapper),
-        "take_survey": TakeSurvey(manager, db, aiogram_wrapper)
+        "take_survey": TakeSurvey(manager, db, aiogram_wrapper),
+        "send_message_to_admin": SendMessageToAdmin(manager, db, aiogram_wrapper)
     }
     return commands
 

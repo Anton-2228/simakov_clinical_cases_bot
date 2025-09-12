@@ -24,3 +24,4 @@ class States(StatesGroup):
     ENTER_SURVEY_STEP_VALUE = State()
     SELECT_TAKE_SURVEY = State()
     PROCESSED_SURVEY = State()
+    SEND_MESSAGE_TO_ADMIN = State()

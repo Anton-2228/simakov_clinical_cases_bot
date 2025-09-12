@@ -10,7 +10,7 @@ from enums import (SURVEY_STEP_TYPE, SURVEY_STEP_VARIABLE_FILEDS, SURVEY_VARIABL
                    ListEditAdminListActions, ListEditSurveyActions,
                    ListEditSurveysActions, ListEditSurveyStepsActions,
                    ListSelectTakeSurveyActions, ListSetStepsOrderActions,
-                   ListTakeSurveyActions, ListUserMainMenuActions)
+                   ListTakeSurveyActions, ListUserMainMenuActions, ListSendMessageToAdminActions)
 
 
 class UserMainMenuCallbackFactory(CallbackData, prefix="umm"): # user_main_menu
@@ -63,3 +63,6 @@ class SelectTakeSurveyCallbackFactory(CallbackData, prefix="sts"): # select_take
 
 class TakeSurveyCallbackFactory(CallbackData, prefix="ts"): # take_survey
     action: ListTakeSurveyActions
+
+class SendMessageToAdminCallbackFactory(CallbackData, prefix="smta"): # send_message_to_admin
+    action: ListSendMessageToAdminActions

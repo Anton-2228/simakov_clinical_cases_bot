@@ -1,10 +1,23 @@
 from datetime import datetime
+from enum import Enum
+from typing import Optional
+
 from sqlalchemy import ForeignKey, String, Text, BigInteger, text
 from sqlalchemy.dialects.postgresql import ENUM as PgEnum
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from db.postgres import Base
 from enums import SURVEY_STEP_TYPE
+
+
+class MessageStatus(Enum):
+    NEW = "new"
+    ANSWERED = "answered"
+
+
+class MESSAGE_TYPE(Enum):
+    TO_ADMINS = "to_admins"
+    TO_USER = "to_user"
 
 
 class SurveyORM(Base):
@@ -60,3 +73,17 @@ class SurveyStepResultORM(Base):
     survey_step: Mapped["SurveyStepORM"] = relationship()
     survey_result: Mapped["SurveyResultORM"] = relationship(back_populates="survey_step_results")
 
+
+class MessagesORM(Base):
+    __tablename__ = "messages"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    text: Mapped[str]
+    from_user_id: Mapped[int] = mapped_column(BigInteger)
+    to_user_id: Mapped[Optional[int]] = mapped_column(BigInteger, nullable=True)
+    status: Mapped[MessageStatus] = mapped_column(
+        PgEnum(MessageStatus, name="message_status", create_type=True)
+    )
+    type: Mapped[MESSAGE_TYPE] = mapped_column(
+        PgEnum(MESSAGE_TYPE, name="message_type", create_type=True)
+    )
