@@ -6,7 +6,7 @@ import tempfile
 import uuid
 from os import PathLike
 from pathlib import Path
-from typing import Any, Dict
+from typing import Any, Dict, Optional
 
 
 def load_json(path: PathLike) -> Dict[str, Any]:
@@ -32,8 +32,9 @@ def escape_markdown_v2(text: str) -> str:
 def get_uuid() -> str:
     return str(uuid.uuid4())
 
-def get_tmp_path() -> str:
+def get_tmp_path(filename: Optional[str] = None) -> str:
     temp_dir = tempfile.mkdtemp()
-    random_hex = secrets.token_hex(16)
-    temp_file_path = os.path.join(temp_dir, random_hex)
+    if filename is None:
+        filename = secrets.token_hex(16)
+    temp_file_path = os.path.join(temp_dir, filename)
     return temp_file_path

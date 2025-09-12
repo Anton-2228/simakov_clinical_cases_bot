@@ -31,6 +31,12 @@ class AsyncUserService(ABC):
         :return: список пользователей
         """
 
+    async def get_users(self) -> List[User]:
+        """
+        Метод для получения всех пользователей
+        :return: список пользователей
+        """
+
     async def update_user(self, user: User) -> None:
         """
         Метод для обновления информации о пользователе. Значение будет обновлено только если пользователь есть в базе

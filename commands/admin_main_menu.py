@@ -1,3 +1,4 @@
+import json
 import logging
 from typing import TYPE_CHECKING, Optional
 
@@ -13,6 +14,8 @@ from enums import ListAdminMainMenuActions
 from keyboards_generators import get_keyboard_for_admin_main_menu
 from resources.messages import ADMIN_MAIN_MENU_MESSAGE
 from states import States
+from utils import get_tmp_path
+from xlsx_handler import XLSXHandler
 
 from .base_command import BaseCommand
 
@@ -24,9 +27,11 @@ if TYPE_CHECKING:
 class AdminMainMenu(BaseCommand):
     def __init__(self, manager: "Manager", db: ABCServices, aiogram_wrapper: AiogramWrapper) -> None:
         super().__init__(manager, db, aiogram_wrapper)
+        self.xlsx_handler = XLSXHandler()
         self.aiogram_wrapper.register_callback(self._take_the_survey, AdminMainMenuCallbackFactory.filter(F.action == ListAdminMainMenuActions.TAKE_THE_SURVEY))
         self.aiogram_wrapper.register_callback(self._edit_surveys, AdminMainMenuCallbackFactory.filter(F.action == ListAdminMainMenuActions.EDIT_SURVEYS))
         self.aiogram_wrapper.register_callback(self._edit_admin_list, AdminMainMenuCallbackFactory.filter(F.action == ListAdminMainMenuActions.EDIT_ADMIN_LIST))
+        self.aiogram_wrapper.register_callback(self._get_dump_users, AdminMainMenuCallbackFactory.filter(F.action == ListAdminMainMenuActions.GET_DUMP_USERS))
 
     async def execute(self, message: Message, state: FSMContext, command: Optional[CommandObject] = None, **kwargs):
         keyboard_builder = get_keyboard_for_admin_main_menu()
@@ -63,4 +68,16 @@ class AdminMainMenu(BaseCommand):
         await self.manager.launch(name="edit_admin_list",
                                   message=callback.message,
                                   state=state)
+        await callback.answer()
+
+    async def _get_dump_users(self, callback: CallbackQuery, callback_data: AdminMainMenuCallbackFactory, state: FSMContext):
+        users = await self.db.user.get_users()
+        users = [list(json.loads(x.model_dump_json()).values()) for x in users]
+        headers = ["telegram id", "Полное имя", "Роль"]
+        file_path = get_tmp_path(filename="users.xlsx")
+        file_path = self.xlsx_handler.create_from_list(data=users,
+                                                       headers=headers,
+                                                       file_path=file_path)
+        await self.aiogram_wrapper.send_file(chat_id=callback.message.chat.id,
+                                             file_path=file_path)
         await callback.answer()

@@ -67,6 +67,7 @@ class ListAdminMainMenuActions(Enum):
     TAKE_THE_SURVEY = "take_the_survey"
     EDIT_SURVEYS = "edit_surveys"
     EDIT_ADMIN_LIST = "edit_admin_list"
+    GET_DUMP_USERS = "get_dump_users"
 
 class ListEditAdminListActions(Enum):
     ADD_ADMIN = "add_admin"

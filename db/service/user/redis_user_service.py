@@ -33,6 +33,14 @@ class RedisUserService(AsyncUserService):
                 admins.append(user)
         return admins
 
+    async def get_users(self) -> List[User]:
+        users_id = await self.redis_client.get_list(key="all_users")
+        admins = []
+        for user_id in users_id:
+            user = await self.redis_client.get_value(key=user_id, return_type=User)
+            admins.append(user)
+        return admins
+
     async def update_user(self, user: User) -> None:
         db_user = await self.redis_client.get_value(key=str(user.telegram_id), return_type=User)
         if db_user:

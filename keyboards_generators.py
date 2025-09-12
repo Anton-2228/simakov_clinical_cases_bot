@@ -40,6 +40,7 @@ def get_keyboard_for_admin_main_menu() -> InlineKeyboardBuilder:
     builder.button(text="Пройти опрос", callback_data=AdminMainMenuCallbackFactory(action=ListAdminMainMenuActions.TAKE_THE_SURVEY))
     builder.button(text="Отредактировать опросы", callback_data=AdminMainMenuCallbackFactory(action=ListAdminMainMenuActions.EDIT_SURVEYS))
     builder.button(text="Обновить список админов", callback_data=AdminMainMenuCallbackFactory(action=ListAdminMainMenuActions.EDIT_ADMIN_LIST))
+    builder.button(text="Получить таблицу с пользователями", callback_data=AdminMainMenuCallbackFactory(action=ListAdminMainMenuActions.GET_DUMP_USERS))
     builder.adjust(1)
     return builder
 

@@ -1,3 +1,4 @@
+from pathlib import Path
 from typing import Optional, Union
 import tempfile
 import os
@@ -9,7 +10,7 @@ from aiogram.fsm.context import FSMContext
 from aiogram.methods import SendMessage
 from aiogram.types import (InlineKeyboardMarkup, InputMediaAudio,
                            InputMediaDocument, InputMediaPhoto,
-                           InputMediaVideo, Message)
+                           InputMediaVideo, Message, FSInputFile)
 
 from db.service.abc_services import ABCServices
 from states import States
@@ -146,6 +147,24 @@ class AiogramWrapper:
         await self.bot.download_file(file.file_path, temp_file_path)
         
         return temp_file_path
+
+    async def send_file(self,
+                        chat_id: int,
+                        file_path: str | Path,
+                        caption: Optional[str] = None,
+                        reply_markup: Optional[InlineKeyboardMarkup] = None,
+                        parse_mode: Optional[str] = None):
+        """
+        Отправляет файл пользователю. Тип определяется по расширению.
+        """
+        file_path = str(file_path)
+        ext = os.path.splitext(file_path)[1].lower()
+        input_file = FSInputFile(file_path)
+        return await self.bot.send_document(chat_id,
+                                            document=input_file,
+                                            caption=caption,
+                                            reply_markup=reply_markup,
+                                            parse_mode=parse_mode)
 
     def register_callback(self, callback: CallbackType, *filters: CallbackType):
         self.router.callback_query.register(callback, *filters)
