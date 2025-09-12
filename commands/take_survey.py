@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING, Callable, Optional
 
 from aiogram.filters import CommandObject
 from aiogram.fsm.context import FSMContext
-from aiogram.types import CallbackQuery, Message
+from aiogram.types import CallbackQuery, Message, ReplyKeyboardRemove
 from aiogram import F
 # from magic_filter import F
 
@@ -23,7 +23,8 @@ from pagers.aiogram_pager import AiogramPager
 from pagers.pager import PAGING_STATUS
 from resources.messages import (TAKE_SURVEY_MAXIMUM_NUMBER_FILES,
                                 TAKE_SURVEY_SEND_NOT_FILE,
-                                TAKE_SURVEY_START, TAKE_SURVEY_SEND_NOT_TEXT, TAKE_SURVEY_ENTER_FILES_DIRECTION_END)
+                                TAKE_SURVEY_START, TAKE_SURVEY_SEND_NOT_TEXT, TAKE_SURVEY_ENTER_FILES_DIRECTION_END,
+                                TAKE_SURVEY_WAIT_END, TAKE_SURVEY_SENDED_NOT_ENOUGH_FILES, TAKE_SURVEY_ENTER_FILES_END)
 from states import States
 
 from .base_command import BaseCommand
@@ -174,9 +175,24 @@ class TakeSurvey(BaseCommand):
         await processed_answer_method(message=message, state_context=state, step=current_step)
 
     async def _finish_send_files(self, message: Message, state: FSMContext, command: Optional[CommandObject] = None):
+        current_step = await self._get_current_step(state_context=state)
+        survey_answer = await self.aiogram_wrapper.get_state_data(state_context=state,
+                                                                  field_name=RedisTmpFields.TAKE_SURVEY_SURVEY_ANSWER.value)
+        step_id = str(current_step.id)
+        if step_id not in survey_answer:
+            send_message = await self.aiogram_wrapper.answer_massage(message=message,
+                                                                     text=TAKE_SURVEY_SENDED_NOT_ENOUGH_FILES)
+            return
+
+        send_message = await self.aiogram_wrapper.answer_massage(message=message,
+                                                                 text=TAKE_SURVEY_ENTER_FILES_END,
+                                                                 reply_markup=ReplyKeyboardRemove())
         await self._send_next_ask(message=message, state_context=state)
 
     async def _finish_take_survey(self, message: Message, state_context: FSMContext):
+        send_message = await self.aiogram_wrapper.answer_massage(message=message,
+                                                                 text=TAKE_SURVEY_WAIT_END)
+
         survey_answer = await self.aiogram_wrapper.get_state_data(state_context=state_context,
                                                                   field_name=RedisTmpFields.TAKE_SURVEY_SURVEY_ANSWER.value)
         survey_id = await self.aiogram_wrapper.get_state_data(state_context=state_context,

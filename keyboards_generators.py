@@ -286,7 +286,7 @@ def get_keyboard_for_take_survey_step(step_type: SURVEY_STEP_TYPE) -> tuple[Inli
     if step_type == SURVEY_STEP_TYPE.FILES:
         reply_builder = ReplyKeyboardBuilder()
         reply_builder.row(KeyboardButton(text="✅готово"))
-        reply_kb = reply_builder.as_markup(resize_keyboard=True, one_time_keyboard=True)
+        reply_kb = reply_builder.as_markup(resize_keyboard=True)
 
     return builder, reply_kb
 
