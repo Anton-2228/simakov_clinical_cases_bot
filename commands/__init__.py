@@ -10,6 +10,7 @@ from .add_survey import AddSurvey
 from .add_survey_step import AddSurveyStep
 from .add_user_to_admin_list import AddUserToAdminLit
 from .admin_main_menu import AdminMainMenu
+from .change_survey import ChangeSurvey
 from .change_survey_step import ChangeSurveyStep
 from .delete_user_from_admin_list import DeleteUserFromAdminLit
 from .edit_admin_list import EditAdminList
@@ -46,6 +47,7 @@ def get_admin_commands(manager: "Manager", db: ABCServices, aiogram_wrapper: Aio
         "edit_surveys": EditSurveys(manager, db, aiogram_wrapper),
         "add_survey": AddSurvey(manager, db, aiogram_wrapper),
         "edit_survey": EditSurvey(manager, db, aiogram_wrapper),
+        "change_survey": ChangeSurvey(manager, db, aiogram_wrapper),
         "edit_survey_step": EditSurveyStep(manager, db, aiogram_wrapper),
         "change_survey_step": ChangeSurveyStep(manager, db, aiogram_wrapper),
         "add_survey_step": AddSurveyStep(manager, db, aiogram_wrapper),

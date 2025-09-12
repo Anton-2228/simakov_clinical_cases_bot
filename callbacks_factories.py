@@ -2,15 +2,15 @@ from typing import Optional
 
 from aiogram.filters.callback_data import CallbackData
 
-from enums import (SURVEY_STEP_TYPE, ListAddSurveyListActions,
-                   ListAddSurveyStepActions, ListAddUserToAdminListActions,
-                   ListAdminMainMenuActions, ListChangeSurveyStepsActions,
+from enums import (SURVEY_STEP_TYPE, SURVEY_STEP_VARIABLE_FILEDS, SURVEY_VARIABLE_FIELDS,
+                   ListAddSurveyListActions, ListAddSurveyStepActions,
+                   ListAddUserToAdminListActions, ListAdminMainMenuActions,
+                   ListChangeSurveyActions, ListChangeSurveyStepsActions,
                    ListDeleteUserFromAdminListActions,
-                   ListEditAdminListActions,
-                   ListEditSurveyActions, ListEditSurveysActions,
-                   ListEditSurveyStepsActions, ListSelectTakeSurveyActions,
-                   ListSetStepsOrderActions, ListTakeSurveyActions,
-                   ListUserMainMenuActions)
+                   ListEditAdminListActions, ListEditSurveyActions,
+                   ListEditSurveysActions, ListEditSurveyStepsActions,
+                   ListSelectTakeSurveyActions, ListSetStepsOrderActions,
+                   ListTakeSurveyActions, ListUserMainMenuActions)
 
 
 class UserMainMenuCallbackFactory(CallbackData, prefix="umm"): # user_main_menu
@@ -46,6 +46,9 @@ class EditSurveyStepsCallbackFactory(CallbackData, prefix="esst"): # edit_survey
 class ChangeSurveyStepsCallbackFactory(CallbackData, prefix="csst"): # change_survey_steps
     action: ListChangeSurveyStepsActions
     step_type: Optional[SURVEY_STEP_TYPE] = None
+
+class ChangeSurveyCallbackFactory(CallbackData, prefix="cs"): # change_survey
+    action: ListChangeSurveyActions
 
 class SetStepsOrderCallbackFactory(CallbackData, prefix="sso"): # set_steps_order
     action: ListSetStepsOrderActions

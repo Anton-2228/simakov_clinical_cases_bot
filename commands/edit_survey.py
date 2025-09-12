@@ -31,6 +31,7 @@ class EditSurvey(BaseCommand):
         self.aiogram_wrapper.register_callback(self._next_steps, EditSurveyCallbackFactory.filter(F.action == ListEditSurveyActions.NEXT_STEPS))
         self.aiogram_wrapper.register_callback(self._previous_steps, EditSurveyCallbackFactory.filter(F.action == ListEditSurveyActions.PREVIOUS_STEPS))
         self.aiogram_wrapper.register_callback(self._add_step, EditSurveyCallbackFactory.filter(F.action == ListEditSurveyActions.ADD_NEW_STEP))
+        self.aiogram_wrapper.register_callback(self._change_survey, EditSurveyCallbackFactory.filter(F.action == ListEditSurveyActions.CHANGE_SURVEY))
         self.aiogram_wrapper.register_callback(self._set_steps_order, EditSurveyCallbackFactory.filter(F.action == ListEditSurveyActions.SET_STEPS_ORDER))
         self.aiogram_wrapper.register_callback(self._delete_survey, EditSurveyCallbackFactory.filter(F.action == ListEditSurveyActions.DELETE_SURVEY))
         self.aiogram_wrapper.register_callback(self._confirm_delete_survey, EditSurveyCallbackFactory.filter(F.action == ListEditSurveyActions.CONFIRM_DELETE_SURVEY))
@@ -113,6 +114,19 @@ class EditSurvey(BaseCommand):
         survey_id = await self.aiogram_wrapper.get_state_data(state_context=state,
                                                               field_name=RedisTmpFields.EDIT_SURVEY_SURVEY_ID.value)
         await self.manager.launch(name="add_survey_step",
+                                  message=callback.message,
+                                  state=state,
+                                  survey_id=survey_id)
+        await callback.answer()
+
+    async def _change_survey(self, callback: CallbackQuery, callback_data: EditSurveyCallbackFactory, state: FSMContext):
+        survey_id = await self.aiogram_wrapper.get_state_data(state_context=state,
+                                                              field_name=RedisTmpFields.EDIT_SURVEY_SURVEY_ID.value)
+        await self.manager.aiogram_wrapper.set_state(state_context=state,
+                                                     state=States.CHANGE_SURVEY)
+        await self.manager.aiogram_wrapper.delete_message(message_id=callback.message.message_id,
+                                                          chat_id=callback.from_user.id)
+        await self.manager.launch(name="change_survey",
                                   message=callback.message,
                                   state=state,
                                   survey_id=survey_id)

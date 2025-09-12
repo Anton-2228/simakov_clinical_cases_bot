@@ -55,6 +55,7 @@ class TakeSurvey(BaseCommand):
                       survey_id: Optional[int] = None,
                       **kwargs):
         steps = await self.db.survey_step.get_all_survey_steps(survey_id=survey_id)
+        survey = await self.db.survey.get_survey(id=survey_id)
         steps = [{"id": x.id, "position": x.position} for x in steps]
         await self.aiogram_wrapper.set_state_data(state_context=state, field_name=RedisTmpFields.TAKE_SURVEY_SURVEY_ANSWER.value,
                                                   value={})
@@ -63,6 +64,8 @@ class TakeSurvey(BaseCommand):
                                                   value=survey_id)
         await self.steps_pager.init(state_context=state, elements=steps, page_count=1)
         keyboard = get_keyboard_for_take_survey()
+        send_message = await self.aiogram_wrapper.answer_massage(message=message,
+                                                                 text=survey.start_message)
         send_message = await self.aiogram_wrapper.answer_massage(message=message,
                                                                  text=TAKE_SURVEY_START,
                                                                  reply_markup=keyboard.as_markup())
@@ -211,6 +214,10 @@ class TakeSurvey(BaseCommand):
 
         async with YANDEX_DISK_SESSION() as yd:
             await yd.add_survey_result(services=self.db, survey_result=survey_result)
+
+        survey = await self.db.survey.get_survey(id=survey_id)
+        send_message = await self.aiogram_wrapper.answer_massage(message=message,
+                                                                 text=survey.finish_message)
 
         await self.manager.aiogram_wrapper.set_state(state_context=state_context,
                                                      state=States.MAIN_MENU)

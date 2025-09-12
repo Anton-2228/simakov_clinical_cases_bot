@@ -53,7 +53,7 @@ class EditSurveyStep(BaseCommand):
         step_id = await self.aiogram_wrapper.get_state_data(state_context=state,
                                                             field_name=RedisTmpFields.EDIT_SURVEY_STEPS_STEP_ID.value)
         survey_id = await self.aiogram_wrapper.get_state_data(state_context=state,
-                                                              field_name=RedisTmpFields.EDIT_SURVEY_SURVEY_ID.value)
+                                                              field_name=RedisTmpFields.EDIT_SURVEY_STEPS_SURVEY_ID.value)
         await self.manager.aiogram_wrapper.set_state(state_context=state,
                                                      state=States.CHANGE_SURVEY_STEP)
         await self.manager.aiogram_wrapper.delete_message(message_id=callback.message.message_id,
@@ -78,7 +78,7 @@ class EditSurveyStep(BaseCommand):
         step_id = await self.aiogram_wrapper.get_state_data(state_context=state,
                                                             field_name=RedisTmpFields.EDIT_SURVEY_STEPS_STEP_ID.value)
         survey_id = await self.aiogram_wrapper.get_state_data(state_context=state,
-                                                              field_name=RedisTmpFields.EDIT_SURVEY_SURVEY_ID.value)
+                                                              field_name=RedisTmpFields.EDIT_SURVEY_STEPS_SURVEY_ID.value)
         await self.db.survey_step.delete_step(id=step_id)
         await self.manager.aiogram_wrapper.set_state(state_context=state,
                                                      state=States.EDIT_SURVEY)
@@ -92,7 +92,7 @@ class EditSurveyStep(BaseCommand):
 
     async def _reject_delete_step(self, callback: CallbackQuery, callback_data: EditSurveyStepsCallbackFactory, state: FSMContext):
         survey_id = await self.aiogram_wrapper.get_state_data(state_context=state,
-                                                              field_name=RedisTmpFields.EDIT_SURVEY_SURVEY_ID.value)
+                                                              field_name=RedisTmpFields.EDIT_SURVEY_STEPS_SURVEY_ID.value)
         await self.manager.aiogram_wrapper.set_state(state_context=state,
                                                      state=States.EDIT_SURVEY)
         await self.manager.aiogram_wrapper.delete_message(message_id=callback.message.message_id,
@@ -105,7 +105,7 @@ class EditSurveyStep(BaseCommand):
 
     async def _return_to_edit_survey(self, callback: CallbackQuery, callback_data: EditSurveyStepsCallbackFactory, state: FSMContext):
         survey_id = await self.aiogram_wrapper.get_state_data(state_context=state,
-                                                              field_name=RedisTmpFields.EDIT_SURVEY_SURVEY_ID.value)
+                                                              field_name=RedisTmpFields.EDIT_SURVEY_STEPS_SURVEY_ID.value)
         await self.manager.aiogram_wrapper.set_state(state_context=state,
                                                      state=States.EDIT_SURVEY)
         await self.manager.aiogram_wrapper.delete_message(message_id=callback.message.message_id,

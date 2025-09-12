@@ -5,6 +5,7 @@ from callbacks_factories import (AddSurveyCallbackFactory,
                                  AddSurveyStepCallbackFactory,
                                  AddUserToAdminListCallbackFactory,
                                  AdminMainMenuCallbackFactory,
+                                 ChangeSurveyCallbackFactory,
                                  ChangeSurveyStepsCallbackFactory,
                                  DeleteUserFromAdminListCallbackFactory,
                                  EditAdminListCallbackFactory,
@@ -15,7 +16,7 @@ from callbacks_factories import (AddSurveyCallbackFactory,
                                  SetStepsOrderCallbackFactory,
                                  TakeSurveyCallbackFactory,
                                  UserMainMenuCallbackFactory)
-from enums import (SURVEY_STEP_TYPE, SURVEY_STEP_VARIABLE_FILEDS,
+from enums import (SURVEY_STEP_TYPE, SURVEY_STEP_VARIABLE_FILEDS, SURVEY_VARIABLE_FIELDS,
                    ListAddSurveyListActions, ListAddSurveyStepActions,
                    ListAddUserToAdminListActions, ListAdminMainMenuActions,
                    ListChangeSurveyStepsActions,
@@ -23,7 +24,7 @@ from enums import (SURVEY_STEP_TYPE, SURVEY_STEP_VARIABLE_FILEDS,
                    ListEditAdminListActions, ListEditSurveyActions,
                    ListEditSurveysActions, ListEditSurveyStepsActions,
                    ListSelectTakeSurveyActions, ListSetStepsOrderActions,
-                   ListTakeSurveyActions, ListUserMainMenuActions)
+                   ListTakeSurveyActions, ListUserMainMenuActions, ListChangeSurveyActions)
 from models import User
 from pagers.pager import PAGING_STATUS
 
@@ -140,6 +141,11 @@ def get_keyboard_for_edit_survey(steps_idx: list[int], page_status: PAGING_STATU
         callback_data=EditSurveyCallbackFactory(action=ListEditSurveyActions.ADD_NEW_STEP).pack()
     )
     builder.row(add_new_step_button)
+    add_new_step_button = InlineKeyboardButton(
+        text="Отредактировать опрос",
+        callback_data=EditSurveyCallbackFactory(action=ListEditSurveyActions.CHANGE_SURVEY).pack()
+    )
+    builder.row(add_new_step_button)
     set_steps_order_button = InlineKeyboardButton(
         text="Изменить порядок шагов",
         callback_data=EditSurveyCallbackFactory(action=ListEditSurveyActions.SET_STEPS_ORDER).pack()
@@ -219,6 +225,12 @@ def get_keyboard_for_add_survey_steps(field: SURVEY_STEP_VARIABLE_FILEDS) -> Inl
                                             )
 
         builder.row(str_button, files_button)
+    return builder
+
+def get_keyboard_for_add_survey_field(field: SURVEY_VARIABLE_FIELDS) -> InlineKeyboardBuilder:
+    builder = InlineKeyboardBuilder()
+    # Для полей опроса не нужны специальные кнопки, только кнопка "Вернуться"
+    builder.row(InlineKeyboardButton(text="Вернуться", callback_data=AddSurveyCallbackFactory(action=ListAddSurveyListActions.RETURN_TO_EDIT_SURVEYS).pack()))
     return builder
 
 def get_keyboard_for_select_take_survey(surveys: list[str], survey_idx_map: dict[int, str], page_status: PAGING_STATUS) -> InlineKeyboardBuilder:
@@ -335,4 +347,9 @@ def get_keyboard_for_confirm_delete_step() -> InlineKeyboardBuilder:
         callback_data=EditSurveyStepsCallbackFactory(action=ListEditSurveyStepsActions.REJECT_DELETE_STEP).pack()
     )
     builder.row(return_button)
+    return builder
+
+def get_keyboard_for_change_survey(field: SURVEY_VARIABLE_FIELDS) -> InlineKeyboardBuilder:
+    builder = InlineKeyboardBuilder()
+    builder.row(InlineKeyboardButton(text="Оставить текущее", callback_data=ChangeSurveyCallbackFactory(action=ListChangeSurveyActions.KEEP_CURRENT_VALUE).pack()))
     return builder

@@ -12,6 +12,8 @@ class SurveyORM(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str]
+    start_message: Mapped[str]
+    finish_message: Mapped[str]
 
     survey_steps: Mapped[list["SurveyStepORM"]] = relationship(cascade="all, delete-orphan",
                                                                passive_deletes=True)

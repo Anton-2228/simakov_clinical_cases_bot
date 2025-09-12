@@ -50,9 +50,6 @@ class ChangeSurveyStep(BaseCommand):
         await self.aiogram_wrapper.set_state(state_context=state,
                                              state=States.ENTER_SURVEY_STEP_NEW_VALUE)
         step = await self.db.survey_step.get_survey_step(id=step_id)
-        print(survey_id)
-        print(step_id)
-        print(step)
         step = json.loads(step.model_dump_json())
         text = create_edit_survey_step_output(step=step)
         await self.aiogram_wrapper.answer_massage(message=message,

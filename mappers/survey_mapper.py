@@ -23,6 +23,8 @@ class SurveyMapper(ABCMapper):
         return Survey(
             id=entity.id,
             name=entity.name,
+            start_message=entity.start_message,
+            finish_message=entity.finish_message,
             survey_steps=survey_steps
         )
 
@@ -30,5 +32,7 @@ class SurveyMapper(ABCMapper):
     def to_entity(dto: Survey):
         return SurveyORM(
             id=dto.id,
-            name=dto.name
+            name=dto.name,
+            start_message=dto.start_message,
+            finish_message=dto.finish_message,
         )

@@ -10,6 +10,8 @@ class RedisTmpFields(Enum):
     ENTER_NEW_SURVEY_STEP_FIELD_VALUE_REQUEST_CHAT_ID = "enter_new_survey_step_field_value_request_chat_id"
     ENTER_SURVEY_STEP_FIELD_VALUE_REQUEST_MESSAGE_ID = "enter_survey_step_field_value_request_message_id"
     ENTER_SURVEY_STEP_FIELD_VALUE_REQUEST_CHAT_ID = "enter_survey_step_field_value_request_chat_id"
+    ENTER_NEW_SURVEY_FIELD_VALUE_REQUEST_MESSAGE_ID = "enter_new_survey_field_value_request_message_id"
+    ENTER_NEW_SURVEY_FIELD_VALUE_REQUEST_CHAT_ID = "enter_new_survey_field_value_request_chat_id"
 
     DUMP_EDIT_SURVEYS = "dump_edit_surveys"
     DUMP_EDIT_SURVEY = "dump_edit_survey"
@@ -27,11 +29,15 @@ class RedisTmpFields(Enum):
     CHANGE_SURVEY_STEPS_SURVEY_ID = "change_survey_steps_survey_id"
     CHANGE_SURVEY_STEPS_STEP_ID = "change_survey_steps_step_id"
     CHANGE_SURVEY_STEPS_CURRENT_FIELD_ID = "change_survey_steps_current_field"
+    CHANGE_SURVEY_SURVEY_ID = "change_survey_survey_id"
+    CHANGE_SURVEY_CURRENT_FIELD_ID = "change_survey_current_field"
     SET_STEPS_ORDER_SURVEY_ID = "set_steps_order_survey_id"
     SET_STEPS_ORDER_LIST_STEPS = "set_steps_order_list_steps"
     ADD_SURVEY_STEP_SURVEY_ID = "add_survey_step_survey_id"
     ADD_SURVEY_STEP_CURRENT_FIELD_ID = "add_survey_step_current_field"
     ADD_SURVEY_STEP_TEMPLATE_ADDED_STEP = "add_survey_step_template_added_step"
+    ADD_SURVEY_CURRENT_FIELD_ID = "add_survey_current_field"
+    ADD_SURVEY_TEMPLATE_ADDED_SURVEY = "add_survey_template_added_survey"
     SELECT_TAKE_SURVEY_IDX_MAP = "select_take_survey_idx_map"
     TAKE_SURVEY_SURVEY_ANSWER = "take_survey_survey_answer"
     TAKE_SURVEY_SURVEY_ID = "take_survey_survey_id"
@@ -48,6 +54,11 @@ class SURVEY_STEP_VARIABLE_FILEDS(Enum):
     NAME = "name"
     TEXT = "text"
     TYPE = "type"
+
+class SURVEY_VARIABLE_FIELDS(Enum):
+    NAME = "name"
+    START_MESSAGE = "start_message"
+    FINISH_MESSAGE = "finish_message"
 
 class ListUserMainMenuActions(Enum):
     TAKE_THE_SURVEY = "take_the_survey"
@@ -81,6 +92,7 @@ class ListEditSurveyActions(Enum):
     NEXT_STEPS = "next_steps"
     PREVIOUS_STEPS = "previous_steps"
     ADD_NEW_STEP = "add_new_step"
+    CHANGE_SURVEY = "change_survey"
     SET_STEPS_ORDER = "set_steps_order"
     DELETE_SURVEY = "delete_survey"
     CONFIRM_DELETE_SURVEY = "confirm_delete_survey"
@@ -100,6 +112,9 @@ class ListEditSurveyStepsActions(Enum):
 class ListChangeSurveyStepsActions(Enum):
     KEEP_CURRENT_VALUE = "keep_current_value"
     SELECT_STEP_TYPE = "select_step_type"
+
+class ListChangeSurveyActions(Enum):
+    KEEP_CURRENT_VALUE = "keep_current_value"
 
 class ListSetStepsOrderActions(Enum):
     NEXT_STEPS = "next_steps"

@@ -5,7 +5,7 @@ from resources.messages import (ADD_SURVEY_STEP,
                                 EDIT_ADMIN_LIST_MESSAGE, EDIT_SURVEY,
                                 SET_STEPS_ORDER, TAKE_SURVEY_COUNT_FILES,
                                 TAKE_SURVEY_ENTER_FILES,
-                                TAKE_SURVEY_ENTER_STRING)
+                                TAKE_SURVEY_ENTER_STRING, ADD_SURVEY, CHANGE_SURVEY_CURRENT_SURVEY_DATA)
 
 
 def create_edit_admin_list_output(admins: list[User]) -> str:
@@ -35,9 +35,9 @@ def create_edit_survey_output(survey_steps: list[dict]) -> str:
 
 def create_edit_survey_step_output(step: dict) -> str:
     text_message = CHANGE_SURVEY_STEP_CURRENT_STEP_DATA.format(id=step["id"],
-                                                             name=step["name"],
-                                                             text=step["text"],
-                                                             type=step["type"])
+                                                               name=step["name"],
+                                                               text=step["text"],
+                                                               type=step["type"])
     return text_message
 
 def create_set_steps_order_output(survey_steps: list[dict]) -> str:
@@ -57,6 +57,10 @@ def create_add_survey_step_output() -> str:
     text_message = ADD_SURVEY_STEP
     return text_message
 
+def create_add_survey_output() -> str:
+    text_message = ADD_SURVEY
+    return text_message
+
 def create_take_survey_step_output(step_type: SURVEY_STEP_TYPE, step_text: str) -> str:
     text_message = None
     if step_type == SURVEY_STEP_TYPE.STRING:
@@ -68,4 +72,10 @@ def create_take_survey_step_output(step_type: SURVEY_STEP_TYPE, step_text: str) 
 
 def create_take_survey_file_count_output(file_count) -> str:
     text_message = TAKE_SURVEY_COUNT_FILES.format(file_count=file_count)
+    return text_message
+
+def create_change_survey_output(survey: dict) -> str:
+    text_message = CHANGE_SURVEY_CURRENT_SURVEY_DATA.format(name=survey["name"],
+                                                            start_message=survey["start_message"],
+                                                            finish_message=survey["finish_message"])
     return text_message

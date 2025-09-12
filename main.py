@@ -58,7 +58,9 @@ async def main():
     await drop_tables()
     await create_tables()
 
-    survey = Survey(name="clinical cases")
+    survey = Survey(name="clinical cases",
+                    start_message="Опаааа, стартовое сообщение опроса",
+                    finish_message="Оййййй, а это уже финальное сообщение")
     added_survey = await DB.survey.save_survey(survey=survey)
 
     minio_file_path = MINIO.key_builder.key_survey_file(user_id=user_id, survey_id=str(added_survey.id), filename="aboba")
@@ -129,7 +131,9 @@ async def main():
 
 
 
-    survey = Survey(name="test survey")
+    survey = Survey(name="test survey",
+                    start_message="Опаааа, стартовое сообщение опроса",
+                    finish_message="Оййййй, а это уже финальное сообщение")
     added_survey = await DB.survey.save_survey(survey=survey)
 
     survey_step = SurveyStep(survey_id=added_survey.id,

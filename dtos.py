@@ -9,6 +9,8 @@ from enums import SURVEY_STEP_TYPE
 class Survey(BaseModel):
     id: Optional[int] = None
     name: str
+    start_message: str
+    finish_message: str
     survey_steps: Optional[list["SurveyStep"]] = None
 
 
