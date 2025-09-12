@@ -41,6 +41,6 @@ class SurveyResultMapper(ABCMapper):
         return SurveyResultORM(
             id=dto.id,
             user_id=dto.user_id,
-            survey_id=dto.survey_id,
-            created_at=dto.created_at or datetime.utcnow()
+            survey_id=dto.survey_id
+            # created_at=dto.created_at or datetime.utcnow()
         )

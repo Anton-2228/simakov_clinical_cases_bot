@@ -1,5 +1,5 @@
 from datetime import datetime
-from sqlalchemy import ForeignKey, String, Text, BigInteger
+from sqlalchemy import ForeignKey, String, Text, BigInteger, text
 from sqlalchemy.dialects.postgresql import ENUM as PgEnum
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -38,7 +38,7 @@ class SurveyResultORM(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     user_id: Mapped[int] = mapped_column(BigInteger)
     survey_id: Mapped[int] = mapped_column(ForeignKey("surveys.id", ondelete="CASCADE"))
-    created_at: Mapped[datetime] = mapped_column(default=datetime.utcnow)
+    created_at: Mapped[datetime] = mapped_column(server_default=text("TIMEZONE('utc-3', now())"))
 
     survey: Mapped["SurveyORM"] = relationship()
     survey_step_results: Mapped[list["SurveyStepResultORM"]] = relationship(
@@ -52,7 +52,7 @@ class SurveyStepResultORM(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     survey_step_id: Mapped[int] = mapped_column(ForeignKey("survey_steps.id", ondelete="CASCADE"))
     result: Mapped[str] = mapped_column(Text)
-    created_at: Mapped[datetime] = mapped_column(default=datetime.utcnow)
+    created_at: Mapped[datetime] = mapped_column(server_default=text("TIMEZONE('utc-3', now())"))
     survey_result_id: Mapped[int] = mapped_column(ForeignKey("survey_results.id", ondelete="CASCADE"))
 
     survey_step: Mapped["SurveyStepORM"] = relationship()

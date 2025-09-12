@@ -23,6 +23,6 @@ class SurveyStepResultMapper(ABCMapper):
             id=dto.id,
             survey_step_id=dto.survey_step_id,
             result=dto.result,
-            created_at=dto.created_at or datetime.utcnow(),
+            # created_at=dto.created_at or datetime.utcnow(),
             survey_result_id=dto.survey_result_id
         )
