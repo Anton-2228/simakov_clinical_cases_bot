@@ -119,21 +119,22 @@ class SurveyKeyBuilder:
     _allowed = re.compile(r"[^a-zA-Z0-9._-]+")
 
     def _seg(self, s: str) -> str:
-        """
-        Делает безопасный сегмент пути:
-          - нормализует юникод, транслитерирует в ASCII
-          - режет запрещенные символы, заменяя на '-'
-          - убирает повторяющиеся дефисы и точки с краев
-        """
-        if not s:
-            return "_"
-        # нормализация и транслитерация в ASCII
-        norm = unicodedata.normalize("NFKD", s)
-        ascii_bytes = norm.encode("ascii", "ignore")
-        ascii_str = ascii_bytes.decode("ascii") or "_"
-        cleaned = self._allowed.sub("-", ascii_str).strip(" .-/")
-        cleaned = re.sub(r"-{2,}", "-", cleaned)
-        return cleaned or "_"
+        # """
+        # Делает безопасный сегмент пути:
+        #   - нормализует юникод, транслитерирует в ASCII
+        #   - режет запрещенные символы, заменяя на '-'
+        #   - убирает повторяющиеся дефисы и точки с краев
+        # """
+        # if not s:
+        #     return "_"
+        # # нормализация и транслитерация в ASCII
+        # norm = unicodedata.normalize("NFKD", s)
+        # ascii_bytes = norm.encode("ascii", "ignore")
+        # ascii_str = ascii_bytes.decode("ascii") or "_"
+        # cleaned = self._allowed.sub("-", ascii_str).strip(" .-/")
+        # cleaned = re.sub(r"-{2,}", "-", cleaned)
+        # return cleaned or "_"
+        return s
 
     def _file_name(self, name: str) -> str:
         seg = self._seg(name)

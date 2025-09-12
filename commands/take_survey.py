@@ -5,7 +5,8 @@ from typing import TYPE_CHECKING, Callable, Optional
 from aiogram.filters import CommandObject
 from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery, Message
-from magic_filter import F
+from aiogram import F
+# from magic_filter import F
 
 from aiogram_wrapper import AiogramWrapper
 from callbacks_factories import TakeSurveyCallbackFactory
