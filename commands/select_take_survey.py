@@ -39,8 +39,6 @@ class SelectTakeSurvey(BaseCommand):
         for survey in surveys:
             surveys_names.append(survey.name)
             surveys_idx_map[survey.id] = survey.name
-        await self.aiogram_wrapper.set_state_data(state_context=state, field_name=RedisTmpFields.SELECT_TAKE_SURVEY_LIST_SURVEYS.value,
-                                                  value=[x.model_dump() for x in surveys])
         await self.aiogram_wrapper.set_state_data(state_context=state, field_name=RedisTmpFields.SELECT_TAKE_SURVEY_IDX_MAP.value,
                                                   value=surveys_idx_map)
         await self.surveys_pager.init(state_context=state, elements=surveys_names, page_count=5)

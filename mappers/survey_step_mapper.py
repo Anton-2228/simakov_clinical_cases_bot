@@ -2,7 +2,6 @@
 from db.postgres_models import SurveyStepORM
 from dtos import SurveyStep
 from mappers.abc_mapper import ABCMapper
-from mappers.survey_mapper import SurveyMapper
 
 
 class SurveyStepMapper(ABCMapper):
@@ -14,8 +13,7 @@ class SurveyStepMapper(ABCMapper):
             position=entity.position,
             type=entity.type,
             text=entity.text,
-            # survey_id=entity.survey_id
-            survey=SurveyMapper.to_dto(entity.survey)
+            survey_id=entity.survey_id
         )
 
     @staticmethod
@@ -26,6 +24,5 @@ class SurveyStepMapper(ABCMapper):
             position=dto.position,
             type=dto.type,
             text=dto.text,
-            survey_id=dto.survey.id
-            # survey=SurveyMapper.to_entity(dto.survey)
+            survey_id=dto.survey_id
         )

@@ -37,3 +37,6 @@ MINIO_PASSWORD=os.getenv("MINIO_PASSWORD")
 assert MINIO_PASSWORD is not None, "MINIO_PASSWORD not initialized"
 MINIO_PROD_BUCKET=os.getenv("MINIO_PROD_BUCKET")
 assert MINIO_PROD_BUCKET is not None, "MINIO_PROD_BUCKET not initialized"
+
+YANDEX_DISK_TOKEN=os.getenv("YANDEX_DISK_TOKEN")
+assert YANDEX_DISK_TOKEN is not None, "YANDEX_DISK_TOKEN not initialized"

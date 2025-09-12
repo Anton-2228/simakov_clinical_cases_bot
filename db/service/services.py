@@ -21,7 +21,9 @@ from db.service.user.user_service import UserService
 
 
 class Services(ABCServices):
-    def __init__(self, redis_client: RedisStorage, minio_client: AsyncMinioClient):
+    def __init__(self,
+                 redis_client: RedisStorage,
+                 minio_client: AsyncMinioClient):
         self.redis_client = redis_client
         self.minio_client = minio_client
         self.user_service = RedisUserService(redis_client)

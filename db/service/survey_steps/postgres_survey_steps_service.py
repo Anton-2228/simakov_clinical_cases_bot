@@ -1,7 +1,6 @@
 from typing import List, Optional
 
 from sqlalchemy import select
-from sqlalchemy.orm import selectinload
 
 from db.postgres import SESSION_FACTORY
 from db.postgres_models import SurveyStepORM
@@ -18,17 +17,11 @@ class PostgresSurveyStepService(AsyncSurveyStepService):
             session.add(added_step)
             await session.commit()
             await session.refresh(added_step)
-            added_step = await session.scalar(select(SurveyStepORM)
-                                              .where(SurveyStepORM.id == added_step.id)
-                                              .options(selectinload(SurveyStepORM.survey)))
             return SurveyStepMapper.to_dto(added_step)
 
     async def get_survey_step(self, id: int) -> Optional[SurveyStep]:
         async with SESSION_FACTORY() as session:
-            # survey_step = await session.get(SurveyStepORM, id)
-            survey_step = await session.scalar(select(SurveyStepORM)
-                                               .where(SurveyStepORM.id == id)
-                                               .options(selectinload(SurveyStepORM.survey)))
+            survey_step = await session.get(SurveyStepORM, id)
             return SurveyStepMapper.to_dto(survey_step)
 
     async def get_all_survey_steps(self, survey_id: int) -> List[SurveyStep]:
@@ -36,7 +29,6 @@ class PostgresSurveyStepService(AsyncSurveyStepService):
             result = await session.scalars(
                 select(SurveyStepORM)
                 .where(SurveyStepORM.survey_id == survey_id)
-                .options(selectinload(SurveyStepORM.survey))
             )
             survey_steps = result.all()
             return [SurveyStepMapper.to_dto(survey_step) for survey_step in survey_steps]
@@ -47,9 +39,6 @@ class PostgresSurveyStepService(AsyncSurveyStepService):
             updated_step = await session.merge(updated_step)
             await session.commit()
             await session.refresh(updated_step)
-            updated_step = await session.scalar(select(SurveyStepORM)
-                                                .where(SurveyStepORM.id == updated_step.id)
-                                                .options(selectinload(SurveyStepORM.survey)))
             return SurveyStepMapper.to_dto(updated_step)
 
     async def delete_step(self, id: int) -> None:

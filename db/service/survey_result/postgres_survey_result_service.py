@@ -4,7 +4,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import selectinload
 
 from db.postgres import SESSION_FACTORY
-from db.postgres_models import SurveyResultORM
+from db.postgres_models import SurveyORM, SurveyResultORM
 from db.service.survey_result.async_survey_result_service import AsyncSurveyResultService
 from dtos import SurveyResult
 from mappers.survey_result_mapper import SurveyResultMapper
@@ -19,7 +19,7 @@ class PostgresSurveyResultService(AsyncSurveyResultService):
             await session.refresh(added_result)
             added_result = await session.scalar(select(SurveyResultORM)
                                                .where(SurveyResultORM.id == added_result.id)
-                                               .options(selectinload(SurveyResultORM.survey),
+                                               .options(selectinload(SurveyResultORM.survey).selectinload(SurveyORM.survey_steps),
                                                         selectinload(SurveyResultORM.survey_step_results)))
             return SurveyResultMapper.to_dto(added_result)
 
@@ -27,7 +27,7 @@ class PostgresSurveyResultService(AsyncSurveyResultService):
         async with SESSION_FACTORY() as session:
             survey_result = await session.scalar(select(SurveyResultORM)
                                                 .where(SurveyResultORM.id == id)
-                                                .options(selectinload(SurveyResultORM.survey),
+                                                .options(selectinload(SurveyResultORM.survey).selectinload(SurveyORM.survey_steps),
                                                          selectinload(SurveyResultORM.survey_step_results)))
             return SurveyResultMapper.to_dto(survey_result)
 
@@ -36,7 +36,7 @@ class PostgresSurveyResultService(AsyncSurveyResultService):
             result = await session.scalars(
                 select(SurveyResultORM)
                 .where(SurveyResultORM.user_id == user_id)
-                .options(selectinload(SurveyResultORM.survey),
+                .options(selectinload(SurveyResultORM.survey).selectinload(SurveyORM.survey_steps),
                          selectinload(SurveyResultORM.survey_step_results))
             )
             survey_results = result.all()
@@ -46,7 +46,7 @@ class PostgresSurveyResultService(AsyncSurveyResultService):
         async with SESSION_FACTORY() as session:
             result = await session.scalars(
                 select(SurveyResultORM)
-                .options(selectinload(SurveyResultORM.survey),
+                .options(selectinload(SurveyResultORM.survey).selectinload(SurveyORM.survey_steps),
                          selectinload(SurveyResultORM.survey_step_results))
             )
             survey_results = result.all()
@@ -60,7 +60,7 @@ class PostgresSurveyResultService(AsyncSurveyResultService):
             await session.refresh(updated_result)
             updated_result = await session.scalar(select(SurveyResultORM)
                                                  .where(SurveyResultORM.id == updated_result.id)
-                                                 .options(selectinload(SurveyResultORM.survey),
+                                                 .options(selectinload(SurveyResultORM.survey).selectinload(SurveyORM.survey_steps),
                                                           selectinload(SurveyResultORM.survey_step_results)))
             return SurveyResultMapper.to_dto(updated_result)
 

@@ -10,6 +10,7 @@ from magic_filter import F
 from aiogram_wrapper import AiogramWrapper
 from callbacks_factories import TakeSurveyCallbackFactory
 from db.service.abc_services import ABCServices
+from db.service.yandex_disk_wrapper import YANDEX_DISK_SESSION
 from dtos import SurveyStep, SurveyStepResult, SurveyResult
 from enums import (SURVEY_STEP_TYPE, ListTakeSurveyActions,
                    RedisTmpFields)
@@ -112,7 +113,8 @@ class TakeSurvey(BaseCommand):
 
         survey_answer = await self.aiogram_wrapper.get_state_data(state_context=state_context,
                                                                   field_name=RedisTmpFields.TAKE_SURVEY_SURVEY_ANSWER.value)
-        survey_answer[step.id] = {"answer": answer}
+        survey_answer[step.id] = {"answer": answer,
+                                  "type": SURVEY_STEP_TYPE.STRING.value}
         await self.aiogram_wrapper.set_state_data(state_context=state_context, field_name=RedisTmpFields.TAKE_SURVEY_SURVEY_ANSWER.value,
                                                   value=survey_answer)
         await self._send_next_ask(message=message, state_context=state_context)
@@ -136,7 +138,8 @@ class TakeSurvey(BaseCommand):
                                                                   field_name=RedisTmpFields.TAKE_SURVEY_SURVEY_ANSWER.value)
         step_id = str(step.id)
         if step_id not in survey_answer:
-            survey_answer[step_id] = {"answer": []}
+            survey_answer[step_id] = {"answer": [],
+                                      "type": SURVEY_STEP_TYPE.FILES.value}
 
         if len(survey_answer[step_id]["answer"]) >= self.max_files_count:
             send_message = await self.aiogram_wrapper.answer_massage(message=message,
@@ -173,11 +176,16 @@ class TakeSurvey(BaseCommand):
                                      user_id=message.chat.id)
         survey_result = await self.db.survey_result.save_survey_result(survey_result=survey_result)
         for step_id in survey_answer:
-            step_answer = json.dumps(survey_answer[step_id])
+            step_answer = json.dumps(survey_answer[step_id], ensure_ascii=False, indent=2)
             step_result = SurveyStepResult(survey_step_id=int(step_id),
                                            result=step_answer,
                                            survey_result_id=survey_result.id)
             step_result = await self.db.survey_step_result.save_survey_step_result(survey_step_result=step_result)
+
+        survey_result = await self.db.survey_result.get_survey_result(id=survey_result.id)
+
+        async with YANDEX_DISK_SESSION() as yd:
+            await yd.add_survey_result(services=self.db, survey_result=survey_result)
 
         await self.manager.aiogram_wrapper.set_state(state_context=state_context,
                                                      state=States.MAIN_MENU)

@@ -9,3 +9,4 @@ requests
 redis
 pydantic
 minio
+yadisk[async-defaults]

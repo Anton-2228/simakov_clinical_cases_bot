@@ -77,7 +77,7 @@ class AddSurveyStep(BaseCommand):
                                                               field_name=RedisTmpFields.ADD_SURVEY_STEP_SURVEY_ID.value)
         survey = await self.db.survey.get_survey(id=survey_id)
         all_steps = await self.db.survey_step.get_all_survey_steps(survey_id=survey_id)
-        step = SurveyStep(**template_step, position=len(all_steps), survey=survey)
+        step = SurveyStep(**template_step, position=len(all_steps), survey_id=survey.id)
         return step
 
     async def _save_message_data(self, state: FSMContext, message: Message | SendMessage):

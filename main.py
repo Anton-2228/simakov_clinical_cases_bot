@@ -8,6 +8,7 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import Message
 
 from db.postgres import create_tables, drop_tables
+from db.service.yandex_disk_wrapper import YANDEX_DISK_SESSION
 from dtos import Survey, SurveyStep
 from enums import SURVEY_STEP_TYPE, USER_TYPE
 from init import BOT, COMMANDS, DB, MANAGER, ROUTER, STORAGE, MINIO
@@ -47,6 +48,8 @@ async def main():
                 full_name="Зинченко Антон Андреевич",
                 user_type=USER_TYPE.ADMIN)
     user_id = await DB.user.save_user(user=user)
+    async with YANDEX_DISK_SESSION() as yd:
+        await yd.mkdir("Зинченко Антон Андреевич")
     # user = User(telegram_id=5613751001,
     #             full_name="Абоба Хуй",
     #             user_type=USER_TYPE.CLIENT)
@@ -66,55 +69,55 @@ async def main():
                                       file_path="./Dockerfile")
 
 
-    survey_step = SurveyStep(survey=added_survey,
+    survey_step = SurveyStep(survey_id=added_survey.id,
                              name="aboba 0",
                              text="aboba 0 text",
                              position=0,
                              type=SURVEY_STEP_TYPE.STRING)
     await DB.survey_step.save_survey_step(survey_step=survey_step)
-    survey_step = SurveyStep(survey=added_survey,
+    survey_step = SurveyStep(survey_id=added_survey.id,
                              name="aboba 1",
                              text="aboba 1 text",
                              position=1,
                              type=SURVEY_STEP_TYPE.STRING)
     await DB.survey_step.save_survey_step(survey_step=survey_step)
-    survey_step = SurveyStep(survey=added_survey,
+    survey_step = SurveyStep(survey_id=added_survey.id,
                              name="aboba 2",
                              text="aboba 2 text",
                              position=2,
                              type=SURVEY_STEP_TYPE.STRING)
     await DB.survey_step.save_survey_step(survey_step=survey_step)
-    survey_step = SurveyStep(survey=added_survey,
+    survey_step = SurveyStep(survey_id=added_survey.id,
                              name="aboba 3",
                              text="aboba 3 text",
                              position=3,
                              type=SURVEY_STEP_TYPE.STRING)
     await DB.survey_step.save_survey_step(survey_step=survey_step)
-    survey_step = SurveyStep(survey=added_survey,
+    survey_step = SurveyStep(survey_id=added_survey.id,
                              name="aboba 4",
                              text="aboba 4 text",
                              position=4,
                              type=SURVEY_STEP_TYPE.STRING)
     await DB.survey_step.save_survey_step(survey_step=survey_step)
-    survey_step = SurveyStep(survey=added_survey,
+    survey_step = SurveyStep(survey_id=added_survey.id,
                              name="aboba 5",
                              text="aboba 5 text",
                              position=5,
                              type=SURVEY_STEP_TYPE.STRING)
     await DB.survey_step.save_survey_step(survey_step=survey_step)
-    survey_step = SurveyStep(survey=added_survey,
+    survey_step = SurveyStep(survey_id=added_survey.id,
                              name="aboba 6",
                              text="aboba 6 text",
                              position=6,
                              type=SURVEY_STEP_TYPE.STRING)
     await DB.survey_step.save_survey_step(survey_step=survey_step)
-    survey_step = SurveyStep(survey=added_survey,
+    survey_step = SurveyStep(survey_id=added_survey.id,
                              name="aboba 7",
                              text="aboba 7 text",
                              position=7,
                              type=SURVEY_STEP_TYPE.STRING)
     await DB.survey_step.save_survey_step(survey_step=survey_step)
-    survey_step = SurveyStep(survey=added_survey,
+    survey_step = SurveyStep(survey_id=added_survey.id,
                              name="aboba 8",
                              text="aboba 8 text",
                              position=8,
@@ -129,19 +132,19 @@ async def main():
     survey = Survey(name="test survey")
     added_survey = await DB.survey.save_survey(survey=survey)
 
-    survey_step = SurveyStep(survey=added_survey,
+    survey_step = SurveyStep(survey_id=added_survey.id,
                              name="aboba 0",
                              text="aboba 0 text",
                              position=0,
                              type=SURVEY_STEP_TYPE.STRING)
     await DB.survey_step.save_survey_step(survey_step=survey_step)
-    survey_step = SurveyStep(survey=added_survey,
+    survey_step = SurveyStep(survey_id=added_survey.id,
                              name="aboba 1",
                              text="aboba 1 text",
                              position=1,
                              type=SURVEY_STEP_TYPE.STRING)
     await DB.survey_step.save_survey_step(survey_step=survey_step)
-    survey_step = SurveyStep(survey=added_survey,
+    survey_step = SurveyStep(survey_id=added_survey.id,
                              name="aboba 2",
                              text="aboba 2 text",
                              position=2,

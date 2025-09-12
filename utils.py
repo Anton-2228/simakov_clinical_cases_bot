@@ -1,5 +1,8 @@
 import json
+import os
 import re
+import secrets
+import tempfile
 import uuid
 from os import PathLike
 from pathlib import Path
@@ -28,3 +31,9 @@ def escape_markdown_v2(text: str) -> str:
 
 def get_uuid() -> str:
     return str(uuid.uuid4())
+
+def get_tmp_path() -> str:
+    temp_dir = tempfile.mkdtemp()
+    random_hex = secrets.token_hex(16)
+    temp_file_path = os.path.join(temp_dir, random_hex)
+    return temp_file_path

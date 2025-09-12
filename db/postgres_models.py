@@ -13,7 +13,8 @@ class SurveyORM(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str]
 
-    survey_steps: Mapped[list["SurveyStepORM"]] = relationship(back_populates="survey")
+    survey_steps: Mapped[list["SurveyStepORM"]] = relationship(cascade="all, delete-orphan",
+                                                               passive_deletes=True)
 
 
 class SurveyStepORM(Base):
@@ -30,8 +31,6 @@ class SurveyStepORM(Base):
         ForeignKey("surveys.id", ondelete="CASCADE")
     )
 
-    survey: Mapped["SurveyORM"] = relationship(back_populates="survey_steps")
-
 
 class SurveyResultORM(Base):
     __tablename__ = "survey_results"
@@ -43,7 +42,7 @@ class SurveyResultORM(Base):
 
     survey: Mapped["SurveyORM"] = relationship()
     survey_step_results: Mapped[list["SurveyStepResultORM"]] = relationship(
-        back_populates="survey_result", cascade="all, delete-orphan"
+        back_populates="survey_result"
     )
 
 

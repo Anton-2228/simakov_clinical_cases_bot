@@ -1,15 +1,21 @@
 from datetime import datetime
+from typing import TYPE_CHECKING
 
 from db.postgres_models import SurveyResultORM
 from dtos import SurveyResult
 from mappers.abc_mapper import ABCMapper
-from mappers.survey_mapper import SurveyMapper
-from mappers.survey_step_result_mapper import SurveyStepResultMapper
+
+if TYPE_CHECKING:
+    from mappers.survey_mapper import SurveyMapper
+    from mappers.survey_step_result_mapper import SurveyStepResultMapper
 
 
 class SurveyResultMapper(ABCMapper):
     @staticmethod
     def to_dto(entity: SurveyResultORM):
+        from mappers.survey_mapper import SurveyMapper
+        from mappers.survey_step_result_mapper import SurveyStepResultMapper
+        
         survey_step_results = None
         if entity.survey_step_results:
             survey_step_results = [

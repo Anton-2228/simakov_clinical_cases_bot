@@ -7,6 +7,7 @@ from aiogram.types import Message
 
 from aiogram_wrapper import AiogramWrapper
 from db.service.abc_services import ABCServices
+from db.service.yandex_disk_wrapper import YANDEX_DISK_SESSION
 from enums import USER_TYPE
 from models import User
 from resources.messages import (REGISTRATION_MESSAGE,
@@ -43,5 +44,7 @@ class Registration(BaseCommand):
                     full_name=full_name,
                     user_type=USER_TYPE.CLIENT)
         await self.db.user.save_user(user=user)
+        async with YANDEX_DISK_SESSION() as yd:
+            await yd.create_user_dir(user.full_name)
         await self.aiogram_wrapper.clear_state(state_context=state)
         await self.manager.launch(name="start", message=message, state=state, command=command)

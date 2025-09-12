@@ -18,7 +18,6 @@ class RedisTmpFields(Enum):
     DUMP_SELECT_TAKE_SURVEY = "dump_select_take_survey"
     DUMP_TAKE_SURVEY = "dump_take_survey"
 
-    EDIT_SURVEYS_LIST_SURVEYS = "edit_surveys_current_surveys"
     EDIT_SURVEYS_IDX_MAP = "edit_surveys_idx_map"
     EDIT_SURVEY_LIST_STEPS = "edit_survey_list_steps"
     EDIT_SURVEY_SURVEY_ID = "edit_survey_survey_id"
@@ -33,7 +32,6 @@ class RedisTmpFields(Enum):
     ADD_SURVEY_STEP_SURVEY_ID = "add_survey_step_survey_id"
     ADD_SURVEY_STEP_CURRENT_FIELD_ID = "add_survey_step_current_field"
     ADD_SURVEY_STEP_TEMPLATE_ADDED_STEP = "add_survey_step_template_added_step"
-    SELECT_TAKE_SURVEY_LIST_SURVEYS = "select_take_survey_list_surveys"
     SELECT_TAKE_SURVEY_IDX_MAP = "select_take_survey_idx_map"
     TAKE_SURVEY_SURVEY_ANSWER = "take_survey_survey_answer"
     TAKE_SURVEY_SURVEY_ID = "take_survey_survey_id"
