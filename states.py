@@ -25,3 +25,4 @@ class States(StatesGroup):
     SELECT_TAKE_SURVEY = State()
     PROCESSED_SURVEY = State()
     SEND_MESSAGE_TO_ADMIN = State()
+    SEND_MESSAGE_TO_USER = State()

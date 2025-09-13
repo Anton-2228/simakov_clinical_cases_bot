@@ -1,5 +1,5 @@
 
-from aiogram import Bot, Router
+from aiogram import Bot, Router, Dispatcher
 from aiogram.client.default import DefaultBotProperties
 from aiogram.enums import ParseMode
 from aiogram.fsm.storage.redis import RedisStorage as TGRedisStorage
@@ -23,6 +23,9 @@ BOT = Bot(token=TELEGRAM_BOT_TOKEN, default=DefaultBotProperties(parse_mode=Pars
 REDIS = RedisStorage(host=REDIS_HOST, port=REDIS_PORT)
 STORAGE = TGRedisStorage(redis=REDIS.redis)
 
+DISPATCHER = Dispatcher(storage=STORAGE)
+DISPATCHER.include_router(ROUTER)
+
 KEY_BUILDER = SurveyKeyBuilder(
     KeyBuilderConfig(
         root=MINIO_PROD_BUCKET,
@@ -45,7 +48,8 @@ DB = Services(redis_client=REDIS, minio_client=MINIO)
 
 AIOGRAM_WRAPPER = AiogramWrapper(bot=BOT,
                                  db=DB,
-                                 router=ROUTER)
+                                 router=ROUTER,
+                                 dispatcher=DISPATCHER)
 
 MANAGER = Manager(db=DB, aiogram_wrapper=AIOGRAM_WRAPPER)
 MANAGER.update(role=USER_TYPE.CLIENT,

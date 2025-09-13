@@ -5,7 +5,8 @@ from resources.messages import (ADD_SURVEY_STEP,
                                 EDIT_ADMIN_LIST_MESSAGE, EDIT_SURVEY,
                                 SET_STEPS_ORDER, TAKE_SURVEY_COUNT_FILES,
                                 TAKE_SURVEY_ENTER_FILES,
-                                TAKE_SURVEY_ENTER_STRING, ADD_SURVEY, CHANGE_SURVEY_CURRENT_SURVEY_DATA)
+                                TAKE_SURVEY_ENTER_STRING, ADD_SURVEY, CHANGE_SURVEY_CURRENT_SURVEY_DATA,
+                                MESSAGE_TO_ADMINS, MESSAGE_TO_USER)
 
 
 def create_edit_admin_list_output(admins: list[User]) -> str:
@@ -79,3 +80,10 @@ def create_change_survey_output(survey: dict) -> str:
                                                             start_message=survey["start_message"],
                                                             finish_message=survey["finish_message"])
     return text_message
+
+def create_message_to_admins_output(user: User, text: str) -> str:
+    return MESSAGE_TO_ADMINS.format(user_name=f"{user.full_name}({user.telegram_id})",
+                                    text=text)
+
+def create_message_to_user_output(text: str) -> str:
+    return MESSAGE_TO_USER.format(text=text)

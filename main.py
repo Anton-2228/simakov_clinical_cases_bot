@@ -11,8 +11,10 @@ from db.postgres import create_tables, drop_tables
 from db.service.yandex_disk_wrapper import YANDEX_DISK_SESSION
 from dtos import Survey, SurveyStep
 from enums import SURVEY_STEP_TYPE, USER_TYPE
-from init import BOT, COMMANDS, DB, MANAGER, ROUTER, STORAGE, MINIO
+from init import BOT, COMMANDS, DB, MANAGER, ROUTER, STORAGE, MINIO, AIOGRAM_WRAPPER, DISPATCHER
 from models import User
+from regular_tasks import RegularTasks
+from scheduler import Scheduler
 from states import States
 from tests_functions._add_user_to_redis import main as add_user_to_redis
 
@@ -36,10 +38,8 @@ async def enter_new_authorized_users(message: Message, state: FSMContext, comman
 
 async def start_polling():
     await BOT.set_my_commands(commands=COMMANDS)
-    dp = Dispatcher(storage=STORAGE)
-    dp.include_router(ROUTER)
 
-    await dp.start_polling(BOT)
+    await DISPATCHER.start_polling(BOT)
 
 async def main():
     await STORAGE.redis.client().flushdb()
@@ -154,6 +154,13 @@ async def main():
                              position=2,
                              type=SURVEY_STEP_TYPE.FILES)
     await DB.survey_step.save_survey_step(survey_step=survey_step)
+
+
+    scheduler = Scheduler()
+    regular_tasks = RegularTasks(db=DB, aiogram_wrapper=AIOGRAM_WRAPPER, manager=MANAGER)
+    scheduler.register_fetcher_interval(fetch_job=regular_tasks.send_messages_to_admins, seconds=5)
+    scheduler.register_fetcher_interval(fetch_job=regular_tasks.send_messages_to_users, seconds=5)
+    await scheduler.start()
 
 
     await start_polling()

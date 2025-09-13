@@ -15,7 +15,8 @@ from callbacks_factories import (AddSurveyCallbackFactory,
                                  SelectTakeSurveyCallbackFactory,
                                  SetStepsOrderCallbackFactory,
                                  TakeSurveyCallbackFactory,
-                                 UserMainMenuCallbackFactory, SendMessageToAdminCallbackFactory)
+                                 UserMainMenuCallbackFactory, SendMessageToAdminCallbackFactory,
+                                 ReplyMessageToClientCallbackFactory, SendMessageToUserCallbackFactory)
 from enums import (SURVEY_STEP_TYPE, SURVEY_STEP_VARIABLE_FILEDS, SURVEY_VARIABLE_FIELDS,
                    ListAddSurveyListActions, ListAddSurveyStepActions,
                    ListAddUserToAdminListActions, ListAdminMainMenuActions,
@@ -25,7 +26,7 @@ from enums import (SURVEY_STEP_TYPE, SURVEY_STEP_VARIABLE_FILEDS, SURVEY_VARIABL
                    ListEditSurveysActions, ListEditSurveyStepsActions,
                    ListSelectTakeSurveyActions, ListSetStepsOrderActions,
                    ListTakeSurveyActions, ListUserMainMenuActions, ListChangeSurveyActions,
-                   ListSendMessageToAdminActions)
+                   ListSendMessageToAdminActions, ListReplyMessageToClientActions, ListSendMessageToUserActions)
 from models import User
 from pagers.pager import PAGING_STATUS
 
@@ -360,4 +361,15 @@ def get_keyboard_for_change_survey(field: SURVEY_VARIABLE_FIELDS) -> InlineKeybo
 def get_keyboard_for_send_message_to_admin() -> InlineKeyboardBuilder:
     builder = InlineKeyboardBuilder()
     builder.row(InlineKeyboardButton(text="Вернуться в главное меню", callback_data=SendMessageToAdminCallbackFactory(action=ListSendMessageToAdminActions.RETURN_TO_MAIN_MENU).pack()))
+    return builder
+
+def get_keyboard_for_reply_message_to_client(from_user_id: int) -> InlineKeyboardBuilder:
+    builder = InlineKeyboardBuilder()
+    builder.row(InlineKeyboardButton(text="Ответить пользователю", callback_data=ReplyMessageToClientCallbackFactory(action=ListReplyMessageToClientActions.REPLY_TO_CLIENT,
+                                                                                                                     from_user_id=from_user_id).pack()))
+    return builder
+
+def get_keyboard_for_send_message_to_user() -> InlineKeyboardBuilder:
+    builder = InlineKeyboardBuilder()
+    builder.row(InlineKeyboardButton(text="Вернуться в главное меню", callback_data=SendMessageToUserCallbackFactory(action=ListSendMessageToUserActions.RETURN_TO_MAIN_MENU).pack()))
     return builder

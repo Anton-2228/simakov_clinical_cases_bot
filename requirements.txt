@@ -11,3 +11,4 @@ pydantic
 minio
 yadisk[async-defaults]
 openpyxl
+apscheduler

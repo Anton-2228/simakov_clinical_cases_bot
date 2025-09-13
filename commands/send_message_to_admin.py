@@ -9,7 +9,7 @@ from magic_filter import F
 from aiogram_wrapper import AiogramWrapper
 from callbacks_factories import AddSurveyCallbackFactory, SendMessageToAdminCallbackFactory
 from commands import BaseCommand
-from db.postgres_models import MessageStatus, MESSAGE_TYPE
+from db.postgres_models import MessageStatus, MessageType
 from db.service.abc_services import ABCServices
 from enums import ListAddSurveyListActions, ListSendMessageToAdminActions
 from keyboards_generators import get_keyboard_for_send_message_to_admin
@@ -37,19 +37,21 @@ class SendMessageToAdmin(BaseCommand):
     async def _enter_value(self, message: Message, state: FSMContext, command: Optional[CommandObject] = None):
         ask = message.text.strip()
         message_to_admin = MessageDTO(text=ask,
-                             from_user_id=message.chat.id,
-                             status=MessageStatus.NEW,
-                             type=MESSAGE_TYPE.TO_ADMINS)
+                                      from_user_id=message.chat.id,
+                                      status=MessageStatus.NEW,
+                                      type=MessageType.TO_ADMINS)
         await self.db.message.save_message(message=message_to_admin)
         await self.aiogram_wrapper.answer_massage(message=message,
                                                   text=SEND_MESSAGE_TO_ADMIN_FINISH)
+        await self.manager.aiogram_wrapper.set_state(state_context=state,
+                                                     state=States.MAIN_MENU)
         await self.manager.launch(name="main_menu",
                                   message=message,
                                   state=state)
 
     async def _return_to_main_menu(self, callback: CallbackQuery, callback_data: SendMessageToAdminCallbackFactory, state: FSMContext):
         await self.manager.aiogram_wrapper.set_state(state_context=state,
-                                                     state=States.EDIT_SURVEYS)
+                                                     state=States.MAIN_MENU)
         await self.manager.aiogram_wrapper.delete_message(message_id=callback.message.message_id,
                                                           chat_id=callback.from_user.id)
         await self.manager.launch(name="main_menu",

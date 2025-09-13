@@ -12,10 +12,11 @@ from enums import SURVEY_STEP_TYPE
 
 class MessageStatus(Enum):
     NEW = "new"
+    SENT = "sent"
     ANSWERED = "answered"
 
 
-class MESSAGE_TYPE(Enum):
+class MessageType(Enum):
     TO_ADMINS = "to_admins"
     TO_USER = "to_user"
 
@@ -84,6 +85,6 @@ class MessagesORM(Base):
     status: Mapped[MessageStatus] = mapped_column(
         PgEnum(MessageStatus, name="message_status", create_type=True)
     )
-    type: Mapped[MESSAGE_TYPE] = mapped_column(
-        PgEnum(MESSAGE_TYPE, name="message_type", create_type=True)
+    type: Mapped[MessageType] = mapped_column(
+        PgEnum(MessageType, name="message_type", create_type=True)
     )

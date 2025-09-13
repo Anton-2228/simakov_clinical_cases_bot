@@ -18,8 +18,10 @@ from .edit_survey import EditSurvey
 from .edit_survey_step import EditSurveyStep
 from .edit_surveys import EditSurveys
 from .registration import Registration
+from .reply_to_client import ReplyMessageToClient
 from .select_take_survey import SelectTakeSurvey
 from .send_message_to_admin import SendMessageToAdmin
+from .send_message_to_user import SendMessageToUser
 from .set_steps_order import SetStepsOrder
 from .take_survey import TakeSurvey
 from .user_main_menu import UserMainMenu
@@ -54,6 +56,8 @@ def get_admin_commands(manager: "Manager", db: ABCServices, aiogram_wrapper: Aio
         "change_survey_step": ChangeSurveyStep(manager, db, aiogram_wrapper),
         "add_survey_step": AddSurveyStep(manager, db, aiogram_wrapper),
         "set_steps_order": SetStepsOrder(manager, db, aiogram_wrapper),
-        "take_survey": TakeSurvey(manager, db, aiogram_wrapper)
+        "take_survey": TakeSurvey(manager, db, aiogram_wrapper),
+        "send_message_to_user": SendMessageToUser(manager, db, aiogram_wrapper),
+        "reply_message_to_client": ReplyMessageToClient(manager, db, aiogram_wrapper)
     }
     return commands

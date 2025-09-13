@@ -41,6 +41,8 @@ class RedisTmpFields(Enum):
     SELECT_TAKE_SURVEY_IDX_MAP = "select_take_survey_idx_map"
     TAKE_SURVEY_SURVEY_ANSWER = "take_survey_survey_answer"
     TAKE_SURVEY_SURVEY_ID = "take_survey_survey_id"
+    SEND_MESSAGE_TO_USER_FROM_USER_ID = "send_message_to_user_from_user_id"
+    SEND_MESSAGE_TO_USER_REPLY_MESSAGE_ID = "send_message_to_user_reply_message_id"
 
 class USER_TYPE(Enum):
     ADMIN = "admin"
@@ -137,4 +139,10 @@ class ListTakeSurveyActions(Enum):
     START_SURVEY = "start_survey"
 
 class ListSendMessageToAdminActions(Enum):
+    RETURN_TO_MAIN_MENU = "return_to_main_menu"
+
+class ListReplyMessageToClientActions(Enum):
+    REPLY_TO_CLIENT = "reply_to_client"
+
+class ListSendMessageToUserActions(Enum):
     RETURN_TO_MAIN_MENU = "return_to_main_menu"

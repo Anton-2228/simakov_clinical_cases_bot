@@ -4,7 +4,7 @@ import tempfile
 import os
 import secrets
 
-from aiogram import Bot, Router
+from aiogram import Bot, Router, Dispatcher
 from aiogram.dispatcher.event.handler import CallbackType
 from aiogram.fsm.context import FSMContext
 from aiogram.methods import SendMessage
@@ -20,10 +20,12 @@ class AiogramWrapper:
     def __init__(self,
                  bot: Bot,
                  db: ABCServices,
-                 router: Router):
+                 router: Router,
+                 dispatcher: Dispatcher):
         self.bot = bot
         self.db = db
         self.router = router
+        self.dispatcher = dispatcher
 
     async def init_states_data(self, state_context: FSMContext):
         # Тут концептуально должна вызываться инициализация переменных состояния на случай, если где-то
@@ -64,6 +66,26 @@ class AiogramWrapper:
     async def answer_massage(self, message: Message, *args, **kwargs) -> SendMessage:
         send_message = await message.answer(*args, **kwargs)
         return send_message
+
+    async def send_message(self,
+                          chat_id: int,
+                          text: str,
+                          reply_markup: Optional[InlineKeyboardMarkup] = None,
+                          disable_web_page_preview: Optional[bool] = None) -> tuple[Message, FSMContext]:
+        message = await self.bot.send_message(
+            chat_id=chat_id,
+            text=text,
+            reply_markup=reply_markup,
+            disable_web_page_preview=disable_web_page_preview
+        )
+
+        state: FSMContext = self.dispatcher.fsm.get_context(
+            bot=self.bot,
+            chat_id=chat_id,
+            user_id=chat_id  # если у тебя личка, то chat_id == user_id
+        )
+
+        return message, state
 
     async def edit_message_reply_markup(self, chat_id: int, message_id: int, reply_markup: Optional[InlineKeyboardMarkup]):
         await self.bot.edit_message_reply_markup(chat_id=chat_id,

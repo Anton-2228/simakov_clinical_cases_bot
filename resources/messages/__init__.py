@@ -50,3 +50,7 @@ TAKE_SURVEY_SEND_NOT_TEXT = load_txt(Path(__file__).parent / "errors/TAKE_SURVEY
 TAKE_SURVEY_SENDED_NOT_ENOUGH_FILES = load_txt(Path(__file__).parent / "errors/TAKE_SURVEY_SENDED_NOT_ENOUGH_FILES.txt")
 SEND_MESSAGE_TO_ADMIN = load_txt(Path(__file__).parent / "send_messages/SEND_MESSAGE_TO_ADMIN.txt")
 SEND_MESSAGE_TO_ADMIN_FINISH = load_txt(Path(__file__).parent / "send_messages/SEND_MESSAGE_TO_ADMIN_FINISH.txt")
+SEND_MESSAGE_TO_USER = load_txt(Path(__file__).parent / "send_messages/SEND_MESSAGE_TO_USER.txt")
+SEND_MESSAGE_TO_USER_FINISH = load_txt(Path(__file__).parent / "send_messages/SEND_MESSAGE_TO_USER_FINISH.txt")
+MESSAGE_TO_ADMINS = load_txt(Path(__file__).parent / "send_messages/MESSAGE_TO_ADMINS.txt")
+MESSAGE_TO_USER = load_txt(Path(__file__).parent / "send_messages/MESSAGE_TO_USER.txt")
