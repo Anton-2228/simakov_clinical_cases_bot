@@ -38,6 +38,6 @@ class ReplyMessageToClient(BaseCommand):
         await self.manager.launch(name="send_message_to_user",
                                   message=callback.message,
                                   state=state,
-                                  from_user_id=callback_data.from_user_id)
+                                  to_user_id=callback_data.from_user_id)
 
         await callback.answer()

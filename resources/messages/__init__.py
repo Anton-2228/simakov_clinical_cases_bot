@@ -54,3 +54,4 @@ SEND_MESSAGE_TO_USER = load_txt(Path(__file__).parent / "send_messages/SEND_MESS
 SEND_MESSAGE_TO_USER_FINISH = load_txt(Path(__file__).parent / "send_messages/SEND_MESSAGE_TO_USER_FINISH.txt")
 MESSAGE_TO_ADMINS = load_txt(Path(__file__).parent / "send_messages/MESSAGE_TO_ADMINS.txt")
 MESSAGE_TO_USER = load_txt(Path(__file__).parent / "send_messages/MESSAGE_TO_USER.txt")
+SELECT_USER_TO_SEND_MESSAGE = load_txt(Path(__file__).parent / "SELECT_USER_TO_SEND_MESSAGE.txt")

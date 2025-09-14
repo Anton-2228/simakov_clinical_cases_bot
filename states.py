@@ -26,3 +26,4 @@ class States(StatesGroup):
     PROCESSED_SURVEY = State()
     SEND_MESSAGE_TO_ADMIN = State()
     SEND_MESSAGE_TO_USER = State()
+    SELECT_USER_TO_SEND_MESSAGE = State()

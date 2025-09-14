@@ -32,6 +32,7 @@ class AdminMainMenu(BaseCommand):
         self.aiogram_wrapper.register_callback(self._edit_surveys, AdminMainMenuCallbackFactory.filter(F.action == ListAdminMainMenuActions.EDIT_SURVEYS))
         self.aiogram_wrapper.register_callback(self._edit_admin_list, AdminMainMenuCallbackFactory.filter(F.action == ListAdminMainMenuActions.EDIT_ADMIN_LIST))
         self.aiogram_wrapper.register_callback(self._get_dump_users, AdminMainMenuCallbackFactory.filter(F.action == ListAdminMainMenuActions.GET_DUMP_USERS))
+        self.aiogram_wrapper.register_callback(self._send_message_to_user, AdminMainMenuCallbackFactory.filter(F.action == ListAdminMainMenuActions.SEND_MESSAGE_TO_USER))
 
     async def execute(self, message: Message, state: FSMContext, command: Optional[CommandObject] = None, **kwargs):
         keyboard_builder = get_keyboard_for_admin_main_menu()
@@ -80,4 +81,14 @@ class AdminMainMenu(BaseCommand):
                                                        file_path=file_path)
         await self.aiogram_wrapper.send_file(chat_id=callback.message.chat.id,
                                              file_path=file_path)
+        await callback.answer()
+
+    async def _send_message_to_user(self, callback: CallbackQuery, callback_data: AdminMainMenuCallbackFactory, state: FSMContext):
+        await self.aiogram_wrapper.set_state(state_context=state,
+                                             state=States.SELECT_USER_TO_SEND_MESSAGE)
+        await self.manager.aiogram_wrapper.delete_message(message_id=callback.message.message_id,
+                                                          chat_id=callback.from_user.id)
+        await self.manager.launch(name="select_user_to_send_message",
+                                  message=callback.message,
+                                  state=state)
         await callback.answer()

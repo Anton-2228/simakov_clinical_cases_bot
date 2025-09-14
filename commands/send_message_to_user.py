@@ -14,6 +14,7 @@ from db.postgres_models import MessageStatus, MessageType
 from db.service.abc_services import ABCServices
 from enums import ListAddSurveyListActions, ListSendMessageToAdminActions, ListSendMessageToUserActions, RedisTmpFields
 from keyboards_generators import get_keyboard_for_send_message_to_admin, get_keyboard_for_send_message_to_user
+from output_generators import create_send_message_to_user_output
 from resources.messages import SEND_MESSAGE_TO_ADMIN, SEND_MESSAGE_TO_ADMIN_FINISH, SEND_MESSAGE_TO_USER, \
     SEND_MESSAGE_TO_USER_FINISH
 from states import States
@@ -30,16 +31,18 @@ class SendMessageToUser(BaseCommand):
         self.aiogram_wrapper.register_message_handler(self._enter_value, States.SEND_MESSAGE_TO_USER)
         self.aiogram_wrapper.register_callback(self._return_to_main_menu, SendMessageToUserCallbackFactory.filter( F.action == ListSendMessageToUserActions.RETURN_TO_MAIN_MENU))
 
-    async def execute(self, message: Message, state: FSMContext, command: Optional[CommandObject] = None, from_user_id: Optional[int] = None, reply_message_id: Optional[int] = None, **kwargs):
+    async def execute(self, message: Message, state: FSMContext, command: Optional[CommandObject] = None, to_user_id: Optional[int] = None, reply_message_id: Optional[int] = None, **kwargs):
         await self.aiogram_wrapper.set_state_data(state_context=state,
                                                   field_name=RedisTmpFields.SEND_MESSAGE_TO_USER_FROM_USER_ID.value,
-                                                  value=from_user_id)
+                                                  value=to_user_id)
         await self.aiogram_wrapper.set_state_data(state_context=state,
                                                   field_name=RedisTmpFields.SEND_MESSAGE_TO_USER_REPLY_MESSAGE_ID.value,
                                                   value=reply_message_id)
+        user = await self.db.user.get_user(telegram_id=to_user_id)
+        text = create_send_message_to_user_output(user=user)
         keyboard = get_keyboard_for_send_message_to_user()
         send_message = await self.aiogram_wrapper.answer_massage(message=message,
-                                                                 text=SEND_MESSAGE_TO_USER,
+                                                                 text=text,
                                                                  reply_markup=keyboard.as_markup())
 
     async def _enter_value(self, message: Message, state: FSMContext, command: Optional[CommandObject] = None):

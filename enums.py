@@ -19,6 +19,7 @@ class RedisTmpFields(Enum):
     DUMP_CLINICAL_CASES_SURVEY_STEPS = "dump_clinical_cases_survey_steps"
     DUMP_SELECT_TAKE_SURVEY = "dump_select_take_survey"
     DUMP_TAKE_SURVEY = "dump_take_survey"
+    DUMP_SELECT_USER_TO_SEND_MESSAGE = "dump_select_user_to_send_message"
 
     EDIT_SURVEYS_IDX_MAP = "edit_surveys_idx_map"
     EDIT_SURVEY_LIST_STEPS = "edit_survey_list_steps"
@@ -43,6 +44,7 @@ class RedisTmpFields(Enum):
     TAKE_SURVEY_SURVEY_ID = "take_survey_survey_id"
     SEND_MESSAGE_TO_USER_FROM_USER_ID = "send_message_to_user_from_user_id"
     SEND_MESSAGE_TO_USER_REPLY_MESSAGE_ID = "send_message_to_user_reply_message_id"
+    SELECT_USER_TO_SEND_MESSAGE_IDX_MAP = "select_user_to_send_message_idx_map"
 
 class USER_TYPE(Enum):
     ADMIN = "admin"
@@ -71,6 +73,7 @@ class ListAdminMainMenuActions(Enum):
     EDIT_SURVEYS = "edit_surveys"
     EDIT_ADMIN_LIST = "edit_admin_list"
     GET_DUMP_USERS = "get_dump_users"
+    SEND_MESSAGE_TO_USER = "send_message_to_user"
 
 class ListEditAdminListActions(Enum):
     ADD_ADMIN = "add_admin"
@@ -145,4 +148,10 @@ class ListReplyMessageToClientActions(Enum):
     REPLY_TO_CLIENT = "reply_to_client"
 
 class ListSendMessageToUserActions(Enum):
+    RETURN_TO_MAIN_MENU = "return_to_main_menu"
+
+class ListSelectUserToSendMessageActions(Enum):
+    USER_SELECTION = "user_selection"
+    NEXT_USERS = "next_users"
+    PREVIOUS_USERS = "previous_users"
     RETURN_TO_MAIN_MENU = "return_to_main_menu"
