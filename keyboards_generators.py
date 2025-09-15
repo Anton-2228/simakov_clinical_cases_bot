@@ -483,12 +483,12 @@ def get_keyboard_for_select_survey_result(survey_results: list[str], survey_resu
 
 def get_keyboard_for_survey_result_actions() -> InlineKeyboardBuilder:
     builder = InlineKeyboardBuilder()
-    
-    delete_result_button = InlineKeyboardButton(
-        text="Удалить результат",
-        callback_data=SurveyResultActionsCallbackFactory(action=ListSurveyResultActionsActions.DELETE_RESULT).pack()
+
+    see_answers_button = InlineKeyboardButton(
+        text="Посмотреть свои ответы",
+        callback_data=SurveyResultActionsCallbackFactory(action=ListSurveyResultActionsActions.SEE_ANSWERS).pack()
     )
-    builder.row(delete_result_button)
+    builder.row(see_answers_button)
     
     add_comments_button = InlineKeyboardButton(
         text="Добавить комментарии",
@@ -501,6 +501,12 @@ def get_keyboard_for_survey_result_actions() -> InlineKeyboardBuilder:
         callback_data=SurveyResultActionsCallbackFactory(action=ListSurveyResultActionsActions.ADD_FILES).pack()
     )
     builder.row(add_files_button)
+
+    delete_result_button = InlineKeyboardButton(
+        text="Удалить результат",
+        callback_data=SurveyResultActionsCallbackFactory(action=ListSurveyResultActionsActions.DELETE_RESULT).pack()
+    )
+    builder.row(delete_result_button)
     
     return_button = InlineKeyboardButton(
         text="Вернуться к выбору результата",

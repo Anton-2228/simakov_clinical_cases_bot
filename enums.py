@@ -176,6 +176,7 @@ class ListSurveyResultActionsActions(Enum):
     DELETE_RESULT = "delete_result"
     CONFIRM_DELETE_RESULT = "confirm_delete_result"
     REJECT_DELETE_RESULT = "reject_delete_result"
+    SEE_ANSWERS = "see_answers"
     ADD_COMMENTS = "add_comments"
     ADD_FILES = "add_files"
     RETURN_TO_SELECT_SURVEY_RESULT = "return_to_select_survey_result"

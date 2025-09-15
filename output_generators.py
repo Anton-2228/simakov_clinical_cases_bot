@@ -1,3 +1,6 @@
+import json
+
+from dtos import SurveyStep, SurveyStepResult
 from enums import SURVEY_STEP_TYPE
 from models import User
 from resources.messages import (ADD_SURVEY_STEP,
@@ -6,7 +9,9 @@ from resources.messages import (ADD_SURVEY_STEP,
                                 SET_STEPS_ORDER, TAKE_SURVEY_COUNT_FILES,
                                 TAKE_SURVEY_ENTER_FILES,
                                 TAKE_SURVEY_ENTER_STRING, ADD_SURVEY, CHANGE_SURVEY_CURRENT_SURVEY_DATA,
-                                MESSAGE_TO_ADMINS, MESSAGE_TO_USER, SEND_MESSAGE_TO_USER)
+                                MESSAGE_TO_ADMINS, MESSAGE_TO_USER, SEND_MESSAGE_TO_USER, SEE_ANSWERS_STRING,
+                                SEE_ANSWERS_FILES)
+from utils import load_json
 
 
 def create_edit_admin_list_output(admins: list[User]) -> str:
@@ -90,3 +95,14 @@ def create_message_to_user_output(text: str) -> str:
 
 def create_send_message_to_user_output(user: User) -> str:
     return SEND_MESSAGE_TO_USER.format(user_name=f"{user.full_name}(ID: {user.telegram_id})")
+
+def create_survey_result_see_answers_output(step: SurveyStep, step_result: SurveyStepResult) -> str:
+    text_message = None
+    if step.type == SURVEY_STEP_TYPE.STRING:
+        answer = json.loads(step_result.result)
+        text_message = SEE_ANSWERS_STRING.format(ask=step.text,
+                                                 answer=answer["answer"])
+    elif step.type == SURVEY_STEP_TYPE.FILES:
+        text_message = SEE_ANSWERS_FILES.format(ask=step.text)
+    assert text_message is not None, f"Нет генератора сообщения для типа ответа {step.type}"
+    return text_message
