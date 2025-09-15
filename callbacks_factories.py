@@ -12,7 +12,8 @@ from enums import (SURVEY_STEP_TYPE, SURVEY_STEP_VARIABLE_FILEDS, SURVEY_VARIABL
                    ListSelectTakeSurveyActions, ListSetStepsOrderActions,
                    ListTakeSurveyActions, ListUserMainMenuActions, ListSendMessageToAdminActions,
                    ListSendMessageToUserActions, ListReplyMessageToClientActions,
-                   ListSelectUserToSendMessageActions)
+                   ListSelectUserToSendMessageActions, ListSurveyActionsActions,
+                   ListSelectSurveyResultActions, ListSurveyResultActionsActions)
 
 
 class UserMainMenuCallbackFactory(CallbackData, prefix="umm"): # user_main_menu
@@ -79,3 +80,13 @@ class SendMessageToUserCallbackFactory(CallbackData, prefix="smtu"): # send_mess
 class SelectUserToSendMessageCallbackFactory(CallbackData, prefix="sutsm"): # select_user_to_send_message
     action: ListSelectUserToSendMessageActions
     user_id: Optional[int] = None
+
+class SurveyActionsCallbackFactory(CallbackData, prefix="sa"): # survey_actions
+    action: ListSurveyActionsActions
+
+class SelectSurveyResultCallbackFactory(CallbackData, prefix="ssr"): # select_survey_result
+    action: ListSelectSurveyResultActions
+    survey_result_id: Optional[int] = None
+
+class SurveyResultActionsCallbackFactory(CallbackData, prefix="sra"): # survey_result_actions
+    action: ListSurveyResultActionsActions

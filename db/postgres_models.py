@@ -58,7 +58,9 @@ class SurveyResultORM(Base):
 
     survey: Mapped["SurveyORM"] = relationship()
     survey_step_results: Mapped[list["SurveyStepResultORM"]] = relationship(
-        back_populates="survey_result"
+        back_populates="survey_result",
+        cascade="all, delete-orphan",
+        passive_deletes=True
     )
 
 

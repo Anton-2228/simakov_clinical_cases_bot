@@ -27,3 +27,8 @@ class States(StatesGroup):
     SEND_MESSAGE_TO_ADMIN = State()
     SEND_MESSAGE_TO_USER = State()
     SELECT_USER_TO_SEND_MESSAGE = State()
+    SURVEY_ACTIONS = State()
+    SELECT_SURVEY_RESULT = State()
+    SURVEY_RESULT_ACTIONS = State()
+    ADD_COMMENTS_TO_SURVEY_RESULT = State()
+    ADD_FILES_TO_SURVEY_RESULT = State()

@@ -20,6 +20,7 @@ class RedisTmpFields(Enum):
     DUMP_SELECT_TAKE_SURVEY = "dump_select_take_survey"
     DUMP_TAKE_SURVEY = "dump_take_survey"
     DUMP_SELECT_USER_TO_SEND_MESSAGE = "dump_select_user_to_send_message"
+    DUMP_SELECT_SURVEY_RESULT = "dump_select_survey_result"
 
     EDIT_SURVEYS_IDX_MAP = "edit_surveys_idx_map"
     EDIT_SURVEY_LIST_STEPS = "edit_survey_list_steps"
@@ -42,9 +43,13 @@ class RedisTmpFields(Enum):
     SELECT_TAKE_SURVEY_IDX_MAP = "select_take_survey_idx_map"
     TAKE_SURVEY_SURVEY_ANSWER = "take_survey_survey_answer"
     TAKE_SURVEY_SURVEY_ID = "take_survey_survey_id"
+    SURVEY_ACTIONS_SURVEY_ID = "survey_actions_survey_id"
     SEND_MESSAGE_TO_USER_FROM_USER_ID = "send_message_to_user_from_user_id"
     SEND_MESSAGE_TO_USER_REPLY_MESSAGE_ID = "send_message_to_user_reply_message_id"
     SELECT_USER_TO_SEND_MESSAGE_IDX_MAP = "select_user_to_send_message_idx_map"
+    SELECT_SURVEY_RESULT_IDX_MAP = "select_survey_result_idx_map"
+    SELECT_SURVEY_RESULT_SURVEY_ID = "select_survey_result_survey_id"
+    SURVEY_RESULT_ACTIONS_SURVEY_RESULT_ID = "survey_result_actions_survey_result_id"
 
 class USER_TYPE(Enum):
     ADMIN = "admin"
@@ -141,6 +146,11 @@ class ListTakeSurveyActions(Enum):
     RETURN_TO_SELECT_TAKE_SURVEY = "return_to_select_take_survey"
     START_SURVEY = "start_survey"
 
+class ListSurveyActionsActions(Enum):
+    TAKE_SURVEY = "take_survey"
+    VIEW_COMPLETED_SURVEYS = "view_completed_surveys"
+    RETURN_TO_MAIN_MENU = "return_to_main_menu"
+
 class ListSendMessageToAdminActions(Enum):
     RETURN_TO_MAIN_MENU = "return_to_main_menu"
 
@@ -155,3 +165,17 @@ class ListSelectUserToSendMessageActions(Enum):
     NEXT_USERS = "next_users"
     PREVIOUS_USERS = "previous_users"
     RETURN_TO_MAIN_MENU = "return_to_main_menu"
+
+class ListSelectSurveyResultActions(Enum):
+    RESULT_SELECTION = "result_selection"
+    NEXT_RESULTS = "next_results"
+    PREVIOUS_RESULTS = "previous_results"
+    RETURN_TO_SURVEY_ACTIONS = "return_to_survey_actions"
+
+class ListSurveyResultActionsActions(Enum):
+    DELETE_RESULT = "delete_result"
+    CONFIRM_DELETE_RESULT = "confirm_delete_result"
+    REJECT_DELETE_RESULT = "reject_delete_result"
+    ADD_COMMENTS = "add_comments"
+    ADD_FILES = "add_files"
+    RETURN_TO_SELECT_SURVEY_RESULT = "return_to_select_survey_result"

@@ -19,11 +19,14 @@ from .edit_survey_step import EditSurveyStep
 from .edit_surveys import EditSurveys
 from .registration import Registration
 from .reply_to_client import ReplyMessageToClient
+from .select_survey_result import SelectSurveyResult
 from .select_take_survey import SelectTakeSurvey
 from .select_user_to_send_message import SelectUserToSendMessage
 from .send_message_to_admin import SendMessageToAdmin
 from .send_message_to_user import SendMessageToUser
 from .set_steps_order import SetStepsOrder
+from .survey_actions import SurveyActions
+from .survey_result_actions import SurveyResultActions
 from .take_survey import TakeSurvey
 from .user_main_menu import UserMainMenu
 
@@ -37,7 +40,10 @@ def get_user_commands(manager: "Manager", db: ABCServices, aiogram_wrapper: Aiog
         "main_menu": UserMainMenu(manager, db, aiogram_wrapper),
         "select_take_survey": SelectTakeSurvey(manager, db, aiogram_wrapper),
         "take_survey": TakeSurvey(manager, db, aiogram_wrapper),
-        "send_message_to_admin": SendMessageToAdmin(manager, db, aiogram_wrapper)
+        "send_message_to_admin": SendMessageToAdmin(manager, db, aiogram_wrapper),
+        "survey_actions": SurveyActions(manager, db, aiogram_wrapper),
+        "select_survey_result": SelectSurveyResult(manager, db, aiogram_wrapper),
+        "survey_result_actions": SurveyResultActions(manager, db, aiogram_wrapper)
     }
     return commands
 
@@ -60,6 +66,9 @@ def get_admin_commands(manager: "Manager", db: ABCServices, aiogram_wrapper: Aio
         "take_survey": TakeSurvey(manager, db, aiogram_wrapper),
         "send_message_to_user": SendMessageToUser(manager, db, aiogram_wrapper),
         "reply_message_to_client": ReplyMessageToClient(manager, db, aiogram_wrapper),
-        "select_user_to_send_message": SelectUserToSendMessage(manager, db, aiogram_wrapper)
+        "select_user_to_send_message": SelectUserToSendMessage(manager, db, aiogram_wrapper),
+        "survey_actions": SurveyActions(manager, db, aiogram_wrapper),
+        "select_survey_result": SelectSurveyResult(manager, db, aiogram_wrapper),
+        "survey_result_actions": SurveyResultActions(manager, db, aiogram_wrapper)
     }
     return commands

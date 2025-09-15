@@ -14,10 +14,12 @@ from callbacks_factories import (AddSurveyCallbackFactory,
                                  EditSurveyStepsCallbackFactory,
                                  SelectTakeSurveyCallbackFactory,
                                  SetStepsOrderCallbackFactory,
+                                 SurveyActionsCallbackFactory,
                                  TakeSurveyCallbackFactory,
                                  UserMainMenuCallbackFactory, SendMessageToAdminCallbackFactory,
                                  ReplyMessageToClientCallbackFactory, SendMessageToUserCallbackFactory,
-                                 SelectUserToSendMessageCallbackFactory)
+                                 SelectUserToSendMessageCallbackFactory, SelectSurveyResultCallbackFactory,
+                                 SurveyResultActionsCallbackFactory)
 from enums import (SURVEY_STEP_TYPE, SURVEY_STEP_VARIABLE_FILEDS, SURVEY_VARIABLE_FIELDS,
                    ListAddSurveyListActions, ListAddSurveyStepActions,
                    ListAddUserToAdminListActions, ListAdminMainMenuActions,
@@ -26,9 +28,9 @@ from enums import (SURVEY_STEP_TYPE, SURVEY_STEP_VARIABLE_FILEDS, SURVEY_VARIABL
                    ListEditAdminListActions, ListEditSurveyActions,
                    ListEditSurveysActions, ListEditSurveyStepsActions,
                    ListSelectTakeSurveyActions, ListSetStepsOrderActions,
-                   ListTakeSurveyActions, ListUserMainMenuActions, ListChangeSurveyActions,
+                   ListSurveyActionsActions, ListTakeSurveyActions, ListUserMainMenuActions, ListChangeSurveyActions,
                    ListSendMessageToAdminActions, ListReplyMessageToClientActions, ListSendMessageToUserActions,
-                   ListSelectUserToSendMessageActions)
+                   ListSelectUserToSendMessageActions, ListSelectSurveyResultActions, ListSurveyResultActionsActions)
 from models import User
 from pagers.pager import PAGING_STATUS
 
@@ -414,4 +416,113 @@ def get_keyboard_for_select_user_to_send_message(users: list[str], user_idx_map:
         callback_data=SelectUserToSendMessageCallbackFactory(action=ListSelectUserToSendMessageActions.RETURN_TO_MAIN_MENU).pack()
     )
     builder.row(return_to_main_menu_button)
+    return builder
+
+
+def get_keyboard_for_survey_actions() -> InlineKeyboardBuilder:
+    builder = InlineKeyboardBuilder()
+    
+    take_survey_button = InlineKeyboardButton(
+        text="Пройти опрос",
+        callback_data=SurveyActionsCallbackFactory(action=ListSurveyActionsActions.TAKE_SURVEY).pack()
+    )
+    builder.row(take_survey_button)
+    
+    view_completed_button = InlineKeyboardButton(
+        text="Просмотреть пройденные опросы",
+        callback_data=SurveyActionsCallbackFactory(action=ListSurveyActionsActions.VIEW_COMPLETED_SURVEYS).pack()
+    )
+    builder.row(view_completed_button)
+    
+    return_to_main_menu_button = InlineKeyboardButton(
+        text="Вернуться к выбору опроса",
+        callback_data=SurveyActionsCallbackFactory(action=ListSurveyActionsActions.RETURN_TO_MAIN_MENU).pack()
+    )
+    builder.row(return_to_main_menu_button)
+    
+    return builder
+
+def get_keyboard_for_select_survey_result(survey_results: list[str], survey_result_idx_map: dict[int, str], page_status: PAGING_STATUS) -> InlineKeyboardBuilder:
+    def _get_survey_result_id(survey_result_text: str):
+        for id in survey_result_idx_map:
+            if survey_result_idx_map[id] == survey_result_text:
+                return id
+
+    builder = InlineKeyboardBuilder()
+    for survey_result in survey_results:
+        survey_result_id = _get_survey_result_id(survey_result_text=survey_result)
+        builder.button(
+            text=survey_result,
+            callback_data=SelectSurveyResultCallbackFactory(
+                action=ListSelectSurveyResultActions.RESULT_SELECTION,
+                survey_result_id=survey_result_id
+            )
+        )
+
+    builder.adjust(1, repeat=True)
+
+    navigate_buttons = []
+    if page_status not in [PAGING_STATUS.FIRST_PAGE, PAGING_STATUS.ONLY_PAGE, PAGING_STATUS.NO_PAGE]:
+        previous_button = InlineKeyboardButton(
+            text="Назад",
+            callback_data=SelectSurveyResultCallbackFactory(action=ListSelectSurveyResultActions.PREVIOUS_RESULTS).pack())
+        navigate_buttons.append(previous_button)
+    if page_status not in [PAGING_STATUS.LAST_PAGE, PAGING_STATUS.ONLY_PAGE, PAGING_STATUS.NO_PAGE]:
+        next_button = InlineKeyboardButton(
+            text="Вперед",
+            callback_data=SelectSurveyResultCallbackFactory(action=ListSelectSurveyResultActions.NEXT_RESULTS).pack())
+        navigate_buttons.append(next_button)
+    builder.row(*navigate_buttons)
+
+    return_to_survey_actions_button = InlineKeyboardButton(
+        text="Вернуться к действиям с опросом",
+        callback_data=SelectSurveyResultCallbackFactory(action=ListSelectSurveyResultActions.RETURN_TO_SURVEY_ACTIONS).pack()
+    )
+    builder.row(return_to_survey_actions_button)
+    return builder
+
+def get_keyboard_for_survey_result_actions() -> InlineKeyboardBuilder:
+    builder = InlineKeyboardBuilder()
+    
+    delete_result_button = InlineKeyboardButton(
+        text="Удалить результат",
+        callback_data=SurveyResultActionsCallbackFactory(action=ListSurveyResultActionsActions.DELETE_RESULT).pack()
+    )
+    builder.row(delete_result_button)
+    
+    add_comments_button = InlineKeyboardButton(
+        text="Добавить комментарии",
+        callback_data=SurveyResultActionsCallbackFactory(action=ListSurveyResultActionsActions.ADD_COMMENTS).pack()
+    )
+    builder.row(add_comments_button)
+    
+    add_files_button = InlineKeyboardButton(
+        text="Добавить файлы",
+        callback_data=SurveyResultActionsCallbackFactory(action=ListSurveyResultActionsActions.ADD_FILES).pack()
+    )
+    builder.row(add_files_button)
+    
+    return_button = InlineKeyboardButton(
+        text="Вернуться к выбору результата",
+        callback_data=SurveyResultActionsCallbackFactory(action=ListSurveyResultActionsActions.RETURN_TO_SELECT_SURVEY_RESULT).pack()
+    )
+    builder.row(return_button)
+    
+    return builder
+
+def get_keyboard_for_confirm_delete_survey_result() -> InlineKeyboardBuilder:
+    builder = InlineKeyboardBuilder()
+    
+    confirm_delete_button = InlineKeyboardButton(
+        text="Удалить результат",
+        callback_data=SurveyResultActionsCallbackFactory(action=ListSurveyResultActionsActions.CONFIRM_DELETE_RESULT).pack()
+    )
+    builder.row(confirm_delete_button)
+    
+    return_button = InlineKeyboardButton(
+        text="Вернуться",
+        callback_data=SurveyResultActionsCallbackFactory(action=ListSurveyResultActionsActions.REJECT_DELETE_RESULT).pack()
+    )
+    builder.row(return_button)
+    
     return builder

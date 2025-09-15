@@ -55,3 +55,7 @@ SEND_MESSAGE_TO_USER_FINISH = load_txt(Path(__file__).parent / "send_messages/SE
 MESSAGE_TO_ADMINS = load_txt(Path(__file__).parent / "send_messages/MESSAGE_TO_ADMINS.txt")
 MESSAGE_TO_USER = load_txt(Path(__file__).parent / "send_messages/MESSAGE_TO_USER.txt")
 SELECT_USER_TO_SEND_MESSAGE = load_txt(Path(__file__).parent / "SELECT_USER_TO_SEND_MESSAGE.txt")
+SURVEY_ACTIONS = load_txt(Path(__file__).parent / "SURVEY_ACTIONS.txt")
+SELECT_SURVEY_RESULT = load_txt(Path(__file__).parent / "SELECT_SURVEY_RESULT.txt")
+SURVEY_RESULT_ACTIONS = load_txt(Path(__file__).parent / "SURVEY_RESULT_ACTIONS.txt")
+CONFIRM_DELETE_SURVEY_RESULT = load_txt(Path(__file__).parent / "CONFIRM_DELETE_SURVEY_RESULT.txt")

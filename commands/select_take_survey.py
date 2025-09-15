@@ -51,10 +51,10 @@ class SelectTakeSurvey(BaseCommand):
     async def _take_selection(self, callback: CallbackQuery, callback_data: SelectTakeSurveyCallbackFactory, state: FSMContext):
         survey_id = callback_data.survey_id
         await self.manager.aiogram_wrapper.set_state(state_context=state,
-                                                     state=States.SELECT_TAKE_SURVEY)
+                                                     state=States.SURVEY_ACTIONS)
         await self.manager.aiogram_wrapper.delete_message(message_id=callback.message.message_id,
                                                           chat_id=callback.from_user.id)
-        await self.manager.launch(name="take_survey",
+        await self.manager.launch(name="survey_actions",
                                   message=callback.message,
                                   state=state,
                                   survey_id=survey_id)
