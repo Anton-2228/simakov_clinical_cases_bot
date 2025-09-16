@@ -489,18 +489,18 @@ def get_keyboard_for_survey_result_actions() -> InlineKeyboardBuilder:
         callback_data=SurveyResultActionsCallbackFactory(action=ListSurveyResultActionsActions.SEE_ANSWERS).pack()
     )
     builder.row(see_answers_button)
-    
-    add_comments_button = InlineKeyboardButton(
-        text="Добавить комментарии",
-        callback_data=SurveyResultActionsCallbackFactory(action=ListSurveyResultActionsActions.ADD_COMMENTS).pack()
-    )
-    builder.row(add_comments_button)
-    
-    add_files_button = InlineKeyboardButton(
-        text="Добавить файлы",
-        callback_data=SurveyResultActionsCallbackFactory(action=ListSurveyResultActionsActions.ADD_FILES).pack()
-    )
-    builder.row(add_files_button)
+
+    # add_comments_button = InlineKeyboardButton(
+    #     text="Добавить комментарии",
+    #     callback_data=SurveyResultActionsCallbackFactory(action=ListSurveyResultActionsActions.ADD_COMMENTS).pack()
+    # )
+    # builder.row(add_comments_button)
+    #
+    # add_files_button = InlineKeyboardButton(
+    #     text="Добавить файлы",
+    #     callback_data=SurveyResultActionsCallbackFactory(action=ListSurveyResultActionsActions.ADD_FILES).pack()
+    # )
+    # builder.row(add_files_button)
 
     delete_result_button = InlineKeyboardButton(
         text="Удалить результат",

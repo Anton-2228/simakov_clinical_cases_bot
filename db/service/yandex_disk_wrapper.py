@@ -99,17 +99,32 @@ class YandexDiskWrapper(AsyncClient):
         user = await services.user.get_user(telegram_id=survey_result.user_id)
         survey_dir = f"{user.full_name}/{survey_result.survey.name}"
         await self.mkdir(path=survey_dir)
-        max_num = 0
-        async for num in self.listdir(f"{self.root_dir}/{survey_dir}"):
-            if num.name.isdigit():
-                if max_num < int(num.name):
-                    max_num = int(num.name)
-        max_num += 1
-        dst_dir = f"{survey_dir}/{max_num}"
+        dst_dir = f"{survey_dir}/{survey_result.created_at}"
         await self.mkdir(path=dst_dir)
 
         await _add_string_result(dst_dir)
         await _add_files_result(dst_dir)
+
+    async def delete_survey_result(
+            self,
+            services: ABCServices,
+            survey_result: SurveyResult,
+            permanently: bool = True,
+    ) -> None:
+        user = await services.user.get_user(telegram_id=survey_result.user_id)
+        survey_dir = f"{user.full_name}/{survey_result.survey.name}"
+        dst_dir = f"{survey_dir}/{survey_result.created_at}"
+
+        full_path = str(Path(self.root_dir) / dst_dir)
+        try:
+            await super().get_meta(full_path)
+        except Exception:
+            return
+
+        try:
+            await super().remove(full_path, permanently=permanently)
+        except Exception:
+            pass
 
 def YANDEX_DISK_SESSION():
     return YandexDiskWrapper(token=YANDEX_DISK_TOKEN, root_dir="/test")

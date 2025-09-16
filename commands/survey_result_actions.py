@@ -10,6 +10,7 @@ from magic_filter import F
 from aiogram_wrapper import AiogramWrapper
 from callbacks_factories import SurveyResultActionsCallbackFactory
 from db.service.abc_services import ABCServices
+from db.service.yandex_disk_wrapper import YANDEX_DISK_SESSION
 from enums import ListSurveyResultActionsActions, RedisTmpFields, SURVEY_STEP_TYPE
 from keyboards_generators import (get_keyboard_for_survey_result_actions,
                                   get_keyboard_for_confirm_delete_survey_result)
@@ -64,6 +65,8 @@ class SurveyResultActions(BaseCommand):
                                                                      field_name=RedisTmpFields.SURVEY_RESULT_ACTIONS_SURVEY_RESULT_ID.value)
         survey_result = await self.db.survey_result.get_survey_result(id=survey_result_id)
         await self.db.survey_result.delete_survey_result(id=survey_result_id)
+        async with YANDEX_DISK_SESSION() as yd:
+            await yd.delete_survey_result(services=self.db, survey_result=survey_result)
         await self.manager.aiogram_wrapper.set_state(state_context=state,
                                                      state=States.SELECT_SURVEY_RESULT)
         await self.manager.aiogram_wrapper.delete_message(message_id=callback.message.message_id,
