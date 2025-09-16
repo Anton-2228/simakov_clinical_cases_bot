@@ -46,27 +46,35 @@ class SendMessageToUser(BaseCommand):
                                                                  reply_markup=keyboard.as_markup())
 
     async def _enter_value(self, message: Message, state: FSMContext, command: Optional[CommandObject] = None):
-        text = message.text.strip()
+        # text = message.text.strip()
         to_user_id = await self.aiogram_wrapper.get_state_data(state_context=state,
                                                                field_name=RedisTmpFields.SEND_MESSAGE_TO_USER_FROM_USER_ID.value)
-        reply_message_id = await self.aiogram_wrapper.get_state_data(state_context=state,
-                                                                     field_name=RedisTmpFields.SEND_MESSAGE_TO_USER_REPLY_MESSAGE_ID.value)
-        if reply_message_id:
-            reply_message = await self.db.message.get_message(id=reply_message_id)
-            reply_message.status = MessageStatus.ANSWERED
-            await self.db.message.update_message(message=reply_message)
+        # reply_message_id = await self.aiogram_wrapper.get_state_data(state_context=state,
+        #                                                              field_name=RedisTmpFields.SEND_MESSAGE_TO_USER_REPLY_MESSAGE_ID.value)
+        # if reply_message_id:
+        #     reply_message = await self.db.message.get_message(id=reply_message_id)
+        #     reply_message.status = MessageStatus.ANSWERED
+        #     await self.db.message.update_message(message=reply_message)
 
-        message_to_user = MessageDTO(text=text,
-                                     from_user_id=message.chat.id,
-                                     to_user_id=to_user_id,
-                                     status=MessageStatus.NEW,
-                                     type=MessageType.TO_USER)
-        await self.db.message.save_message(message=message_to_user)
-        await self.aiogram_wrapper.answer_massage(message=message,
-                                                  text=SEND_MESSAGE_TO_USER_FINISH)
-        await self.manager.launch(name="main_menu",
-                                  message=message,
-                                  state=state)
+        # message_to_user = MessageDTO(text=text,
+        #                              from_user_id=message.chat.id,
+        #                              to_user_id=to_user_id,
+        #                              status=MessageStatus.NEW,
+        #                              type=MessageType.TO_USER)
+        # await self.db.message.save_message(message=message_to_user)
+        delivered = await self.aiogram_wrapper.relay_to_user(
+            message=message,
+            to_user_id=to_user_id,
+            reply_to_message_id=None,
+            preserve_forward_header=False,
+            attach_markup=True,  # если хочешь повторить inline-кнопки
+        )
+        if delivered:
+            await self.aiogram_wrapper.answer_massage(message=message,
+                                                      text=SEND_MESSAGE_TO_USER_FINISH)
+            await self.manager.launch(name="main_menu",
+                                      message=message,
+                                      state=state)
 
     async def _return_to_main_menu(self, callback: CallbackQuery, callback_data: SendMessageToAdminCallbackFactory, state: FSMContext):
         await self.manager.aiogram_wrapper.set_state(state_context=state,

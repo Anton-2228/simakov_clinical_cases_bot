@@ -1,3 +1,5 @@
+import asyncio
+from collections import defaultdict
 from pathlib import Path
 from typing import Optional, Union
 import tempfile
@@ -17,6 +19,8 @@ from states import States
 
 
 class AiogramWrapper:
+    _album_cache: dict[tuple[int, str], list[Message]] = defaultdict(list)
+    _ALBUM_WAIT_MS = 400  # задержка, чтобы собрать все части альбома
     def __init__(self,
                  bot: Bot,
                  db: ABCServices,
@@ -187,6 +191,156 @@ class AiogramWrapper:
                                             caption=caption,
                                             reply_markup=reply_markup,
                                             parse_mode=parse_mode)
+
+    @staticmethod
+    def _to_input_media(m: Message):
+        """
+        Преобразует Message в соответствующий InputMedia*
+        Поддержаны: фото, видео, документ, аудио с сохранением caption/caption_entities
+        """
+        caption = m.caption or None
+        entities = m.caption_entities or None
+
+        if m.photo:
+            file_id = m.photo[-1].file_id
+            return InputMediaPhoto(media=file_id, caption=caption, caption_entities=entities)
+        if m.video:
+            return InputMediaVideo(media=m.video.file_id, caption=caption, caption_entities=entities)
+        if m.document:
+            return InputMediaDocument(media=m.document.file_id, caption=caption, caption_entities=entities)
+        if m.audio:
+            return InputMediaAudio(media=m.audio.file_id, caption=caption, caption_entities=entities)
+        return None
+
+    async def _flush_album(self, key: tuple[int, str], to_user_id: int) -> list[Message]:
+        messages = self._album_cache.pop(key, [])
+        if not messages:
+            return []
+
+        media = []
+        singles_fallback = []
+        for m in messages:
+            im = self._to_input_media(m)
+            if im:
+                media.append(im)
+            else:
+                singles_fallback.append(m)
+
+        delivered: list[Message] = []
+        if media:
+            sent = await self.bot.send_media_group(chat_id=to_user_id, media=media)
+            delivered.extend(sent)
+
+        for m in singles_fallback if media else messages:
+            delivered.append(await m.copy_to(chat_id=to_user_id))
+        return delivered
+
+    async def _send_preserving_entities(  # NEW
+            self,
+            message: Message,
+            to_user_id: int,
+            reply_to_message_id: Optional[int] = None,
+            attach_markup: bool = False,
+    ) -> Optional[Message]:
+        """
+        Явно переотправляет контент, сохраняя entities/caption_entities.
+        Возвращает Message или None, если тип не поддержан здесь.
+        """
+        markup = message.reply_markup if attach_markup else None
+
+        if message.text:
+            # Сохраняем все entities
+            return await self.bot.send_message(
+                chat_id=to_user_id,
+                text=message.text,
+                entities=message.entities,
+                reply_to_message_id=reply_to_message_id,
+                reply_markup=markup,
+            )
+
+        if message.photo:
+            return await self.bot.send_photo(
+                chat_id=to_user_id,
+                photo=message.photo[-1].file_id,
+                caption=message.caption,
+                caption_entities=message.caption_entities,
+                reply_to_message_id=reply_to_message_id,
+                reply_markup=markup,
+            )
+        if message.video:
+            return await self.bot.send_video(
+                chat_id=to_user_id,
+                video=message.video.file_id,
+                caption=message.caption,
+                caption_entities=message.caption_entities,
+                reply_to_message_id=reply_to_message_id,
+                reply_markup=markup,
+            )
+        if message.document:
+            return await self.bot.send_document(
+                chat_id=to_user_id,
+                document=message.document.file_id,
+                caption=message.caption,
+                caption_entities=message.caption_entities,
+                reply_to_message_id=reply_to_message_id,
+                reply_markup=markup,
+            )
+        if message.audio:
+            return await self.bot.send_audio(
+                chat_id=to_user_id,
+                audio=message.audio.file_id,
+                caption=message.caption,
+                caption_entities=message.caption_entities,
+                reply_to_message_id=reply_to_message_id,
+                reply_markup=markup,
+            )
+        # Голосовые/видео-заметки/стикеры/локации оставим copy_to
+        return None
+
+    async def relay_to_user(
+            self,
+            message: Message,
+            to_user_id: int,
+            *,
+            reply_to_message_id: Optional[int] = None,
+            preserve_forward_header: bool = False,
+            attach_markup: bool = False,  # NEW: если хочешь тащить исходную клавиатуру
+    ) -> list[Message]:
+        """
+        Универсальная пересылка входящего message другому пользователю.
+        - Альбомы: собирает по media_group_id и отправляет send_media_group.
+        - Текст/медиа с разметкой: отправляет вручную с entities для гарантии.
+        - Остальное: copy_to/forward.
+        """
+        # Альбом
+        if message.media_group_id:
+            key = (message.chat.id, message.media_group_id)
+            self._album_cache[key].append(message)
+            if len(self._album_cache[key]) == 1:
+                await asyncio.sleep(self._ALBUM_WAIT_MS / 1000)
+                return await self._flush_album(key, to_user_id)
+            return []
+
+        # Попытка гарантированного сохранения разметки
+        # Если есть entities/caption_entities — шлём вручную
+        if (message.text and message.entities) or (message.caption and message.caption_entities):
+            sent = await self._send_preserving_entities(
+                message=message,
+                to_user_id=to_user_id,
+                reply_to_message_id=reply_to_message_id,
+                attach_markup=attach_markup,
+            )
+            if sent:
+                return [sent]
+
+        # Иначе обычное копирование/пересылка
+        if preserve_forward_header:
+            return [await message.forward(chat_id=to_user_id)]
+
+        return [await message.copy_to(
+            chat_id=to_user_id,
+            reply_to_message_id=reply_to_message_id
+        )]
 
     def register_callback(self, callback: CallbackType, *filters: CallbackType):
         self.router.callback_query.register(callback, *filters)

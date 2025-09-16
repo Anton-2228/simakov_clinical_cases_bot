@@ -156,11 +156,11 @@ async def main():
     await DB.survey_step.save_survey_step(survey_step=survey_step)
 
 
-    scheduler = Scheduler()
-    regular_tasks = RegularTasks(db=DB, aiogram_wrapper=AIOGRAM_WRAPPER, manager=MANAGER)
-    scheduler.register_fetcher_interval(fetch_job=regular_tasks.send_messages_to_admins, seconds=5)
-    scheduler.register_fetcher_interval(fetch_job=regular_tasks.send_messages_to_users, seconds=5)
-    await scheduler.start()
+    # scheduler = Scheduler()
+    # regular_tasks = RegularTasks(db=DB, aiogram_wrapper=AIOGRAM_WRAPPER, manager=MANAGER)
+    # scheduler.register_fetcher_interval(fetch_job=regular_tasks.send_messages_to_admins, seconds=5)
+    # scheduler.register_fetcher_interval(fetch_job=regular_tasks.send_messages_to_users, seconds=5)
+    # await scheduler.start()
 
 
     await start_polling()
