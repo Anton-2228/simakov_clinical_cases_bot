@@ -103,7 +103,7 @@ class TakeSurvey(BaseCommand):
 
     async def _send_next_ask(self, message: Message, state_context: FSMContext):
         page_number, page_status, current_page = await self.steps_pager.get_current_page(state_context=state_context)
-        if page_status == PAGING_STATUS.LAST_PAGE:
+        if page_status in [PAGING_STATUS.LAST_PAGE, PAGING_STATUS.ONLY_PAGE]:
             await self._finish_take_survey(message=message, state_context=state_context)
             return
 
