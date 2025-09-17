@@ -39,6 +39,18 @@ class AsyncSurveyResultService(ABC):
         """
 
     @abstractmethod
+    async def get_survey_results_by_user_and_survey(self, user_id: int, survey_id: int) -> List[SurveyResult]:
+        """
+        Метод получает все результаты конкретного опроса пользователя из базы данных
+
+        :param user_id - id пользователя
+        :param survey_id - id опроса
+
+        :return:
+            список всех результатов конкретного опроса пользователя
+        """
+
+    @abstractmethod
     async def get_all_survey_results(self) -> List[SurveyResult]:
         """
         Метод получает все результаты опросов из базы данных

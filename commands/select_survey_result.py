@@ -46,8 +46,8 @@ class SelectSurveyResult(BaseCommand):
         # Получаем user_id из сообщения
         user_id = message.chat.id
         
-        # Получаем все результаты опросов пользователя
-        survey_results = await self.db.survey_result.get_survey_results_by_user(user_id)
+        # Получаем все результаты опросов пользователя для конкретного опроса
+        survey_results = await self.db.survey_result.get_survey_results_by_user_and_survey(user_id, survey_id)
         
         # Формируем список текстов для кнопок с датой создания
         survey_results_texts = []

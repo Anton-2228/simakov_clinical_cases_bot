@@ -42,6 +42,18 @@ class PostgresSurveyResultService(AsyncSurveyResultService):
             survey_results = result.all()
             return [SurveyResultMapper.to_dto(survey_result) for survey_result in survey_results]
 
+    async def get_survey_results_by_user_and_survey(self, user_id: int, survey_id: int) -> List[SurveyResult]:
+        async with SESSION_FACTORY() as session:
+            result = await session.scalars(
+                select(SurveyResultORM)
+                .where(SurveyResultORM.user_id == user_id)
+                .where(SurveyResultORM.survey_id == survey_id)
+                .options(selectinload(SurveyResultORM.survey).selectinload(SurveyORM.survey_steps),
+                         selectinload(SurveyResultORM.survey_step_results))
+            )
+            survey_results = result.all()
+            return [SurveyResultMapper.to_dto(survey_result) for survey_result in survey_results]
+
     async def get_all_survey_results(self) -> List[SurveyResult]:
         async with SESSION_FACTORY() as session:
             result = await session.scalars(
