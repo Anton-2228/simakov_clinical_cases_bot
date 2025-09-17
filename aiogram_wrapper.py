@@ -15,6 +15,10 @@ from aiogram.types import (InlineKeyboardMarkup, InputMediaAudio,
                            InputMediaVideo, Message, FSInputFile)
 
 from db.service.abc_services import ABCServices
+from keyboards_generators import get_keyboard_for_reply_message_to_client
+from models import User
+from output_generators import create_message_to_admins_output
+from resources.messages import MESSAGE_TO_USER
 from states import States
 
 
@@ -341,6 +345,50 @@ class AiogramWrapper:
             chat_id=to_user_id,
             reply_to_message_id=reply_to_message_id
         )]
+
+    async def send_message_to_admins(
+            self,
+            message: Message,
+            admin_telegram_id: int,
+            from_user: User,
+            *,
+            reply_to_message_id: Optional[int] = None,
+            preserve_forward_header: bool = False,
+            attach_markup: bool = False,  # NEW: если хочешь тащить исходную клавиатуру
+    ):
+        delivered = await self.relay_to_user(
+            message=message,
+            to_user_id=admin_telegram_id,
+            reply_to_message_id=reply_to_message_id,
+            preserve_forward_header=preserve_forward_header,
+            attach_markup=attach_markup,  # если хочешь повторить inline-кнопки
+        )
+        keyboard = get_keyboard_for_reply_message_to_client(from_user_id=message.chat.id)
+        text = create_message_to_admins_output(user=from_user)
+        await self.send_message(chat_id=admin_telegram_id,
+                                text=text,
+                                reply_markup=keyboard.as_markup())
+        return delivered
+
+    async def send_message_to_user(
+            self,
+            message: Message,
+            user_telegram_id: int,
+            *,
+            reply_to_message_id: Optional[int] = None,
+            preserve_forward_header: bool = False,
+            attach_markup: bool = False,  # NEW: если хочешь тащить исходную клавиатуру
+    ):
+        delivered = await self.relay_to_user(
+            message=message,
+            to_user_id=user_telegram_id,
+            reply_to_message_id=reply_to_message_id,
+            preserve_forward_header=preserve_forward_header,
+            attach_markup=attach_markup,  # если хочешь повторить inline-кнопки
+        )
+        await self.send_message(chat_id=user_telegram_id,
+                                text=MESSAGE_TO_USER)
+        return delivered
 
     def register_callback(self, callback: CallbackType, *filters: CallbackType):
         self.router.callback_query.register(callback, *filters)

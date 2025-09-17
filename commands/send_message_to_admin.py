@@ -35,18 +35,14 @@ class SendMessageToAdmin(BaseCommand):
                                                                  reply_markup=keyboard.as_markup())
 
     async def _enter_value(self, message: Message, state: FSMContext, command: Optional[CommandObject] = None):
-        # ask = message.text.strip()
-        # message_to_admin = MessageDTO(text=ask,
-        #                               from_user_id=message.chat.id,
-        #                               status=MessageStatus.NEW,
-        #                               type=MessageType.TO_ADMINS)
-        # await self.db.message.save_message(message=message_to_admin)
         admins = await self.db.user.get_users_by_type(user_type=USER_TYPE.ADMIN)
+        user = await self.db.user.get_user(telegram_id=message.chat.id)
         delivered = False
         for admin in admins:
-            admin_delivered = await self.aiogram_wrapper.relay_to_user(
+            admin_delivered = await self.aiogram_wrapper.send_message_to_admins(
                 message=message,
-                to_user_id=admin.telegram_id,
+                admin_telegram_id=admin.telegram_id,
+                from_user=user,
                 reply_to_message_id=None,
                 preserve_forward_header=False,
                 attach_markup=True,  # если хочешь повторить inline-кнопки

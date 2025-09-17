@@ -86,12 +86,8 @@ def create_change_survey_output(survey: dict) -> str:
                                                             finish_message=survey["finish_message"])
     return text_message
 
-def create_message_to_admins_output(user: User, text: str) -> str:
-    return MESSAGE_TO_ADMINS.format(user_name=f"{user.full_name}(ID: {user.telegram_id})",
-                                    text=text)
-
-def create_message_to_user_output(text: str) -> str:
-    return MESSAGE_TO_USER.format(text=text)
+def create_message_to_admins_output(user: User) -> str:
+    return MESSAGE_TO_ADMINS.format(user_name=f"{user.full_name}(ID: {user.telegram_id})")
 
 def create_send_message_to_user_output(user: User) -> str:
     return SEND_MESSAGE_TO_USER.format(user_name=f"{user.full_name}(ID: {user.telegram_id})")
