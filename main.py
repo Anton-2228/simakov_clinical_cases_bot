@@ -1,5 +1,6 @@
 import asyncio
 import logging
+import os
 from typing import Optional
 
 from aiogram import Dispatcher
@@ -19,7 +20,17 @@ from scheduler import Scheduler
 from states import States
 from tests_functions._add_user_to_redis import main as add_user_to_redis
 
-logging.basicConfig(filename="/log/bot.log", filemode="a", level=logging.INFO, force=True)
+log_path = "/logs/test.log"
+log_dir = os.path.dirname(log_path)
+
+# Проверяем, что /log — именно директория
+if not os.path.exists(log_dir):
+    os.makedirs(log_dir, exist_ok=True)
+elif not os.path.isdir(log_dir):
+    raise RuntimeError(f"{log_dir} существует, но это не директория!")
+
+logging.basicConfig(filename=log_path, filemode="a", level=logging.INFO, force=True)
+
 logger = logging.getLogger(__name__)
 
 console_handler = logging.StreamHandler()

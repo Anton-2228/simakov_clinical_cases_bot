@@ -72,7 +72,7 @@ services:
       - internal_network
       - external_network
     volumes:
-      - ${LOGGING_DIR}:/log
+      - ${LOGGING_DIR}:/logs
 #    extra_hosts:
 #      - "db:172.17.0.1"
 
