@@ -379,6 +379,8 @@ class AiogramWrapper:
             preserve_forward_header: bool = False,
             attach_markup: bool = False,  # NEW: если хочешь тащить исходную клавиатуру
     ):
+        await self.send_message(chat_id=user_telegram_id,
+                                text=MESSAGE_TO_USER)
         delivered = await self.relay_to_user(
             message=message,
             to_user_id=user_telegram_id,
@@ -386,8 +388,6 @@ class AiogramWrapper:
             preserve_forward_header=preserve_forward_header,
             attach_markup=attach_markup,  # если хочешь повторить inline-кнопки
         )
-        await self.send_message(chat_id=user_telegram_id,
-                                text=MESSAGE_TO_USER)
         return delivered
 
     def register_callback(self, callback: CallbackType, *filters: CallbackType):
