@@ -4,6 +4,9 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+TEST_MODE=os.getenv("TEST_MODE")
+assert TEST_MODE is not None, "TEST_MODE not initialized"
+
 TELEGRAM_BOT_TOKEN=os.getenv("TELEGRAM_BOT_TOKEN")
 assert TELEGRAM_BOT_TOKEN is not None, "TELEGRAM_BOT_TOKEN not initialized"
 
