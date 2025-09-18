@@ -71,8 +71,7 @@ class YandexDiskWrapper(AsyncClient):
                 continue
             ask = survey_step.text
             answer = result["answer"]
-            text_answers += f"{TXT_STEP_RESULTS_SURVEY.format(ask=ask,
-                                                              answer=answer)}\n"
+            text_answers += f"{TXT_STEP_RESULTS_SURVEY.format(answer=answer)}\n"
 
         return TXT_RESULTS_SURVEY.format(answers=text_answers)
 
