@@ -9,7 +9,7 @@ from resources.messages import (ADD_SURVEY_STEP,
                                 SET_STEPS_ORDER, TAKE_SURVEY_COUNT_FILES,
                                 TAKE_SURVEY_ENTER_FILES,
                                 TAKE_SURVEY_ENTER_STRING, ADD_SURVEY, CHANGE_SURVEY_CURRENT_SURVEY_DATA,
-                                MESSAGE_TO_ADMINS, MESSAGE_TO_USER, SEND_MESSAGE_TO_USER, SEE_ANSWERS_STRING,
+                                MESSAGE_TO_ADMINS, MESSAGE_TO_USER, SEND_MESSAGE_TO_USER, SEND_MESSAGE_TO_ALL_USERS, SEND_MESSAGE_TO_ALL_USERS_FINISH, SEE_ANSWERS_STRING,
                                 SEE_ANSWERS_FILES)
 from utils import load_json
 
@@ -91,6 +91,9 @@ def create_message_to_admins_output(user: User) -> str:
 
 def create_send_message_to_user_output(user: User) -> str:
     return SEND_MESSAGE_TO_USER.format(user_name=f"{user.full_name}(ID: {user.telegram_id})")
+
+def create_send_message_to_all_users_output() -> str:
+    return SEND_MESSAGE_TO_ALL_USERS
 
 def create_survey_result_see_answers_output(step: SurveyStep, step_result: SurveyStepResult) -> str:
     text_message = None

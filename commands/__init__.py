@@ -24,6 +24,7 @@ from .select_take_survey import SelectTakeSurvey
 from .select_user_to_send_message import SelectUserToSendMessage
 from .send_message_to_admin import SendMessageToAdmin
 from .send_message_to_user import SendMessageToUser
+from .send_message_to_all_users import SendMessageToAllUsers
 from .set_steps_order import SetStepsOrder
 from .survey_actions import SurveyActions
 from .survey_result_actions import SurveyResultActions
@@ -65,6 +66,7 @@ def get_admin_commands(manager: "Manager", db: ABCServices, aiogram_wrapper: Aio
         "set_steps_order": SetStepsOrder(manager, db, aiogram_wrapper),
         "take_survey": TakeSurvey(manager, db, aiogram_wrapper),
         "send_message_to_user": SendMessageToUser(manager, db, aiogram_wrapper),
+        "send_message_to_all_users": SendMessageToAllUsers(manager, db, aiogram_wrapper),
         "reply_message_to_client": ReplyMessageToClient(manager, db, aiogram_wrapper),
         "select_user_to_send_message": SelectUserToSendMessage(manager, db, aiogram_wrapper),
         "survey_actions": SurveyActions(manager, db, aiogram_wrapper),

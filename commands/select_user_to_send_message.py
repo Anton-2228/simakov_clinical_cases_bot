@@ -28,6 +28,7 @@ class SelectUserToSendMessage(BaseCommand):
         self.aiogram_wrapper.register_callback(self._user_selection, SelectUserToSendMessageCallbackFactory.filter(F.action == ListSelectUserToSendMessageActions.USER_SELECTION))
         self.aiogram_wrapper.register_callback(self._next_users, SelectUserToSendMessageCallbackFactory.filter(F.action == ListSelectUserToSendMessageActions.NEXT_USERS))
         self.aiogram_wrapper.register_callback(self._previous_users, SelectUserToSendMessageCallbackFactory.filter(F.action == ListSelectUserToSendMessageActions.PREVIOUS_USERS))
+        self.aiogram_wrapper.register_callback(self._send_to_all_users, SelectUserToSendMessageCallbackFactory.filter(F.action == ListSelectUserToSendMessageActions.SEND_TO_ALL_USERS))
         self.aiogram_wrapper.register_callback(self._return_to_main_menu, SelectUserToSendMessageCallbackFactory.filter(F.action == ListSelectUserToSendMessageActions.RETURN_TO_MAIN_MENU))
         self.users_pager = AiogramPager(aiogram_wrapper=aiogram_wrapper,
                                        dump_field_name=RedisTmpFields.DUMP_SELECT_USER_TO_SEND_MESSAGE.value)
@@ -87,6 +88,16 @@ class SelectUserToSendMessage(BaseCommand):
         send_message = await self.manager.aiogram_wrapper.answer_massage(message=callback.message,
                                                                          text=SELECT_USER_TO_SEND_MESSAGE,
                                                                          reply_markup=keyboard.as_markup())
+        await callback.answer()
+
+    async def _send_to_all_users(self, callback: CallbackQuery, callback_data: SelectUserToSendMessageCallbackFactory, state: FSMContext):
+        await self.manager.aiogram_wrapper.set_state(state_context=state,
+                                                     state=States.SEND_MESSAGE_TO_ALL_USERS)
+        await self.manager.aiogram_wrapper.delete_message(message_id=callback.message.message_id,
+                                                          chat_id=callback.from_user.id)
+        await self.manager.launch(name="send_message_to_all_users",
+                                  message=callback.message,
+                                  state=state)
         await callback.answer()
 
     async def _return_to_main_menu(self, callback: CallbackQuery, callback_data: SelectUserToSendMessageCallbackFactory, state: FSMContext):

@@ -160,10 +160,14 @@ class ListReplyMessageToClientActions(Enum):
 class ListSendMessageToUserActions(Enum):
     RETURN_TO_MAIN_MENU = "return_to_main_menu"
 
+class ListSendMessageToAllUsersActions(Enum):
+    RETURN_TO_MAIN_MENU = "return_to_main_menu"
+
 class ListSelectUserToSendMessageActions(Enum):
     USER_SELECTION = "user_selection"
     NEXT_USERS = "next_users"
     PREVIOUS_USERS = "previous_users"
+    SEND_TO_ALL_USERS = "send_to_all_users"
     RETURN_TO_MAIN_MENU = "return_to_main_menu"
 
 class ListSelectSurveyResultActions(Enum):

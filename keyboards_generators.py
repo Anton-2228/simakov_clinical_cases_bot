@@ -18,6 +18,7 @@ from callbacks_factories import (AddSurveyCallbackFactory,
                                  TakeSurveyCallbackFactory,
                                  UserMainMenuCallbackFactory, SendMessageToAdminCallbackFactory,
                                  ReplyMessageToClientCallbackFactory, SendMessageToUserCallbackFactory,
+                                 SendMessageToAllUsersCallbackFactory,
                                  SelectUserToSendMessageCallbackFactory, SelectSurveyResultCallbackFactory,
                                  SurveyResultActionsCallbackFactory)
 from enums import (SURVEY_STEP_TYPE, SURVEY_STEP_VARIABLE_FILEDS, SURVEY_VARIABLE_FIELDS,
@@ -30,6 +31,7 @@ from enums import (SURVEY_STEP_TYPE, SURVEY_STEP_VARIABLE_FILEDS, SURVEY_VARIABL
                    ListSelectTakeSurveyActions, ListSetStepsOrderActions,
                    ListSurveyActionsActions, ListTakeSurveyActions, ListUserMainMenuActions, ListChangeSurveyActions,
                    ListSendMessageToAdminActions, ListReplyMessageToClientActions, ListSendMessageToUserActions,
+                   ListSendMessageToAllUsersActions,
                    ListSelectUserToSendMessageActions, ListSelectSurveyResultActions, ListSurveyResultActionsActions)
 from models import User
 from pagers.pager import PAGING_STATUS
@@ -379,6 +381,11 @@ def get_keyboard_for_send_message_to_user() -> InlineKeyboardBuilder:
     builder.row(InlineKeyboardButton(text="Вернуться в главное меню", callback_data=SendMessageToUserCallbackFactory(action=ListSendMessageToUserActions.RETURN_TO_MAIN_MENU).pack()))
     return builder
 
+def get_keyboard_for_send_message_to_all_users() -> InlineKeyboardBuilder:
+    builder = InlineKeyboardBuilder()
+    builder.row(InlineKeyboardButton(text="Вернуться в главное меню", callback_data=SendMessageToAllUsersCallbackFactory(action=ListSendMessageToAllUsersActions.RETURN_TO_MAIN_MENU).pack()))
+    return builder
+
 def get_keyboard_for_select_user_to_send_message(users: list[str], user_idx_map: dict[int, str], page_status: PAGING_STATUS) -> InlineKeyboardBuilder:
     def _get_user_id(user_name: str):
         for id in user_idx_map:
@@ -410,6 +417,12 @@ def get_keyboard_for_select_user_to_send_message(users: list[str], user_idx_map:
             callback_data=SelectUserToSendMessageCallbackFactory(action=ListSelectUserToSendMessageActions.NEXT_USERS).pack())
         navigate_buttons.append(next_button)
     builder.row(*navigate_buttons)
+
+    send_to_all_users_button = InlineKeyboardButton(
+        text="Отправить всем пользователям",
+        callback_data=SelectUserToSendMessageCallbackFactory(action=ListSelectUserToSendMessageActions.SEND_TO_ALL_USERS).pack()
+    )
+    builder.row(send_to_all_users_button)
 
     return_to_main_menu_button = InlineKeyboardButton(
         text="Вернуться в главное меню",
