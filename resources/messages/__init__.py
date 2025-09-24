@@ -62,4 +62,5 @@ SELECT_USER_TO_SEND_MESSAGE = load_txt(Path(__file__).parent / "SELECT_USER_TO_S
 SURVEY_ACTIONS = load_txt(Path(__file__).parent / "SURVEY_ACTIONS.txt")
 SELECT_SURVEY_RESULT = load_txt(Path(__file__).parent / "SELECT_SURVEY_RESULT.txt")
 SURVEY_RESULT_ACTIONS = load_txt(Path(__file__).parent / "SURVEY_RESULT_ACTIONS.txt")
+SEND_INFO_ABOUT_NEW_SURVEY_RESULT = load_txt(Path(__file__).parent / "send_messages/SEND_INFO_ABOUT_NEW_SURVEY_RESULT.txt")
 CONFIRM_DELETE_SURVEY_RESULT = load_txt(Path(__file__).parent / "CONFIRM_DELETE_SURVEY_RESULT.txt")
