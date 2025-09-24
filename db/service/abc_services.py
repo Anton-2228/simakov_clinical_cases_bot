@@ -14,6 +14,8 @@ from db.service.user.async_user_service import AsyncUserService
 from db.service.user.user_service import UserService
 from db.service.message.async_message_service import AsyncMessageService
 from db.service.message.message_service import MessageService
+from db.service.survey_result_comments.async_survey_result_comments_service import AsyncSurveyResultCommentsService
+from db.service.survey_result_comments.survey_result_comments_service import SurveyResultCommentsService
 
 
 class ABCServices(ABC):
@@ -45,6 +47,11 @@ class ABCServices(ABC):
     @property
     @abstractmethod
     def message(self) -> MessageService | AsyncMessageService:
+        pass
+
+    @property
+    @abstractmethod
+    def survey_result_comments(self) -> SurveyResultCommentsService | AsyncSurveyResultCommentsService:
         pass
 
     @property

@@ -5,6 +5,8 @@ from commands.base_command import BaseCommand
 from commands.manager import Manager
 from commands.start import Start
 from db.service.abc_services import ABCServices
+from .add_comments_to_survey_result import AddCommentsToSurveyResult
+from .add_files_to_survey_result import AddFilesToSurveyResult
 
 from .add_survey import AddSurvey
 from .add_survey_step import AddSurveyStep
@@ -44,7 +46,9 @@ def get_user_commands(manager: "Manager", db: ABCServices, aiogram_wrapper: Aiog
         "send_message_to_admin": SendMessageToAdmin(manager, db, aiogram_wrapper),
         "survey_actions": SurveyActions(manager, db, aiogram_wrapper),
         "select_survey_result": SelectSurveyResult(manager, db, aiogram_wrapper),
-        "survey_result_actions": SurveyResultActions(manager, db, aiogram_wrapper)
+        "survey_result_actions": SurveyResultActions(manager, db, aiogram_wrapper),
+        "add_comments_to_survey_result": AddCommentsToSurveyResult(manager, db, aiogram_wrapper),
+        "add_files_to_survey_result": AddFilesToSurveyResult(manager, db, aiogram_wrapper)
     }
     return commands
 
@@ -71,6 +75,8 @@ def get_admin_commands(manager: "Manager", db: ABCServices, aiogram_wrapper: Aio
         "select_user_to_send_message": SelectUserToSendMessage(manager, db, aiogram_wrapper),
         "survey_actions": SurveyActions(manager, db, aiogram_wrapper),
         "select_survey_result": SelectSurveyResult(manager, db, aiogram_wrapper),
-        "survey_result_actions": SurveyResultActions(manager, db, aiogram_wrapper)
+        "survey_result_actions": SurveyResultActions(manager, db, aiogram_wrapper),
+        "add_comments_to_survey_result": AddCommentsToSurveyResult(manager, db, aiogram_wrapper),
+        "add_files_to_survey_result": AddFilesToSurveyResult(manager, db, aiogram_wrapper)
     }
     return commands

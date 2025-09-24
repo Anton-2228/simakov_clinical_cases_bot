@@ -21,6 +21,9 @@ from db.service.user.user_service import UserService
 from db.service.message.async_message_service import AsyncMessageService
 from db.service.message.postgres_message_service import PostgresMessageService
 from db.service.message.message_service import MessageService
+from db.service.survey_result_comments.async_survey_result_comments_service import AsyncSurveyResultCommentsService
+from db.service.survey_result_comments.postgres_survey_result_comments_service import PostgresSurveyResultCommentsService
+from db.service.survey_result_comments.survey_result_comments_service import SurveyResultCommentsService
 
 
 class Services(ABCServices):
@@ -35,6 +38,7 @@ class Services(ABCServices):
         self.survey_result_service = PostgresSurveyResultService()
         self.survey_step_result_service = PostgresSurveyStepResultService()
         self.message_service = PostgresMessageService()
+        self.survey_result_comments_service = PostgresSurveyResultCommentsService()
 
     @property
     def user(self) -> UserService | AsyncUserService:
@@ -59,6 +63,10 @@ class Services(ABCServices):
     @property
     def message(self) -> MessageService | AsyncMessageService:
         return self.message_service
+
+    @property
+    def survey_result_comments(self) -> SurveyResultCommentsService | AsyncSurveyResultCommentsService:
+        return self.survey_result_comments_service
 
     @property
     def files_storage(self) -> AsyncMinioClient:

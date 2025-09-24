@@ -11,10 +11,10 @@ from aiogram_wrapper import AiogramWrapper
 from callbacks_factories import SurveyResultActionsCallbackFactory
 from db.service.abc_services import ABCServices
 from db.service.yandex_disk_wrapper import YANDEX_DISK_SESSION
-from enums import ListSurveyResultActionsActions, RedisTmpFields, SURVEY_STEP_TYPE
+from enums import ListSurveyResultActionsActions, RedisTmpFields, SURVEY_STEP_TYPE, SURVEY_RESULT_COMMENT_TYPE
 from keyboards_generators import (get_keyboard_for_survey_result_actions,
                                   get_keyboard_for_confirm_delete_survey_result)
-from output_generators import create_survey_result_see_answers_output
+from output_generators import create_survey_result_see_answers_output, create_survey_result_comments_see_answers_output
 from resources.messages import SURVEY_RESULT_ACTIONS, CONFIRM_DELETE_SURVEY_RESULT
 from states import States
 from utils import get_tmp_path
@@ -111,6 +111,24 @@ class SurveyResultActions(BaseCommand):
                                                               file_path=tmp_path)
                     await self.aiogram_wrapper.send_file(chat_id=callback.message.chat.id,
                                                          file_path=tmp_path)
+
+        survey_result_comments = await self.db.survey_result_comments.get_survey_result_comments_by_survey_result(survey_result_id=survey_result_id)
+        for survey_result_comment in survey_result_comments:
+            text_output = create_survey_result_comments_see_answers_output(survey_result_comment=survey_result_comment)
+            if survey_result_comment.type == SURVEY_RESULT_COMMENT_TYPE.STRING:
+                await self.aiogram_wrapper.answer_massage(message=callback.message,
+                                                          text=text_output)
+            elif survey_result_comment.type == SURVEY_RESULT_COMMENT_TYPE.FILES:
+                await self.aiogram_wrapper.answer_massage(message=callback.message,
+                                                          text=text_output)
+                answer = json.loads(survey_result_comment.result)
+                for minio_key in answer["answer"]:
+                    tmp_path = get_tmp_path(filename=minio_key.split("/")[-1])
+                    await self.db.files_storage.download_file(object_name=minio_key,
+                                                              file_path=tmp_path)
+                    await self.aiogram_wrapper.send_file(chat_id=callback.message.chat.id,
+                                                         file_path=tmp_path)
+
         await self.manager.aiogram_wrapper.set_state(state_context=state,
                                                      state=States.SURVEY_RESULT_ACTIONS)
         # await self.manager.aiogram_wrapper.delete_message(message_id=callback.message.message_id,

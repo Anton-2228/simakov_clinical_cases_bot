@@ -50,12 +50,19 @@ class RedisTmpFields(Enum):
     SELECT_SURVEY_RESULT_IDX_MAP = "select_survey_result_idx_map"
     SELECT_SURVEY_RESULT_SURVEY_ID = "select_survey_result_survey_id"
     SURVEY_RESULT_ACTIONS_SURVEY_RESULT_ID = "survey_result_actions_survey_result_id"
+    ADD_COMMENTS_TO_SURVEY_RESULT_SURVEY_RESULT_ID = "add_comments_to_survey_result_survey_result_id"
+    ADD_FILES_TO_SURVEY_RESULT_SURVEY_RESULT_ID = "add_files_to_survey_result_survey_result_id"
+    ADD_FILES_TO_SURVEY_RESULT_ANSWER = "add_files_to_survey_result_answer"
 
 class USER_TYPE(Enum):
     ADMIN = "admin"
     CLIENT = "client"
 
 class SURVEY_STEP_TYPE(Enum):
+    STRING = "string"
+    FILES = "files"
+
+class SURVEY_RESULT_COMMENT_TYPE(Enum):
     STRING = "string"
     FILES = "files"
 
@@ -184,3 +191,9 @@ class ListSurveyResultActionsActions(Enum):
     ADD_COMMENTS = "add_comments"
     ADD_FILES = "add_files"
     RETURN_TO_SELECT_SURVEY_RESULT = "return_to_select_survey_result"
+
+class ListAddCommentsActions(Enum):
+    RETURN_TO_SURVEY_RESULT_ACTIONS = "return_to_survey_result_actions"
+
+class ListAddFilesActions(Enum):
+    RETURN_TO_SURVEY_RESULT_ACTIONS = "return_to_survey_result_actions"

@@ -20,7 +20,8 @@ from callbacks_factories import (AddSurveyCallbackFactory,
                                  ReplyMessageToClientCallbackFactory, SendMessageToUserCallbackFactory,
                                  SendMessageToAllUsersCallbackFactory,
                                  SelectUserToSendMessageCallbackFactory, SelectSurveyResultCallbackFactory,
-                                 SurveyResultActionsCallbackFactory)
+                                 SurveyResultActionsCallbackFactory, AddCommentsCallbackFactory,
+                                 AddFilesCallbackFactory)
 from enums import (SURVEY_STEP_TYPE, SURVEY_STEP_VARIABLE_FILEDS, SURVEY_VARIABLE_FIELDS,
                    ListAddSurveyListActions, ListAddSurveyStepActions,
                    ListAddUserToAdminListActions, ListAdminMainMenuActions,
@@ -32,7 +33,8 @@ from enums import (SURVEY_STEP_TYPE, SURVEY_STEP_VARIABLE_FILEDS, SURVEY_VARIABL
                    ListSurveyActionsActions, ListTakeSurveyActions, ListUserMainMenuActions, ListChangeSurveyActions,
                    ListSendMessageToAdminActions, ListReplyMessageToClientActions, ListSendMessageToUserActions,
                    ListSendMessageToAllUsersActions,
-                   ListSelectUserToSendMessageActions, ListSelectSurveyResultActions, ListSurveyResultActionsActions)
+                   ListSelectUserToSendMessageActions, ListSelectSurveyResultActions, ListSurveyResultActionsActions,
+                   ListAddCommentsActions, ListAddFilesActions)
 from models import User
 from pagers.pager import PAGING_STATUS
 
@@ -503,17 +505,17 @@ def get_keyboard_for_survey_result_actions() -> InlineKeyboardBuilder:
     )
     builder.row(see_answers_button)
 
-    # add_comments_button = InlineKeyboardButton(
-    #     text="Добавить комментарии",
-    #     callback_data=SurveyResultActionsCallbackFactory(action=ListSurveyResultActionsActions.ADD_COMMENTS).pack()
-    # )
-    # builder.row(add_comments_button)
-    #
-    # add_files_button = InlineKeyboardButton(
-    #     text="Добавить файлы",
-    #     callback_data=SurveyResultActionsCallbackFactory(action=ListSurveyResultActionsActions.ADD_FILES).pack()
-    # )
-    # builder.row(add_files_button)
+    add_comments_button = InlineKeyboardButton(
+        text="Добавить комментарии",
+        callback_data=SurveyResultActionsCallbackFactory(action=ListSurveyResultActionsActions.ADD_COMMENTS).pack()
+    )
+    builder.row(add_comments_button)
+
+    add_files_button = InlineKeyboardButton(
+        text="Добавить файлы",
+        callback_data=SurveyResultActionsCallbackFactory(action=ListSurveyResultActionsActions.ADD_FILES).pack()
+    )
+    builder.row(add_files_button)
 
     delete_result_button = InlineKeyboardButton(
         text="Удалить результат",
@@ -545,3 +547,29 @@ def get_keyboard_for_confirm_delete_survey_result() -> InlineKeyboardBuilder:
     builder.row(return_button)
     
     return builder
+
+def get_keyboard_for_add_comments() -> InlineKeyboardBuilder:
+    builder = InlineKeyboardBuilder()
+    
+    return_button = InlineKeyboardButton(
+        text="Преждевременно завершить добавление комментариев",
+        callback_data=AddCommentsCallbackFactory(action=ListAddCommentsActions.RETURN_TO_SURVEY_RESULT_ACTIONS).pack()
+    )
+    builder.row(return_button)
+
+    return builder
+
+def get_keyboard_for_add_files() -> InlineKeyboardBuilder:
+    builder = InlineKeyboardBuilder()
+    
+    return_button = InlineKeyboardButton(
+        text="Преждевременно завершить добавление файлов",
+        callback_data=AddFilesCallbackFactory(action=ListAddFilesActions.RETURN_TO_SURVEY_RESULT_ACTIONS).pack()
+    )
+    builder.row(return_button)
+    
+    reply_builder = ReplyKeyboardBuilder()
+    reply_builder.row(KeyboardButton(text="✅готово"))
+    reply_kb = reply_builder.as_markup(resize_keyboard=True)
+
+    return builder, reply_kb

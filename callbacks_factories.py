@@ -13,7 +13,8 @@ from enums import (SURVEY_STEP_TYPE, SURVEY_STEP_VARIABLE_FILEDS, SURVEY_VARIABL
                    ListTakeSurveyActions, ListUserMainMenuActions, ListSendMessageToAdminActions,
                    ListSendMessageToUserActions, ListSendMessageToAllUsersActions, ListReplyMessageToClientActions,
                    ListSelectUserToSendMessageActions, ListSurveyActionsActions,
-                   ListSelectSurveyResultActions, ListSurveyResultActionsActions)
+                   ListSelectSurveyResultActions, ListSurveyResultActionsActions,
+                   ListAddCommentsActions, ListAddFilesActions)
 
 
 class UserMainMenuCallbackFactory(CallbackData, prefix="umm"): # user_main_menu
@@ -93,3 +94,9 @@ class SelectSurveyResultCallbackFactory(CallbackData, prefix="ssr"): # select_su
 
 class SurveyResultActionsCallbackFactory(CallbackData, prefix="sra"): # survey_result_actions
     action: ListSurveyResultActionsActions
+
+class AddCommentsCallbackFactory(CallbackData, prefix="ac"): # add_comments
+    action: ListAddCommentsActions
+
+class AddFilesCallbackFactory(CallbackData, prefix="af"): # add_files
+    action: ListAddFilesActions

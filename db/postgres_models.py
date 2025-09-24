@@ -7,7 +7,7 @@ from sqlalchemy.dialects.postgresql import ENUM as PgEnum
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from db.postgres import Base
-from enums import SURVEY_STEP_TYPE
+from enums import SURVEY_STEP_TYPE, SURVEY_RESULT_COMMENT_TYPE
 
 
 class MessageStatus(Enum):
@@ -62,6 +62,11 @@ class SurveyResultORM(Base):
         cascade="all, delete-orphan",
         passive_deletes=True
     )
+    survey_results_comments: Mapped[list["SurveyResultCommentsORM"]] = relationship(
+        back_populates="survey_result",
+        cascade="all, delete-orphan",
+        passive_deletes=True
+    )
 
 
 class SurveyStepResultORM(Base):
@@ -75,6 +80,18 @@ class SurveyStepResultORM(Base):
 
     survey_step: Mapped["SurveyStepORM"] = relationship()
     survey_result: Mapped["SurveyResultORM"] = relationship(back_populates="survey_step_results")
+
+class SurveyResultCommentsORM(Base):
+    __tablename__ = "survey_result_comments"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    survey_result_id: Mapped[int] = mapped_column(ForeignKey("survey_results.id", ondelete="CASCADE"))
+    type: Mapped[SURVEY_RESULT_COMMENT_TYPE] = mapped_column(
+        PgEnum(SURVEY_RESULT_COMMENT_TYPE, name="survey_result_comment_types", create_type=True)
+    )
+    result: Mapped[str] = mapped_column(Text)
+    created_at: Mapped[datetime] = mapped_column(server_default=text("TIMEZONE('utc-3', now())"))
+    survey_result: Mapped["SurveyResultORM"] = relationship(back_populates="survey_results_comments")
 
 
 class MessagesORM(Base):

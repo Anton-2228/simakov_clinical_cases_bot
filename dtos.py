@@ -3,7 +3,7 @@ from typing import Optional
 
 from pydantic import BaseModel
 
-from enums import SURVEY_STEP_TYPE
+from enums import SURVEY_STEP_TYPE, SURVEY_RESULT_COMMENT_TYPE
 from db.postgres_models import MessageStatus, MessageType
 
 
@@ -38,6 +38,14 @@ class SurveyStepResult(BaseModel):
     survey_step_id: int
     result: str
     survey_result_id: int
+    created_at: Optional[datetime] = None
+
+
+class SurveyResultComments(BaseModel):
+    id: Optional[int] = None
+    survey_result_id: int
+    type: SURVEY_RESULT_COMMENT_TYPE
+    result: str
     created_at: Optional[datetime] = None
 
 

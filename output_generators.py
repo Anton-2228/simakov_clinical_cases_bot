@@ -1,7 +1,7 @@
 import json
 
-from dtos import SurveyStep, SurveyStepResult, SurveyResult
-from enums import SURVEY_STEP_TYPE
+from dtos import SurveyStep, SurveyStepResult, SurveyResult, SurveyResultComments
+from enums import SURVEY_STEP_TYPE, SURVEY_RESULT_COMMENT_TYPE
 from models import User
 from resources.messages import (ADD_SURVEY_STEP,
                                 CHANGE_SURVEY_STEP_CURRENT_STEP_DATA,
@@ -12,7 +12,8 @@ from resources.messages import (ADD_SURVEY_STEP,
                                 MESSAGE_TO_ADMINS, MESSAGE_TO_USER, SEND_MESSAGE_TO_USER, SEND_MESSAGE_TO_ALL_USERS,
                                 SEND_MESSAGE_TO_ALL_USERS_FINISH, SEE_ANSWERS_STRING,
                                 SEE_ANSWERS_FILES,
-                                SEND_INFO_ABOUT_NEW_SURVEY_RESULT)
+                                SEND_INFO_ABOUT_NEW_SURVEY_RESULT, ADD_FILES_TO_SURVEY_RESULT_COUNT_FILES,
+                                SEE_COMMENTS_FILES, SEE_COMMENTS_STRING)
 from utils import load_json
 
 
@@ -108,9 +109,20 @@ def create_survey_result_see_answers_output(step: SurveyStep, step_result: Surve
     assert text_message is not None, f"Нет генератора сообщения для типа ответа {step.type}"
     return text_message
 
-# def create_add_files_to_survey_result_file_count_output(file_count) -> str:
-#     text_message = ADD_FILES_TO_SURVEY_RESULT_COUNT_FILES.format(file_count=file_count)
-#     return text_message
+def create_survey_result_comments_see_answers_output(survey_result_comment: SurveyResultComments) -> str:
+    text_message = None
+    if survey_result_comment.type == SURVEY_RESULT_COMMENT_TYPE.STRING:
+        answer = json.loads(survey_result_comment.result)
+        text_message = SEE_COMMENTS_STRING.format(created_at=survey_result_comment.created_at,
+                                                  comment=answer["answer"])
+    elif survey_result_comment.type == SURVEY_RESULT_COMMENT_TYPE.FILES:
+        text_message = SEE_COMMENTS_FILES.format(created_at=survey_result_comment.created_at)
+    assert text_message is not None, f"Нет генератора сообщения для типа комментария {survey_result_comment.type}"
+    return text_message
+
+def create_add_files_to_survey_result_file_count_output(file_count) -> str:
+    text_message = ADD_FILES_TO_SURVEY_RESULT_COUNT_FILES.format(file_count=file_count)
+    return text_message
 
 def create_send_info_about_new_survey_result_output(user: User, survey_result: SurveyResult, link: str) -> str:
     text_message = SEND_INFO_ABOUT_NEW_SURVEY_RESULT.format(name=f"{user.full_name}(ID: {user.telegram_id})",
