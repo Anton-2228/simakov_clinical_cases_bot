@@ -14,11 +14,11 @@ from db.service.abc_services import ABCServices
 from db.service.yandex_disk_wrapper import YANDEX_DISK_SESSION
 from dtos import SurveyStep, SurveyStepResult, SurveyResult
 from enums import (SURVEY_STEP_TYPE, ListTakeSurveyActions,
-                   RedisTmpFields)
+                   RedisTmpFields, USER_TYPE)
 from keyboards_generators import (get_keyboard_for_take_survey,
                                   get_keyboard_for_take_survey_step)
 from output_generators import (create_take_survey_file_count_output,
-                               create_take_survey_step_output)
+                               create_take_survey_step_output, create_send_info_about_new_survey_result_output)
 from pagers.aiogram_pager import AiogramPager
 from pagers.pager import PAGING_STATUS
 from resources.messages import (TAKE_SURVEY_MAXIMUM_NUMBER_FILES,
@@ -214,6 +214,17 @@ class TakeSurvey(BaseCommand):
 
         async with YANDEX_DISK_SESSION() as yd:
             await yd.add_survey_result(services=self.db, survey_result=survey_result)
+            link = await yd.get_folder_link(services=self.db, survey_result=survey_result)
+            admins = await self.db.user.get_users_by_type(user_type=USER_TYPE.ADMIN)
+            current_user = await self.db.user.get_user(telegram_id=message.chat.id)
+            text = create_send_info_about_new_survey_result_output(user=current_user,
+                                                                   survey_result=survey_result,
+                                                                   link=link)
+            for admin in admins:
+                sent_message, new_state = await self.aiogram_wrapper.send_message(
+                    text=text,
+                    chat_id=admin.telegram_id
+                )
 
         survey = await self.db.survey.get_survey(id=survey_id)
         send_message = await self.aiogram_wrapper.answer_massage(message=message,

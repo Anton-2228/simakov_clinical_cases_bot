@@ -4,6 +4,7 @@ import secrets
 import tempfile
 from pathlib import Path
 from typing import Dict
+from urllib.parse import quote
 
 from yadisk import AsyncClient
 from yadisk.types import AsyncFileOrPath
@@ -11,8 +12,8 @@ from yadisk.objects import AsyncResourceLinkObject
 
 from db.minio.minio import AsyncMinioClient
 from db.service.abc_services import ABCServices
-from dtos import SurveyResult
-from enums import SURVEY_STEP_TYPE
+from dtos import SurveyResult, SurveyResultComments
+from enums import SURVEY_STEP_TYPE, SURVEY_RESULT_COMMENT_TYPE
 from environments import YANDEX_DISK_TOKEN
 from resources.result_survey import TXT_STEP_RESULTS_SURVEY, TXT_RESULTS_SURVEY
 from utils import get_tmp_path
@@ -104,6 +105,23 @@ class YandexDiskWrapper(AsyncClient):
         await _add_string_result(dst_dir)
         await _add_files_result(dst_dir)
 
+    async def add_files_to_survey_result(self, services: ABCServices, survey_result: SurveyResult, comment: SurveyResultComments):
+        result = json.loads(comment.result)
+        if result["type"] == SURVEY_RESULT_COMMENT_TYPE.STRING.value:
+            return
+
+        user = await services.user.get_user(telegram_id=survey_result.user_id)
+        survey_dir = f"{user.full_name}/{survey_result.survey.name}"
+        await self.mkdir(path=survey_dir)
+        dst_dir = f"{survey_dir}/{survey_result.created_at}"
+        await self.mkdir(path=dst_dir)
+
+        for minio_path in result["answer"]:
+            temp_file_path = get_tmp_path()
+            await services.files_storage.download_file(object_name=minio_path, file_path=temp_file_path)
+            dst_path = f"{dst_dir}/{minio_path.split('/')[-1]}"
+            await self.upload(temp_file_path, dst_path)
+
     async def delete_survey_result(
             self,
             services: ABCServices,
@@ -124,6 +142,22 @@ class YandexDiskWrapper(AsyncClient):
             await super().remove(full_path, permanently=permanently)
         except Exception:
             pass
+
+    async def get_folder_link(self, services: ABCServices, survey_result: SurveyResult) -> str:
+        """
+        Вернуть ссылку на папку в веб-интерфейсе Яндекс.Диска.
+        Работает только для владельца аккаунта (нужна авторизация).
+        """
+        user = await services.user.get_user(telegram_id=survey_result.user_id)
+        survey_dir = f"{user.full_name}/{survey_result.survey.name}"
+        await self.mkdir(path=survey_dir)
+        dst_dir = f"{self.root_dir}/{survey_dir}/{survey_result.created_at}"
+        # В интерфейсе "disk" всегда начинается с /disk/
+        # убираем возможные // и нормализуем
+        ydisk_path = str(dst_dir).lstrip("/")
+        # encoded_path = "/".join(quote(p) for p in ydisk_path.split("/"))
+        encoded_path = quote(ydisk_path, safe="/")
+        return f"https://disk.yandex.ru/client/disk/{encoded_path}"
 
 def YANDEX_DISK_SESSION():
     return YandexDiskWrapper(token=YANDEX_DISK_TOKEN, root_dir="/test")

@@ -1,6 +1,6 @@
 import json
 
-from dtos import SurveyStep, SurveyStepResult
+from dtos import SurveyStep, SurveyStepResult, SurveyResult
 from enums import SURVEY_STEP_TYPE
 from models import User
 from resources.messages import (ADD_SURVEY_STEP,
@@ -9,8 +9,10 @@ from resources.messages import (ADD_SURVEY_STEP,
                                 SET_STEPS_ORDER, TAKE_SURVEY_COUNT_FILES,
                                 TAKE_SURVEY_ENTER_FILES,
                                 TAKE_SURVEY_ENTER_STRING, ADD_SURVEY, CHANGE_SURVEY_CURRENT_SURVEY_DATA,
-                                MESSAGE_TO_ADMINS, MESSAGE_TO_USER, SEND_MESSAGE_TO_USER, SEND_MESSAGE_TO_ALL_USERS, SEND_MESSAGE_TO_ALL_USERS_FINISH, SEE_ANSWERS_STRING,
-                                SEE_ANSWERS_FILES)
+                                MESSAGE_TO_ADMINS, MESSAGE_TO_USER, SEND_MESSAGE_TO_USER, SEND_MESSAGE_TO_ALL_USERS,
+                                SEND_MESSAGE_TO_ALL_USERS_FINISH, SEE_ANSWERS_STRING,
+                                SEE_ANSWERS_FILES, ADD_FILES_TO_SURVEY_RESULT_COUNT_FILES,
+                                SEND_INFO_ABOUT_NEW_SURVEY_RESULT)
 from utils import load_json
 
 
@@ -104,4 +106,14 @@ def create_survey_result_see_answers_output(step: SurveyStep, step_result: Surve
     elif step.type == SURVEY_STEP_TYPE.FILES:
         text_message = SEE_ANSWERS_FILES.format(ask=step.text)
     assert text_message is not None, f"Нет генератора сообщения для типа ответа {step.type}"
+    return text_message
+
+def create_add_files_to_survey_result_file_count_output(file_count) -> str:
+    text_message = ADD_FILES_TO_SURVEY_RESULT_COUNT_FILES.format(file_count=file_count)
+    return text_message
+
+def create_send_info_about_new_survey_result_output(user: User, survey_result: SurveyResult, link: str) -> str:
+    text_message = SEND_INFO_ABOUT_NEW_SURVEY_RESULT.format(name=f"{user.full_name}(ID: {user.telegram_id})",
+                                                            survey_name=survey_result.survey.name,
+                                                            result_link=link)
     return text_message
