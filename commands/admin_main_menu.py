@@ -35,6 +35,8 @@ class AdminMainMenu(BaseCommand):
         self.aiogram_wrapper.register_callback(self._send_message_to_user, AdminMainMenuCallbackFactory.filter(F.action == ListAdminMainMenuActions.SEND_MESSAGE_TO_USER))
 
     async def execute(self, message: Message, state: FSMContext, command: Optional[CommandObject] = None, **kwargs):
+        await self.manager.aiogram_wrapper.set_state(state_context=state,
+                                                     state=States.MAIN_MENU)
         keyboard_builder = get_keyboard_for_admin_main_menu()
         text_message = ADMIN_MAIN_MENU_MESSAGE
         send_message = await self.aiogram_wrapper.answer_massage(message=message,
