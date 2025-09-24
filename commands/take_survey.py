@@ -65,10 +65,11 @@ class TakeSurvey(BaseCommand):
         await self.steps_pager.init(state_context=state, elements=steps, page_count=1)
         keyboard = get_keyboard_for_take_survey()
         send_message = await self.aiogram_wrapper.answer_massage(message=message,
-                                                                 text=survey.start_message)
-        send_message = await self.aiogram_wrapper.answer_massage(message=message,
-                                                                 text=TAKE_SURVEY_START,
+                                                                 text=survey.start_message,
                                                                  reply_markup=keyboard.as_markup())
+        # send_message = await self.aiogram_wrapper.answer_massage(message=message,
+        #                                                          text=TAKE_SURVEY_START,
+        #                                                          reply_markup=keyboard.as_markup())
 
     async def _start_survey(self, callback: CallbackQuery, callback_data: TakeSurveyCallbackFactory, state: FSMContext):
         await self.manager.aiogram_wrapper.set_state(state_context=state,
