@@ -75,6 +75,10 @@ class AiogramWrapper:
         send_message = await message.answer(*args, **kwargs)
         return send_message
 
+    async def answer_photo_massage(self, message: Message, *args, **kwargs) -> SendMessage:
+        send_message = await message.answer_photo(*args, **kwargs)
+        return send_message
+
     async def send_message(self,
                           chat_id: int,
                           text: str,

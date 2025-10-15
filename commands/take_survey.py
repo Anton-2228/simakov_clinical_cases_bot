@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING, Callable, Optional
 
 from aiogram.filters import CommandObject
 from aiogram.fsm.context import FSMContext
-from aiogram.types import CallbackQuery, Message, ReplyKeyboardRemove
+from aiogram.types import CallbackQuery, Message, ReplyKeyboardRemove, BufferedInputFile
 from aiogram import F
 # from magic_filter import F
 
@@ -94,9 +94,18 @@ class TakeSurvey(BaseCommand):
         step = await self._get_current_step(state_context=state_context)
         text = create_take_survey_step_output(step_type=step.type, step_text=step.text)
         inline_keyboard, reply_keyboard = get_keyboard_for_take_survey_step(step_type=step.type)
-        send_message = await self.aiogram_wrapper.answer_massage(message=message,
-                                                                 text=text,
-                                                                 reply_markup=inline_keyboard.as_markup())
+        logger.info(step.__dict__)
+        if step.image:
+            image_bytes = await self.db.files_storage.download_bytes(object_name=step.image)
+            image = BufferedInputFile(image_bytes, filename=f"step_{step.id}.png")
+            send_message = await self.aiogram_wrapper.answer_photo_massage(message=message,
+                                                                           photo=image,
+                                                                           caption=text,
+                                                                           reply_markup=inline_keyboard.as_markup())
+        else:
+            send_message = await self.aiogram_wrapper.answer_massage(message=message,
+                                                                     text=text,
+                                                                     reply_markup=inline_keyboard.as_markup())
         if step.type == SURVEY_STEP_TYPE.FILES:
             send_message = await self.aiogram_wrapper.answer_massage(message=message,
                                                                      text=TAKE_SURVEY_ENTER_FILES_DIRECTION_END,
@@ -111,9 +120,18 @@ class TakeSurvey(BaseCommand):
         step = await self._get_next_step(state_context=state_context)
         text = create_take_survey_step_output(step_type=step.type, step_text=step.text)
         inline_keyboard, reply_keyboard = get_keyboard_for_take_survey_step(step_type=step.type)
-        send_message = await self.aiogram_wrapper.answer_massage(message=message,
-                                                                 text=text,
-                                                                 reply_markup=inline_keyboard.as_markup())
+        logger.info(step.__dict__)
+        if step.image:
+            image_bytes = await self.db.files_storage.download_bytes(object_name=step.image)
+            image = BufferedInputFile(image_bytes, filename=f"step_{step.id}.png")
+            send_message = await self.aiogram_wrapper.answer_photo_massage(message=message,
+                                                                           photo=image,
+                                                                           caption=text,
+                                                                           reply_markup=inline_keyboard.as_markup())
+        else:
+            send_message = await self.aiogram_wrapper.answer_massage(message=message,
+                                                                     text=text,
+                                                                     reply_markup=inline_keyboard.as_markup())
         if step.type == SURVEY_STEP_TYPE.FILES:
             send_message = await self.aiogram_wrapper.answer_massage(message=message,
                                                                      text=TAKE_SURVEY_ENTER_FILES_DIRECTION_END,

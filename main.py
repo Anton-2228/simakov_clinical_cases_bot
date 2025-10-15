@@ -148,9 +148,13 @@ async def create_test_date():
                     finish_message="Оййййй, а это уже финальное сообщение")
     added_survey = await DB.survey.save_survey(survey=survey)
 
+    minio_key = DB.files_storage.key_builder.key_survey_step_image(survey_id=survey.id,
+                                                                   filename='aboba')
+    await DB.files_storage.upload_file(minio_key, "/bot/test-image.jpg")
     survey_step = SurveyStep(survey_id=added_survey.id,
                              name="aboba 0",
                              text="aboba 0 text",
+                             image=minio_key,
                              position=0,
                              type=SURVEY_STEP_TYPE.STRING)
     await DB.survey_step.save_survey_step(survey_step=survey_step)
