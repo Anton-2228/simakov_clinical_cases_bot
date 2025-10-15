@@ -21,6 +21,7 @@ class SurveyStep(BaseModel):
     name: str
     position: int
     text: str
+    image: Optional[str] = None
     type: SURVEY_STEP_TYPE
 
 

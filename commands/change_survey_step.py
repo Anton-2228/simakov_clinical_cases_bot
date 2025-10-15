@@ -17,7 +17,8 @@ from keyboards_generators import get_keyboard_for_change_survey_steps
 from output_generators import create_edit_survey_step_output
 from resources.messages import (REQUEST_ENTER_NEW_STEP_NAME,
                                 REQUEST_ENTER_NEW_STEP_TEXT,
-                                REQUEST_ENTER_NEW_STEP_TYPE)
+                                REQUEST_ENTER_NEW_STEP_TYPE,
+                                REQUEST_ENTER_NEW_STEP_IMAGE, ENTER_STEP_IMAGE_NOT_IMAGE)
 from states import States
 
 from .base_command import BaseCommand
@@ -35,7 +36,8 @@ class ChangeSurveyStep(BaseCommand):
         self.aiogram_wrapper.register_callback(self._set_step_type, ChangeSurveyStepsCallbackFactory.filter(F.action == ListChangeSurveyStepsActions.SELECT_STEP_TYPE))
         self.filed_order = [{"field_name": SURVEY_STEP_VARIABLE_FILEDS.NAME, "text": REQUEST_ENTER_NEW_STEP_NAME},
                             {"field_name": SURVEY_STEP_VARIABLE_FILEDS.TEXT, "text": REQUEST_ENTER_NEW_STEP_TEXT},
-                            {"field_name": SURVEY_STEP_VARIABLE_FILEDS.TYPE, "text": REQUEST_ENTER_NEW_STEP_TYPE}]
+                            {"field_name": SURVEY_STEP_VARIABLE_FILEDS.TYPE, "text": REQUEST_ENTER_NEW_STEP_TYPE},
+                            {"field_name": SURVEY_STEP_VARIABLE_FILEDS.IMAGE, "text": REQUEST_ENTER_NEW_STEP_IMAGE}]
 
     async def execute(self, message: Message, state: FSMContext, command: Optional[CommandObject] = None, survey_id: int = None, step_id: int = None, **kwargs):
         await self.aiogram_wrapper.set_state_data(state_context=state,
@@ -144,6 +146,8 @@ class ChangeSurveyStep(BaseCommand):
                                                                      field_name=RedisTmpFields.CHANGE_SURVEY_STEPS_CURRENT_FIELD_ID.value)
         step_id = await self.aiogram_wrapper.get_state_data(state_context=state,
                                                             field_name=RedisTmpFields.CHANGE_SURVEY_STEPS_STEP_ID.value)
+        survey_id = await self.aiogram_wrapper.get_state_data(state_context=state,
+                                                              field_name=RedisTmpFields.CHANGE_SURVEY_STEPS_SURVEY_ID.value)
         if self.filed_order[current_field_id]["field_name"] == SURVEY_STEP_VARIABLE_FILEDS.NAME:
             new_name = message.text
             step = await self.db.survey_step.get_survey_step(id=step_id)
@@ -156,6 +160,20 @@ class ChangeSurveyStep(BaseCommand):
             await self.db.survey_step.update_survey_step(survey_step=step)
         elif self.filed_order[current_field_id]["field_name"] == SURVEY_STEP_VARIABLE_FILEDS.TYPE:
             return
+        elif self.filed_order[current_field_id]["field_name"] == SURVEY_STEP_VARIABLE_FILEDS.IMAGE:
+            if message.photo:
+                file_id = message.photo[-1].file_id
+                file_path = await self.aiogram_wrapper.download_file(message=message)
+                step = await self.db.survey_step.get_survey_step(id=step_id)
+                minio_key = self.db.files_storage.key_builder.key_survey_step_image(survey_id=survey_id,
+                                                                                    filename=file_id)
+                await self.db.files_storage.upload_file(minio_key, file_path)
+                step.image = minio_key
+                await self.db.survey_step.update_survey_step(survey_step=step)
+            else:
+                send_message = await self.aiogram_wrapper.answer_massage(message=message,
+                                                                         text=ENTER_STEP_IMAGE_NOT_IMAGE)
+                return
 
         current_field_id = await self._set_next_field_id(state_context=state)
         if current_field_id == -1:

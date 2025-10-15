@@ -61,7 +61,7 @@ class SurveyKeyBuilder:
             trailing_slash=True,
         )
 
-    def prefix_survey(self, user_id: str, survey_id: str) -> str:
+    def prefix_survey_result(self, user_id: str, survey_id: str) -> str:
         """Префикс конкретного пройденного опроса."""
         return self._join(
             self.cfg.root,
@@ -72,10 +72,25 @@ class SurveyKeyBuilder:
             trailing_slash=True,
         )
 
-    def prefix_survey_files(self, user_id: str, survey_id: str) -> str:
+    def prefix_survey_result_files(self, user_id: str, survey_id: str) -> str:
         """Префикс каталога файлов внутри опроса. Удобно для list(prefix=...)."""
         return self._join(
-            self.prefix_survey(user_id, survey_id),
+            self.prefix_survey_result(user_id, survey_id),
+            self.cfg.files_dir,
+            trailing_slash=True,
+        )
+
+    def prefix_survey_step(self, survey_id: str) -> str:
+        return self._join(
+            self.cfg.root,
+            self.cfg.surveys_dir,
+            self._seg(survey_id),
+            trailing_slash=True,
+        )
+
+    def prefix_survey_step_files(self, survey_id: str) -> str:
+        return self._join(
+            self.prefix_survey_step(survey_id),
             self.cfg.files_dir,
             trailing_slash=True,
         )
@@ -96,13 +111,40 @@ class SurveyKeyBuilder:
         Полный ключ для файла из опроса.
         Пример: app/users/u1/surveys/s42/files/att/20/ab/2025/09/09/report.pdf
         """
-        base = [self.prefix_survey_files(user_id, survey_id)]
+        base = [self.prefix_survey_result_files(user_id, survey_id)]
         if category:
             base.append(self._seg(category))
 
         # шардирование по хешу userId/surveyId/(filename или stable_id)
         if self.cfg.hash_sharding:
             shard_key = f"{user_id}/{survey_id}/{stable_id or filename}"
+            base.extend(self._shards(shard_key))
+
+        # дата-партиционирование
+        if self.cfg.date_partition:
+            dt = ts or datetime.utcnow()
+            base.extend([f"{dt:%Y}", f"{dt:%m}", f"{dt:%d}"])
+
+        # финальное имя
+        last = self._seg(stable_id) if stable_id else self._file_name(filename)
+        return self._join(*base, last)
+
+    def key_survey_step_image(
+        self,
+        survey_id: str,
+        filename: str,
+        *,
+        category: Optional[str] = None,   # подкаталог типа "attachments", "exports" и т. п.
+        ts: Optional[datetime] = None,    # если нужен дата-префикс — можно передать время
+        stable_id: Optional[str] = None,  # свой идентификатор файла вместо имени, если нужно
+    ) -> str:
+        base = [self.prefix_survey_step_files(survey_id)]
+        if category:
+            base.append(self._seg(category))
+
+        # шардирование по хешу surveyId/(filename или stable_id)
+        if self.cfg.hash_sharding:
+            shard_key = f"{survey_id}/{stable_id or filename}"
             base.extend(self._shards(shard_key))
 
         # дата-партиционирование

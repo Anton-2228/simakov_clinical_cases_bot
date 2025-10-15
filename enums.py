@@ -70,6 +70,7 @@ class SURVEY_STEP_VARIABLE_FILEDS(Enum):
     NAME = "name"
     TEXT = "text"
     TYPE = "type"
+    IMAGE = "image"
 
 class SURVEY_VARIABLE_FIELDS(Enum):
     NAME = "name"

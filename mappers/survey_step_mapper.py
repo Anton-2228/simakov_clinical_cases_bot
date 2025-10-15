@@ -13,6 +13,7 @@ class SurveyStepMapper(ABCMapper):
             position=entity.position,
             type=entity.type,
             text=entity.text,
+            image=entity.image,
             survey_id=entity.survey_id
         )
 
@@ -24,5 +25,6 @@ class SurveyStepMapper(ABCMapper):
             position=dto.position,
             type=dto.type,
             text=dto.text,
+            image=dto.image,
             survey_id=dto.survey_id
         )

@@ -40,6 +40,7 @@ class SurveyStepORM(Base):
     name: Mapped[str]
     position: Mapped[int]
     text: Mapped[str]
+    image: Mapped[Optional[str]] = mapped_column(nullable=True)
     type: Mapped[SURVEY_STEP_TYPE] = mapped_column(
         PgEnum(SURVEY_STEP_TYPE, name="survey_step_types", create_type=True)
     )

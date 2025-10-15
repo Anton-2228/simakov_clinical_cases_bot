@@ -17,7 +17,8 @@ from keyboards_generators import get_keyboard_for_add_survey_steps
 from output_generators import create_add_survey_step_output
 from resources.messages import (REQUEST_ENTER_STEP_NAME,
                                 REQUEST_ENTER_STEP_TEXT,
-                                REQUEST_ENTER_STEP_TYPE)
+                                REQUEST_ENTER_STEP_TYPE,
+                                REQUEST_ENTER_STEP_IMAGE, ENTER_STEP_IMAGE_NOT_IMAGE)
 from states import States
 
 from .base_command import BaseCommand
@@ -34,7 +35,8 @@ class AddSurveyStep(BaseCommand):
         self.aiogram_wrapper.register_callback(self._set_step_type, AddSurveyStepCallbackFactory.filter(F.action == ListAddSurveyStepActions.SELECT_STEP_TYPE))
         self.filed_order = [{"field_name": SURVEY_STEP_VARIABLE_FILEDS.NAME, "text": REQUEST_ENTER_STEP_NAME},
                             {"field_name": SURVEY_STEP_VARIABLE_FILEDS.TEXT, "text": REQUEST_ENTER_STEP_TEXT},
-                            {"field_name": SURVEY_STEP_VARIABLE_FILEDS.TYPE, "text": REQUEST_ENTER_STEP_TYPE}]
+                            {"field_name": SURVEY_STEP_VARIABLE_FILEDS.TYPE, "text": REQUEST_ENTER_STEP_TYPE},
+                            {"field_name": SURVEY_STEP_VARIABLE_FILEDS.IMAGE, "text": REQUEST_ENTER_STEP_IMAGE}]
 
     async def execute(self, message: Message, state: FSMContext, command: Optional[CommandObject] = None, survey_id: int = None, **kwargs):
         await self.aiogram_wrapper.set_state_data(state_context=state,
@@ -113,42 +115,17 @@ class AddSurveyStep(BaseCommand):
         return current_field_id
 
     async def _send_field_request(self, state_context: FSMContext, message: Message, field_id: int):
-        # await self._delete_last_message_keyboard(state_context=state_context)
         keyboard = get_keyboard_for_add_survey_steps(field=self.filed_order[field_id]["field_name"])
         send_message = await self.aiogram_wrapper.answer_massage(message=message,
                                                                  text=self.filed_order[field_id]["text"],
                                                                  reply_markup=keyboard.as_markup())
         await self._save_message_data(state=state_context, message=send_message)
-        # if self.filed_order[field_id]["field_name"] == SURVEY_STEP_VARIABLE_FILEDS.NAME:
-        #     send_message = await self.aiogram_wrapper.answer_massage(message=message,
-        #                                                              text=self.filed_order[field_id]["text"],
-        #                                                              reply_markup=keyboard.as_markup())
-        #     await self._save_message_data(state=state_context, message=send_message)
-        # elif self.filed_order[field_id]["field_name"] == SURVEY_STEP_VARIABLE_FILEDS.TEXT:
-        #     send_message = await self.aiogram_wrapper.answer_massage(message=message,
-        #                                                              text=self.filed_order[field_id]["text"],
-        #                                                              reply_markup=keyboard.as_markup())
-        #     await self._save_message_data(state=state_context, message=send_message)
-        # elif self.filed_order[field_id]["field_name"] == SURVEY_STEP_VARIABLE_FILEDS.TYPE:
-        #     send_message = await self.aiogram_wrapper.answer_massage(message=message,
-        #                                                              text=self.filed_order[field_id]["text"],
-        #                                                              reply_markup=keyboard.as_markup())
-        #     await self._save_message_data(state=state_context, message=send_message)
-
-    # async def _delete_last_message_keyboard(self, state_context: FSMContext):
-    #     request_chat_id, request_message_id = await self._get_message_data(state=state_context)
-    #     await self.aiogram_wrapper.edit_message_reply_markup(
-    #         chat_id=int(request_chat_id),
-    #         message_id=int(request_message_id),
-    #         reply_markup=None
-    #     )
 
     async def _end_processing(self, message: Message, state_context: FSMContext):
         step = await self._get_created_step(state=state_context)
         await self.db.survey_step.save_survey_step(survey_step=step)
         survey_id = await self.aiogram_wrapper.get_state_data(state_context=state_context,
                                                               field_name=RedisTmpFields.ADD_SURVEY_STEP_SURVEY_ID.value)
-        # await self._delete_last_message_keyboard(state_context=state_context)
         await self.aiogram_wrapper.set_state(state_context=state_context,
                                              state=States.EDIT_SURVEY)
         await self.manager.launch(name="edit_survey", message=message, state=state_context, survey_id=survey_id)
@@ -156,22 +133,31 @@ class AddSurveyStep(BaseCommand):
     async def _enter_value(self, message: Message, state: FSMContext, command: Optional[CommandObject] = None):
         current_field_id = await self.aiogram_wrapper.get_state_data(state_context=state,
                                                                      field_name=RedisTmpFields.ADD_SURVEY_STEP_CURRENT_FIELD_ID.value)
+        survey_id = await self.aiogram_wrapper.get_state_data(state_context=state,
+                                                              field_name=RedisTmpFields.ADD_SURVEY_STEP_SURVEY_ID.value)
         if self.filed_order[current_field_id]["field_name"] == SURVEY_STEP_VARIABLE_FILEDS.NAME:
             new_name = message.text
             await self._set_template_field(state=state,
                                            value=new_name)
-            # step = await self.db.survey_step.get_survey_step(id=step_id)
-            # step.name = new_name
-            # await self.db.survey_step.update_survey_step(survey_step=step)
         elif self.filed_order[current_field_id]["field_name"] == SURVEY_STEP_VARIABLE_FILEDS.TEXT:
             new_text = message.text
             await self._set_template_field(state=state,
                                            value=new_text)
-            # step = await self.db.survey_step.get_survey_step(id=step_id)
-            # step.text = new_text
-            # await self.db.survey_step.update_survey_step(survey_step=step)
         elif self.filed_order[current_field_id]["field_name"] == SURVEY_STEP_VARIABLE_FILEDS.TYPE:
             return
+        elif self.filed_order[current_field_id]["field_name"] == SURVEY_STEP_VARIABLE_FILEDS.IMAGE:
+            if message.photo:
+                file_id = message.photo[-1].file_id
+                file_path = await self.aiogram_wrapper.download_file(message=message)
+                minio_key = self.db.files_storage.key_builder.key_survey_step_image(survey_id=survey_id,
+                                                                                    filename=file_id)
+                await self.db.files_storage.upload_file(minio_key, file_path)
+                await self._set_template_field(state=state,
+                                               value=minio_key)
+            else:
+                send_message = await self.aiogram_wrapper.answer_massage(message=message,
+                                                                         text=ENTER_STEP_IMAGE_NOT_IMAGE)
+                return
 
         current_field_id = await self._set_next_field_id(state_context=state)
         if current_field_id == -1:
@@ -184,12 +170,6 @@ class AddSurveyStep(BaseCommand):
         new_type = callback_data.step_type
         await self._set_template_field(state=state,
                                        value=new_type)
-        # step_id = await self.aiogram_wrapper.get_state_data(state_context=state,
-        #                                                     field_name=RedisTmpFields.EDIT_SURVEY_STEPS_STEP_ID.value)
-        # step = await self.db.survey_step.get_survey_step(id=step_id)
-        # step.type = new_type
-        # await self.db.survey_step.update_survey_step(survey_step=step)
-
         current_field_id = await self._set_next_field_id(state_context=state)
         if current_field_id == -1:
             await self._end_processing(message=callback.message, state_context=state)
