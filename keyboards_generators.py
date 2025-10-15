@@ -573,3 +573,14 @@ def get_keyboard_for_add_files() -> InlineKeyboardBuilder:
     reply_kb = reply_builder.as_markup(resize_keyboard=True)
 
     return builder, reply_kb
+
+def get_keyboard_for_send_survey_result_to_admin(link: str) -> InlineKeyboardBuilder:
+    builder = InlineKeyboardBuilder()
+
+    link_button = InlineKeyboardButton(
+        text="Ссылка на результат",
+        url=link
+    )
+    builder.row(link_button)
+
+    return builder

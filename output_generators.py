@@ -124,8 +124,7 @@ def create_add_files_to_survey_result_file_count_output(file_count) -> str:
     text_message = ADD_FILES_TO_SURVEY_RESULT_COUNT_FILES.format(file_count=file_count)
     return text_message
 
-def create_send_info_about_new_survey_result_output(user: User, survey_result: SurveyResult, link: str) -> str:
+def create_send_info_about_new_survey_result_output(user: User, survey_result: SurveyResult) -> str:
     text_message = SEND_INFO_ABOUT_NEW_SURVEY_RESULT.format(name=f"{user.full_name}(ID: {user.telegram_id})",
-                                                            survey_name=survey_result.survey.name,
-                                                            result_link=link)
+                                                            survey_name=survey_result.survey.name)
     return text_message

@@ -16,7 +16,7 @@ from dtos import SurveyStep, SurveyStepResult, SurveyResult
 from enums import (SURVEY_STEP_TYPE, ListTakeSurveyActions,
                    RedisTmpFields, USER_TYPE)
 from keyboards_generators import (get_keyboard_for_take_survey,
-                                  get_keyboard_for_take_survey_step)
+                                  get_keyboard_for_take_survey_step, get_keyboard_for_send_survey_result_to_admin)
 from output_generators import (create_take_survey_file_count_output,
                                create_take_survey_step_output, create_send_info_about_new_survey_result_output)
 from pagers.aiogram_pager import AiogramPager
@@ -237,11 +237,12 @@ class TakeSurvey(BaseCommand):
             admins = await self.db.user.get_users_by_type(user_type=USER_TYPE.ADMIN)
             current_user = await self.db.user.get_user(telegram_id=message.chat.id)
             text = create_send_info_about_new_survey_result_output(user=current_user,
-                                                                   survey_result=survey_result,
-                                                                   link=link)
+                                                                   survey_result=survey_result)
+            inline_keyboard = get_keyboard_for_send_survey_result_to_admin(link=link)
             for admin in admins:
                 sent_message, new_state = await self.aiogram_wrapper.send_message(
                     text=text,
+                    reply_markup=inline_keyboard.as_markup(),
                     chat_id=admin.telegram_id
                 )
 

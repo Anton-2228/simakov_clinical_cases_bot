@@ -3,6 +3,3 @@
 
 Прошел опрос:
 *{survey_name}*
-
-Результат:
-{result_link}
