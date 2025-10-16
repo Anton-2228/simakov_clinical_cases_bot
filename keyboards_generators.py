@@ -42,7 +42,7 @@ from pagers.pager import PAGING_STATUS
 def get_keyboard_for_user_main_menu() -> InlineKeyboardBuilder:
     builder = InlineKeyboardBuilder()
     builder.button(text="Пройти опрос", callback_data=UserMainMenuCallbackFactory(action=ListUserMainMenuActions.TAKE_THE_SURVEY))
-    builder.button(text="Отправить вопрос администратору", callback_data=UserMainMenuCallbackFactory(action=ListUserMainMenuActions.SEND_MESSAGE_TO_ADMIN))
+    builder.button(text="Задать вопрос", callback_data=UserMainMenuCallbackFactory(action=ListUserMainMenuActions.SEND_MESSAGE_TO_ADMIN))
     builder.adjust(1)
     return builder
 
