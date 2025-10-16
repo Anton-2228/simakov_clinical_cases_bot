@@ -41,14 +41,14 @@ from pagers.pager import PAGING_STATUS
 
 def get_keyboard_for_user_main_menu() -> InlineKeyboardBuilder:
     builder = InlineKeyboardBuilder()
-    builder.button(text="Пройти опрос", callback_data=UserMainMenuCallbackFactory(action=ListUserMainMenuActions.TAKE_THE_SURVEY))
+    builder.button(text="Отправить клинический случай", callback_data=UserMainMenuCallbackFactory(action=ListUserMainMenuActions.TAKE_THE_SURVEY))
     builder.button(text="Задать вопрос", callback_data=UserMainMenuCallbackFactory(action=ListUserMainMenuActions.SEND_MESSAGE_TO_ADMIN))
     builder.adjust(1)
     return builder
 
 def get_keyboard_for_admin_main_menu() -> InlineKeyboardBuilder:
     builder = InlineKeyboardBuilder()
-    builder.button(text="Пройти опрос", callback_data=AdminMainMenuCallbackFactory(action=ListAdminMainMenuActions.TAKE_THE_SURVEY))
+    builder.button(text="Отправить клинический случай", callback_data=AdminMainMenuCallbackFactory(action=ListAdminMainMenuActions.TAKE_THE_SURVEY))
     builder.button(text="Отредактировать опросы", callback_data=AdminMainMenuCallbackFactory(action=ListAdminMainMenuActions.EDIT_SURVEYS))
     builder.button(text="Обновить список админов", callback_data=AdminMainMenuCallbackFactory(action=ListAdminMainMenuActions.EDIT_ADMIN_LIST))
     builder.button(text="Получить таблицу с пользователями", callback_data=AdminMainMenuCallbackFactory(action=ListAdminMainMenuActions.GET_DUMP_USERS))
