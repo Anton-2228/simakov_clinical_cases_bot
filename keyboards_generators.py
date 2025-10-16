@@ -195,8 +195,13 @@ def get_keyboard_for_change_survey_steps(field: SURVEY_STEP_VARIABLE_FILEDS) -> 
                                                 action=ListChangeSurveyStepsActions.SELECT_STEP_TYPE,
                                                 step_type=SURVEY_STEP_TYPE.FILES).pack()
                                             )
+        yes_no_button = InlineKeyboardButton(text="Да/Нет",
+                                             callback_data=ChangeSurveyStepsCallbackFactory(
+                                                action=ListChangeSurveyStepsActions.SELECT_STEP_TYPE,
+                                                step_type=SURVEY_STEP_TYPE.YES_NO).pack()
+                                            )
 
-        builder.row(str_button, files_button)
+        builder.row(str_button, files_button, yes_no_button)
     builder.row(InlineKeyboardButton(text="Оставить текущее", callback_data=ChangeSurveyStepsCallbackFactory(action=ListChangeSurveyStepsActions.KEEP_CURRENT_VALUE).pack()))
     return builder
 
@@ -236,8 +241,13 @@ def get_keyboard_for_add_survey_steps(field: SURVEY_STEP_VARIABLE_FILEDS) -> Inl
                                                 action=ListAddSurveyStepActions.SELECT_STEP_TYPE,
                                                 step_type=SURVEY_STEP_TYPE.FILES).pack()
                                             )
+        yes_no_button = InlineKeyboardButton(text="Да/Нет",
+                                             callback_data=AddSurveyStepCallbackFactory(
+                                                action=ListAddSurveyStepActions.SELECT_STEP_TYPE,
+                                                step_type=SURVEY_STEP_TYPE.YES_NO).pack()
+                                            )
 
-        builder.row(str_button, files_button)
+        builder.row(str_button, files_button, yes_no_button)
     return builder
 
 def get_keyboard_for_add_survey_field(field: SURVEY_VARIABLE_FIELDS) -> InlineKeyboardBuilder:
