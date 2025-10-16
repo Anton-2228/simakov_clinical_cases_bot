@@ -1,7 +1,9 @@
 import json
+import logging
 import os
 import secrets
 import tempfile
+import traceback
 from pathlib import Path
 from typing import Dict
 from urllib.parse import quote
@@ -17,6 +19,10 @@ from enums import SURVEY_STEP_TYPE, SURVEY_RESULT_COMMENT_TYPE
 from environments import YANDEX_DISK_TOKEN
 from resources.result_survey import TXT_STEP_RESULTS_SURVEY, TXT_RESULTS_SURVEY
 from utils import get_tmp_path
+
+
+logger = logging.getLogger(__name__)
+
 
 
 class YandexDiskWrapper(AsyncClient):
@@ -43,6 +49,15 @@ class YandexDiskWrapper(AsyncClient):
             await super().mkdir(str(path), *args, **kwargs)
         except:
             pass
+
+    async def exists(
+        self,
+        path,
+        *args,
+        **kwargs
+    ) -> bool:
+        path = Path(self.root_dir) / path
+        return await super().exists(str(path), *args, **kwargs)
 
     async def upload(
             self,
@@ -77,6 +92,19 @@ class YandexDiskWrapper(AsyncClient):
         return TXT_RESULTS_SURVEY.format(answers=text_answers)
 
     async def add_survey_result(self, services: ABCServices, survey_result: SurveyResult):
+        async def _check_exists(dst_dir: str, filename: str):
+            while True:
+                try:
+                    file_exists = await self.exists(f"{dst_dir}/{filename}")
+                except Exception as e:
+                    logger.info(traceback.format_exc())
+                    file_exists = False
+                if not file_exists:
+                    break
+                name, ext = os.path.splitext(filename)
+                filename = f"{name}_new{ext}"
+            return filename
+
         async def _add_string_result(dst_dir: str):
             string_answers = self._create_string_answers(survey_result)
             temp_file_path = get_tmp_path()
@@ -88,12 +116,15 @@ class YandexDiskWrapper(AsyncClient):
         async def _add_files_result(dst_dir):
             for survey_step_result in survey_result.survey_step_results:
                 result = json.loads(survey_step_result.result)
-                if result["type"] == SURVEY_STEP_TYPE.STRING.value:
+                if result["type"] != SURVEY_STEP_TYPE.FILES.value:
                     continue
                 for minio_path in result["answer"]:
                     temp_file_path = get_tmp_path()
                     await services.files_storage.download_file(object_name=minio_path, file_path=temp_file_path)
-                    dst_path = f"{dst_dir}/{minio_path.split('/')[-1]}"
+                    filename = minio_path.split("/")[-1]
+                    filename = await _check_exists(dst_dir=dst_dir, filename=filename)
+                    dst_path = f"{dst_dir}/{filename}"
+
                     await self.upload(temp_file_path, dst_path)
 
         user = await services.user.get_user(telegram_id=survey_result.user_id)

@@ -13,7 +13,7 @@ from resources.messages import (ADD_SURVEY_STEP,
                                 SEND_MESSAGE_TO_ALL_USERS_FINISH, SEE_ANSWERS_STRING,
                                 SEE_ANSWERS_FILES,
                                 SEND_INFO_ABOUT_NEW_SURVEY_RESULT, ADD_FILES_TO_SURVEY_RESULT_COUNT_FILES,
-                                SEE_COMMENTS_FILES, SEE_COMMENTS_STRING)
+                                SEE_COMMENTS_FILES, SEE_COMMENTS_STRING, TAKE_SURVEY_ENTER_YES_NO)
 from utils import load_json
 
 
@@ -76,6 +76,8 @@ def create_take_survey_step_output(step_type: SURVEY_STEP_TYPE, step_text: str) 
         text_message = TAKE_SURVEY_ENTER_STRING.format(step_text=step_text)
     elif step_type == SURVEY_STEP_TYPE.FILES:
         text_message = TAKE_SURVEY_ENTER_FILES.format(step_text=step_text)
+    elif step_type == SURVEY_STEP_TYPE.YES_NO:
+        text_message = TAKE_SURVEY_ENTER_YES_NO.format(step_text=step_text)
     assert text_message is not None, f"Нет генератора сообщения для типа ответа {step_type}"
     return text_message
 

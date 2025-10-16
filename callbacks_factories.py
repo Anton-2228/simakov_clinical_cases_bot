@@ -14,7 +14,7 @@ from enums import (SURVEY_STEP_TYPE, SURVEY_STEP_VARIABLE_FILEDS, SURVEY_VARIABL
                    ListSendMessageToUserActions, ListSendMessageToAllUsersActions, ListReplyMessageToClientActions,
                    ListSelectUserToSendMessageActions, ListSurveyActionsActions,
                    ListSelectSurveyResultActions, ListSurveyResultActionsActions,
-                   ListAddCommentsActions, ListAddFilesActions)
+                   ListAddCommentsActions, ListAddFilesActions, YES_NO)
 
 
 class UserMainMenuCallbackFactory(CallbackData, prefix="umm"): # user_main_menu
@@ -67,6 +67,7 @@ class SelectTakeSurveyCallbackFactory(CallbackData, prefix="sts"): # select_take
 
 class TakeSurveyCallbackFactory(CallbackData, prefix="ts"): # take_survey
     action: ListTakeSurveyActions
+    yes_no_result: Optional[YES_NO] = None
 
 class SendMessageToAdminCallbackFactory(CallbackData, prefix="smta"): # send_message_to_admin
     action: ListSendMessageToAdminActions

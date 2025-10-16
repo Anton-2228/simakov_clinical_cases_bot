@@ -12,6 +12,8 @@ class RedisTmpFields(Enum):
     ENTER_SURVEY_STEP_FIELD_VALUE_REQUEST_CHAT_ID = "enter_survey_step_field_value_request_chat_id"
     ENTER_NEW_SURVEY_FIELD_VALUE_REQUEST_MESSAGE_ID = "enter_new_survey_field_value_request_message_id"
     ENTER_NEW_SURVEY_FIELD_VALUE_REQUEST_CHAT_ID = "enter_new_survey_field_value_request_chat_id"
+    TAKE_SURVEY_VALUE_REQUEST_MESSAGE_ID = "take_survey_value_request_message_id"
+    TAKE_SURVEY_VALUE_REQUEST_CHAT_ID = "take_survey__value_request_chat_id"
 
     DUMP_EDIT_SURVEYS = "dump_edit_surveys"
     DUMP_EDIT_SURVEY = "dump_edit_survey"
@@ -62,6 +64,10 @@ class SURVEY_STEP_TYPE(Enum):
     STRING = "string"
     FILES = "files"
     YES_NO = "yes\\_no"
+
+class YES_NO(Enum):
+    YES = "yes"
+    NO = "no"
 
 class SURVEY_RESULT_COMMENT_TYPE(Enum):
     STRING = "string"
@@ -154,6 +160,7 @@ class ListSelectTakeSurveyActions(Enum):
 class ListTakeSurveyActions(Enum):
     RETURN_TO_SELECT_TAKE_SURVEY = "return_to_select_take_survey"
     START_SURVEY = "start_survey"
+    YES_NO_SELECTION = "yes_no_selection"
 
 class ListSurveyActionsActions(Enum):
     TAKE_SURVEY = "take_survey"

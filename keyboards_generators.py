@@ -34,7 +34,7 @@ from enums import (SURVEY_STEP_TYPE, SURVEY_STEP_VARIABLE_FILEDS, SURVEY_VARIABL
                    ListSendMessageToAdminActions, ListReplyMessageToClientActions, ListSendMessageToUserActions,
                    ListSendMessageToAllUsersActions,
                    ListSelectUserToSendMessageActions, ListSelectSurveyResultActions, ListSurveyResultActionsActions,
-                   ListAddCommentsActions, ListAddFilesActions)
+                   ListAddCommentsActions, ListAddFilesActions, YES_NO)
 from models import User
 from pagers.pager import PAGING_STATUS
 
@@ -311,17 +311,30 @@ def get_keyboard_for_take_survey() -> InlineKeyboardBuilder:
 
 def get_keyboard_for_take_survey_step(step_type: SURVEY_STEP_TYPE) -> tuple[InlineKeyboardBuilder, ReplyKeyboardBuilder | None]:
     builder = InlineKeyboardBuilder()
-    return_to_select_take_survey_button = InlineKeyboardButton(
-        text="Преждевременно завершить опрос",
-        callback_data=TakeSurveyCallbackFactory(action=ListTakeSurveyActions.RETURN_TO_SELECT_TAKE_SURVEY).pack()
-    )
-    builder.row(return_to_select_take_survey_button)
 
     reply_kb = None
     if step_type == SURVEY_STEP_TYPE.FILES:
         reply_builder = ReplyKeyboardBuilder()
         reply_builder.row(KeyboardButton(text="✅готово"))
         reply_kb = reply_builder.as_markup(resize_keyboard=True)
+    elif step_type == SURVEY_STEP_TYPE.YES_NO:
+        yes_button = InlineKeyboardButton(
+            text="Да",
+            callback_data=TakeSurveyCallbackFactory(action=ListTakeSurveyActions.YES_NO_SELECTION,
+                                                    yes_no_result=YES_NO.YES).pack()
+        )
+        no_button = InlineKeyboardButton(
+            text="Нет",
+            callback_data=TakeSurveyCallbackFactory(action=ListTakeSurveyActions.YES_NO_SELECTION,
+                                                    yes_no_result=YES_NO.NO).pack()
+        )
+        builder.row(yes_button, no_button)
+
+    return_to_select_take_survey_button = InlineKeyboardButton(
+        text="Преждевременно завершить опрос",
+        callback_data=TakeSurveyCallbackFactory(action=ListTakeSurveyActions.RETURN_TO_SELECT_TAKE_SURVEY).pack()
+    )
+    builder.row(return_to_select_take_survey_button)
 
     return builder, reply_kb
 

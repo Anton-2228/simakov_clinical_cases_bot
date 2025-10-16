@@ -162,7 +162,7 @@ async def create_test_date():
                              name="aboba 1",
                              text="aboba 1 text",
                              position=1,
-                             type=SURVEY_STEP_TYPE.STRING)
+                             type=SURVEY_STEP_TYPE.YES_NO)
     await DB.survey_step.save_survey_step(survey_step=survey_step)
     survey_step = SurveyStep(survey_id=added_survey.id,
                              name="aboba 2",
