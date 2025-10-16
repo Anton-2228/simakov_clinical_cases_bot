@@ -10,6 +10,7 @@ from aiogram_wrapper import AiogramWrapper
 from callbacks_factories import UserMainMenuCallbackFactory
 from db.service.abc_services import ABCServices
 from enums import ListUserMainMenuActions
+from environments import TARGETED_SURVEY_ID
 from keyboards_generators import get_keyboard_for_user_main_menu
 from resources.messages import USER_MAIN_MENU_MESSAGE
 from states import States
@@ -41,9 +42,13 @@ class UserMainMenu(BaseCommand):
                                                      state=States.TAKE_THE_SURVEY)
         await self.manager.aiogram_wrapper.delete_message(message_id=callback.message.message_id,
                                                           chat_id=callback.message.chat.id)
-        await self.manager.launch(name="select_take_survey",
+        # await self.manager.launch(name="select_take_survey",
+        #                           message=callback.message,
+        #                           state=state)
+        await self.manager.launch(name="take_survey",
                                   message=callback.message,
-                                  state=state)
+                                  state=state,
+                                  survey_id=int(TARGETED_SURVEY_ID))
         await callback.answer()
 
     async def _send_message_to_admin(self, callback: CallbackQuery, callback_data: UserMainMenuCallbackFactory, state: FSMContext):

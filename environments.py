@@ -10,6 +10,9 @@ assert TEST_MODE is not None, "TEST_MODE not initialized"
 TELEGRAM_BOT_TOKEN=os.getenv("TELEGRAM_BOT_TOKEN")
 assert TELEGRAM_BOT_TOKEN is not None, "TELEGRAM_BOT_TOKEN not initialized"
 
+TARGETED_SURVEY_ID=os.getenv("TARGETED_SURVEY_ID")
+assert TARGETED_SURVEY_ID is not None, "TARGETED_SURVEY_ID not initialized"
+
 REDIS_HOST=os.getenv("REDIS_HOST")
 assert REDIS_HOST is not None, "REDIS_HOST not initialized"
 REDIS_PORT=os.getenv("REDIS_PORT")
