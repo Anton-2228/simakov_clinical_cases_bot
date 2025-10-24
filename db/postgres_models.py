@@ -20,6 +20,9 @@ class MessageType(Enum):
     TO_ADMINS = "to_admins"
     TO_USER = "to_user"
 
+class SurveyResultStatus(Enum):
+    NOT_PROCESSED = "not_processed"
+    PROCESSED = "processed"
 
 class SurveyORM(Base):
     __tablename__ = "surveys"
@@ -55,6 +58,7 @@ class SurveyResultORM(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     user_id: Mapped[int] = mapped_column(BigInteger)
     survey_id: Mapped[int] = mapped_column(ForeignKey("surveys.id", ondelete="CASCADE"))
+    status: Mapped[SurveyResultStatus] = mapped_column(PgEnum(SurveyResultStatus, name="survey_result_status", create_type=True))
     created_at: Mapped[datetime] = mapped_column(server_default=text("TIMEZONE('utc-3', now())"))
 
     survey: Mapped["SurveyORM"] = relationship()

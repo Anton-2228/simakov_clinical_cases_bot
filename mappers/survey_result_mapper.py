@@ -32,6 +32,7 @@ class SurveyResultMapper(ABCMapper):
             user_id=entity.user_id,
             survey_id=entity.survey_id,
             created_at=entity.created_at,
+            status=entity.status,
             survey=survey,
             survey_step_results=survey_step_results
         )
@@ -41,6 +42,7 @@ class SurveyResultMapper(ABCMapper):
         return SurveyResultORM(
             id=dto.id,
             user_id=dto.user_id,
-            survey_id=dto.survey_id
+            survey_id=dto.survey_id,
             # created_at=dto.created_at or datetime.utcnow()
+            status=dto.status
         )

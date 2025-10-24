@@ -11,6 +11,7 @@ from aiogram import F
 
 from aiogram_wrapper import AiogramWrapper
 from callbacks_factories import TakeSurveyCallbackFactory
+from db.postgres_models import SurveyResultStatus
 from db.service.abc_services import ABCServices
 from db.service.yandex_disk_wrapper import YANDEX_DISK_SESSION
 from dtos import SurveyStep, SurveyStepResult, SurveyResult
@@ -275,7 +276,8 @@ class TakeSurvey(BaseCommand):
         survey_id = await self.aiogram_wrapper.get_state_data(state_context=state_context,
                                                               field_name=RedisTmpFields.TAKE_SURVEY_SURVEY_ID.value)
         survey_result = SurveyResult(survey_id=int(survey_id),
-                                     user_id=message.chat.id)
+                                     user_id=message.chat.id,
+                                     status=SurveyResultStatus.NOT_PROCESSED)
         survey_result = await self.db.survey_result.save_survey_result(survey_result=survey_result)
         for step_id in survey_answer:
             step_answer = json.dumps(survey_answer[step_id], ensure_ascii=False, indent=2)
