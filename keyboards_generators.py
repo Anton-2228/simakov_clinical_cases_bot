@@ -21,7 +21,7 @@ from callbacks_factories import (AddSurveyCallbackFactory,
                                  SendMessageToAllUsersCallbackFactory,
                                  SelectUserToSendMessageCallbackFactory, SelectSurveyResultCallbackFactory,
                                  SurveyResultActionsCallbackFactory, AddCommentsCallbackFactory,
-                                 AddFilesCallbackFactory)
+                                 AddFilesCallbackFactory, UnprocessedSurveyResultsCallbackFactory)
 from enums import (SURVEY_STEP_TYPE, SURVEY_STEP_VARIABLE_FILEDS, SURVEY_VARIABLE_FIELDS,
                    ListAddSurveyListActions, ListAddSurveyStepActions,
                    ListAddUserToAdminListActions, ListAdminMainMenuActions,
@@ -34,7 +34,7 @@ from enums import (SURVEY_STEP_TYPE, SURVEY_STEP_VARIABLE_FILEDS, SURVEY_VARIABL
                    ListSendMessageToAdminActions, ListReplyMessageToClientActions, ListSendMessageToUserActions,
                    ListSendMessageToAllUsersActions,
                    ListSelectUserToSendMessageActions, ListSelectSurveyResultActions, ListSurveyResultActionsActions,
-                   ListAddCommentsActions, ListAddFilesActions, YES_NO)
+                   ListAddCommentsActions, ListAddFilesActions, ListUnprocessedSurveyResultsActions, YES_NO)
 from models import User
 from pagers.pager import PAGING_STATUS
 
@@ -53,6 +53,7 @@ def get_keyboard_for_admin_main_menu() -> InlineKeyboardBuilder:
     builder.button(text="Обновить список админов", callback_data=AdminMainMenuCallbackFactory(action=ListAdminMainMenuActions.EDIT_ADMIN_LIST))
     builder.button(text="Получить таблицу с пользователями", callback_data=AdminMainMenuCallbackFactory(action=ListAdminMainMenuActions.GET_DUMP_USERS))
     builder.button(text="Написать сообщение пользователю", callback_data=AdminMainMenuCallbackFactory(action=ListAdminMainMenuActions.SEND_MESSAGE_TO_USER))
+    builder.button(text="Необработанные результаты опросов", callback_data=AdminMainMenuCallbackFactory(action=ListAdminMainMenuActions.UNPROCESSED_SURVEY_RESULTS))
     builder.adjust(1)
     return builder
 
@@ -606,4 +607,39 @@ def get_keyboard_for_send_survey_result_to_admin(link: str) -> InlineKeyboardBui
     )
     builder.row(link_button)
 
+    return builder
+
+def get_keyboard_for_unprocessed_survey_results(survey_results: list, page_status: PAGING_STATUS) -> InlineKeyboardBuilder:
+    builder = InlineKeyboardBuilder()
+    
+    navigate_buttons = []
+    if page_status not in [PAGING_STATUS.FIRST_PAGE, PAGING_STATUS.ONLY_PAGE, PAGING_STATUS.NO_PAGE]:
+        previous_button = InlineKeyboardButton(
+            text="Назад",
+            callback_data=UnprocessedSurveyResultsCallbackFactory(action=ListUnprocessedSurveyResultsActions.PREVIOUS_RESULTS).pack())
+        navigate_buttons.append(previous_button)
+    if page_status not in [PAGING_STATUS.LAST_PAGE, PAGING_STATUS.ONLY_PAGE, PAGING_STATUS.NO_PAGE]:
+        next_button = InlineKeyboardButton(
+            text="Вперед",
+            callback_data=UnprocessedSurveyResultsCallbackFactory(action=ListUnprocessedSurveyResultsActions.NEXT_RESULTS).pack())
+        navigate_buttons.append(next_button)
+    builder.row(*navigate_buttons)
+
+    for survey_result in survey_results:
+        button_text = f"{survey_result['telegram_id']}"
+        builder.button(
+            text=button_text,
+            callback_data=UnprocessedSurveyResultsCallbackFactory(
+                action=ListUnprocessedSurveyResultsActions.RESULT_SELECTION,
+                survey_result_id=survey_result["survey_result_id"]
+            )
+        )
+
+    builder.adjust(1, repeat=True)
+
+    return_to_main_menu_button = InlineKeyboardButton(
+        text="Вернуться в главное меню",
+        callback_data=UnprocessedSurveyResultsCallbackFactory(action=ListUnprocessedSurveyResultsActions.RETURN_TO_MAIN_MENU).pack()
+    )
+    builder.row(return_to_main_menu_button)
     return builder

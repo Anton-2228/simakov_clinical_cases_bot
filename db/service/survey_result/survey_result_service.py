@@ -60,6 +60,15 @@ class SurveyResultService(ABC):
         """
 
     @abstractmethod
+    def get_unprocessed_survey_results(self) -> List[SurveyResult]:
+        """
+        Метод получает все необработанные результаты опросов из базы данных
+
+        :return:
+            список всех необработанных результатов опросов
+        """
+
+    @abstractmethod
     def update_survey_result(self, survey_result: SurveyResult) -> SurveyResult:
         """
         Метод обновляет результат опроса в базе данных

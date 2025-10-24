@@ -4,7 +4,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import selectinload
 
 from db.postgres import SESSION_FACTORY
-from db.postgres_models import SurveyORM, SurveyResultORM
+from db.postgres_models import SurveyORM, SurveyResultORM, SurveyResultStatus
 from db.service.survey_result.async_survey_result_service import AsyncSurveyResultService
 from dtos import SurveyResult
 from mappers.survey_result_mapper import SurveyResultMapper
@@ -75,6 +75,17 @@ class PostgresSurveyResultService(AsyncSurveyResultService):
                                                  .options(selectinload(SurveyResultORM.survey).selectinload(SurveyORM.survey_steps),
                                                           selectinload(SurveyResultORM.survey_step_results)))
             return SurveyResultMapper.to_dto(updated_result)
+
+    async def get_unprocessed_survey_results(self) -> List[SurveyResult]:
+        async with SESSION_FACTORY() as session:
+            result = await session.scalars(
+                select(SurveyResultORM)
+                .where(SurveyResultORM.status == SurveyResultStatus.NOT_PROCESSED)
+                .options(selectinload(SurveyResultORM.survey).selectinload(SurveyORM.survey_steps),
+                         selectinload(SurveyResultORM.survey_step_results))
+            )
+            survey_results = result.all()
+            return [SurveyResultMapper.to_dto(survey_result) for survey_result in survey_results]
 
     async def delete_survey_result(self, id: int) -> None:
         async with SESSION_FACTORY() as session:

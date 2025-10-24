@@ -33,3 +33,4 @@ class States(StatesGroup):
     SURVEY_RESULT_ACTIONS = State()
     ADD_COMMENTS_TO_SURVEY_RESULT = State()
     ADD_FILES_TO_SURVEY_RESULT = State()
+    UNPROCESSED_SURVEY_RESULTS = State()

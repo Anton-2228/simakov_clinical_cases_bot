@@ -23,6 +23,7 @@ class RedisTmpFields(Enum):
     DUMP_TAKE_SURVEY = "dump_take_survey"
     DUMP_SELECT_USER_TO_SEND_MESSAGE = "dump_select_user_to_send_message"
     DUMP_SELECT_SURVEY_RESULT = "dump_select_survey_result"
+    DUMP_UNPROCESSED_SURVEY_RESULTS = "dump_unprocessed_survey_results"
 
     EDIT_SURVEYS_IDX_MAP = "edit_surveys_idx_map"
     EDIT_SURVEY_LIST_STEPS = "edit_survey_list_steps"
@@ -55,6 +56,7 @@ class RedisTmpFields(Enum):
     ADD_COMMENTS_TO_SURVEY_RESULT_SURVEY_RESULT_ID = "add_comments_to_survey_result_survey_result_id"
     ADD_FILES_TO_SURVEY_RESULT_SURVEY_RESULT_ID = "add_files_to_survey_result_survey_result_id"
     ADD_FILES_TO_SURVEY_RESULT_ANSWER = "add_files_to_survey_result_answer"
+    UNPROCESSED_SURVEY_RESULTS_IDX_MAP = "unprocessed_survey_results_idx_map"
 
 class USER_TYPE(Enum):
     ADMIN = "admin"
@@ -94,6 +96,7 @@ class ListAdminMainMenuActions(Enum):
     EDIT_ADMIN_LIST = "edit_admin_list"
     GET_DUMP_USERS = "get_dump_users"
     SEND_MESSAGE_TO_USER = "send_message_to_user"
+    UNPROCESSED_SURVEY_RESULTS = "unprocessed_survey_results"
 
 class ListEditAdminListActions(Enum):
     ADD_ADMIN = "add_admin"
@@ -206,3 +209,9 @@ class ListAddCommentsActions(Enum):
 
 class ListAddFilesActions(Enum):
     RETURN_TO_SURVEY_RESULT_ACTIONS = "return_to_survey_result_actions"
+
+class ListUnprocessedSurveyResultsActions(Enum):
+    RESULT_SELECTION = "result_selection"
+    NEXT_RESULTS = "next_results"
+    PREVIOUS_RESULTS = "previous_results"
+    RETURN_TO_MAIN_MENU = "return_to_main_menu"

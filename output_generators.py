@@ -130,3 +130,12 @@ def create_send_info_about_new_survey_result_output(user: User, survey_result: S
     text_message = SEND_INFO_ABOUT_NEW_SURVEY_RESULT.format(name=f"{user.full_name}(ID: {user.telegram_id})",
                                                             survey_name=survey_result.survey.name)
     return text_message
+
+def create_unprocessed_survey_results_output(survey_results: list) -> str:
+    text_message = "Необработанные результаты опросов:\n\n"
+    for i, survey_result in enumerate(survey_results, 1):
+        text_message += f"{i}.\n"
+        text_message += f"Имя: {survey_result['full_name']}\n"
+        text_message += f"ID: {survey_result['telegram_id']}\n"
+        text_message += f"Опрос: {survey_result['survey_name']}\n\n"
+    return text_message
