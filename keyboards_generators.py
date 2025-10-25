@@ -21,7 +21,8 @@ from callbacks_factories import (AddSurveyCallbackFactory,
                                  SendMessageToAllUsersCallbackFactory,
                                  SelectUserToSendMessageCallbackFactory, SelectSurveyResultCallbackFactory,
                                  SurveyResultActionsCallbackFactory, AddCommentsCallbackFactory,
-                                 AddFilesCallbackFactory, UnprocessedSurveyResultsCallbackFactory)
+                                 AddFilesCallbackFactory, UnprocessedSurveyResultsCallbackFactory,
+                                 UnprocessedSurveyResultCallbackFactory)
 from enums import (SURVEY_STEP_TYPE, SURVEY_STEP_VARIABLE_FILEDS, SURVEY_VARIABLE_FIELDS,
                    ListAddSurveyListActions, ListAddSurveyStepActions,
                    ListAddUserToAdminListActions, ListAdminMainMenuActions,
@@ -34,7 +35,8 @@ from enums import (SURVEY_STEP_TYPE, SURVEY_STEP_VARIABLE_FILEDS, SURVEY_VARIABL
                    ListSendMessageToAdminActions, ListReplyMessageToClientActions, ListSendMessageToUserActions,
                    ListSendMessageToAllUsersActions,
                    ListSelectUserToSendMessageActions, ListSelectSurveyResultActions, ListSurveyResultActionsActions,
-                   ListAddCommentsActions, ListAddFilesActions, ListUnprocessedSurveyResultsActions, YES_NO)
+                   ListAddCommentsActions, ListAddFilesActions, ListUnprocessedSurveyResultsActions, 
+                   ListUnprocessedSurveyResultActions, YES_NO)
 from models import User
 from pagers.pager import PAGING_STATUS
 
@@ -642,4 +644,44 @@ def get_keyboard_for_unprocessed_survey_results(survey_results: list, page_statu
         callback_data=UnprocessedSurveyResultsCallbackFactory(action=ListUnprocessedSurveyResultsActions.RETURN_TO_MAIN_MENU).pack()
     )
     builder.row(return_to_main_menu_button)
+    return builder
+
+def get_keyboard_for_unprocessed_survey_result_actions(link: str) -> InlineKeyboardBuilder:
+    builder = InlineKeyboardBuilder()
+    
+    link_button = InlineKeyboardButton(
+        text="Открыть результат",
+        url=link
+    )
+    builder.row(link_button)
+    
+    mark_processed_button = InlineKeyboardButton(
+        text="Пометить как обработанный",
+        callback_data=UnprocessedSurveyResultCallbackFactory(action=ListUnprocessedSurveyResultActions.MARK_AS_PROCESSED).pack()
+    )
+    builder.row(mark_processed_button)
+    
+    return_button = InlineKeyboardButton(
+        text="Вернуться к списку",
+        callback_data=UnprocessedSurveyResultCallbackFactory(action=ListUnprocessedSurveyResultActions.RETURN_TO_UNPROCESSED_RESULTS).pack()
+    )
+    builder.row(return_button)
+    
+    return builder
+
+def get_keyboard_for_confirm_mark_as_processed() -> InlineKeyboardBuilder:
+    builder = InlineKeyboardBuilder()
+    
+    confirm_button = InlineKeyboardButton(
+        text="Да, пометить как обработанный",
+        callback_data=UnprocessedSurveyResultCallbackFactory(action=ListUnprocessedSurveyResultActions.CONFIRM_MARK_AS_PROCESSED).pack()
+    )
+    builder.row(confirm_button)
+    
+    reject_button = InlineKeyboardButton(
+        text="Отмена",
+        callback_data=UnprocessedSurveyResultCallbackFactory(action=ListUnprocessedSurveyResultActions.REJECT_MARK_AS_PROCESSED).pack()
+    )
+    builder.row(reject_button)
+    
     return builder

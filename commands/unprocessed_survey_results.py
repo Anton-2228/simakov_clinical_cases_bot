@@ -63,15 +63,14 @@ class UnprocessedSurveyResults(BaseCommand):
 
     async def _result_selection(self, callback: CallbackQuery, callback_data: UnprocessedSurveyResultsCallbackFactory, state: FSMContext):
         survey_result_id = callback_data.survey_result_id
-        # TODO: Замокать вызов другой команды
         await self.manager.aiogram_wrapper.set_state(state_context=state,
-                                                     state=States.MAIN_MENU)
+                                                     state=States.UNPROCESSED_SURVEY_RESULT_ACTIONS)
         await self.manager.aiogram_wrapper.delete_message(message_id=callback.message.message_id,
                                                           chat_id=callback.from_user.id)
-        # Пока что просто возвращаемся в главное меню
-        await self.manager.launch(name="main_menu",
+        await self.manager.launch(name="unprocessed_survey_result_actions",
                                   message=callback.message,
-                                  state=state)
+                                  state=state,
+                                  survey_result_id=survey_result_id)
         await callback.answer()
 
     async def _next_results(self, callback: CallbackQuery, callback_data: UnprocessedSurveyResultsCallbackFactory, state: FSMContext):

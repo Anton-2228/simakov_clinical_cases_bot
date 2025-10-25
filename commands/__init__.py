@@ -8,6 +8,7 @@ from db.service.abc_services import ABCServices
 from .add_comments_to_survey_result import AddCommentsToSurveyResult
 from .add_files_to_survey_result import AddFilesToSurveyResult
 from .unprocessed_survey_results import UnprocessedSurveyResults
+from .unprocessed_survey_result_actions import UnprocessedSurveyResultActions
 
 from .add_survey import AddSurvey
 from .add_survey_step import AddSurveyStep
@@ -79,6 +80,7 @@ def get_admin_commands(manager: "Manager", db: ABCServices, aiogram_wrapper: Aio
         "survey_result_actions": SurveyResultActions(manager, db, aiogram_wrapper),
         "add_comments_to_survey_result": AddCommentsToSurveyResult(manager, db, aiogram_wrapper),
         "add_files_to_survey_result": AddFilesToSurveyResult(manager, db, aiogram_wrapper),
-        "unprocessed_survey_results": UnprocessedSurveyResults(manager, db, aiogram_wrapper)
+        "unprocessed_survey_results": UnprocessedSurveyResults(manager, db, aiogram_wrapper),
+        "unprocessed_survey_result_actions": UnprocessedSurveyResultActions(manager, db, aiogram_wrapper)
     }
     return commands

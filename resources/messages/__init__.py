@@ -71,6 +71,7 @@ SELECT_SURVEY_RESULT = load_txt(Path(__file__).parent / "SELECT_SURVEY_RESULT.tx
 SURVEY_RESULT_ACTIONS = load_txt(Path(__file__).parent / "SURVEY_RESULT_ACTIONS.txt")
 SEND_INFO_ABOUT_NEW_SURVEY_RESULT = load_txt(Path(__file__).parent / "send_messages/SEND_INFO_ABOUT_NEW_SURVEY_RESULT.txt")
 CONFIRM_DELETE_SURVEY_RESULT = load_txt(Path(__file__).parent / "CONFIRM_DELETE_SURVEY_RESULT.txt")
+CONFIRM_MARK_AS_PROCESSED = load_txt(Path(__file__).parent / "CONFIRM_MARK_AS_PROCESSED.txt")
 ADD_COMMENTS_TO_SURVEY_RESULT = load_txt(Path(__file__).parent / "ADD_COMMENTS_TO_SURVEY_RESULT.txt")
 ADD_FILES_TO_SURVEY_RESULT = load_txt(Path(__file__).parent / "ADD_FILES_TO_SURVEY_RESULT.txt")
 ADD_COMMENTS_FINISH = load_txt(Path(__file__).parent / "ADD_COMMENTS_FINISH.txt")

@@ -57,6 +57,7 @@ class RedisTmpFields(Enum):
     ADD_FILES_TO_SURVEY_RESULT_SURVEY_RESULT_ID = "add_files_to_survey_result_survey_result_id"
     ADD_FILES_TO_SURVEY_RESULT_ANSWER = "add_files_to_survey_result_answer"
     UNPROCESSED_SURVEY_RESULTS_IDX_MAP = "unprocessed_survey_results_idx_map"
+    UNPROCESSED_SURVEY_RESULT_ACTIONS_SURVEY_RESULT_ID = "unprocessed_survey_result_actions_survey_result_id"
 
 class USER_TYPE(Enum):
     ADMIN = "admin"
@@ -215,3 +216,10 @@ class ListUnprocessedSurveyResultsActions(Enum):
     NEXT_RESULTS = "next_results"
     PREVIOUS_RESULTS = "previous_results"
     RETURN_TO_MAIN_MENU = "return_to_main_menu"
+
+class ListUnprocessedSurveyResultActions(Enum):
+    OPEN_LINK = "open_link"
+    MARK_AS_PROCESSED = "mark_as_processed"
+    CONFIRM_MARK_AS_PROCESSED = "confirm_mark_as_processed"
+    REJECT_MARK_AS_PROCESSED = "reject_mark_as_processed"
+    RETURN_TO_UNPROCESSED_RESULTS = "return_to_unprocessed_results"
