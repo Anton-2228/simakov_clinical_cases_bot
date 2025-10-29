@@ -29,6 +29,7 @@ class PostgresSurveyStepService(AsyncSurveyStepService):
             result = await session.scalars(
                 select(SurveyStepORM)
                 .where(SurveyStepORM.survey_id == survey_id)
+                .order_by(SurveyStepORM.position)
             )
             survey_steps = result.all()
             return [SurveyStepMapper.to_dto(survey_step) for survey_step in survey_steps]

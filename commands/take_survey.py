@@ -26,8 +26,10 @@ from pagers.pager import PAGING_STATUS
 from resources.messages import (TAKE_SURVEY_MAXIMUM_NUMBER_FILES,
                                 TAKE_SURVEY_SEND_NOT_FILE,
                                 TAKE_SURVEY_START, TAKE_SURVEY_SEND_NOT_TEXT, TAKE_SURVEY_ENTER_FILES_DIRECTION_END,
+                                TAKE_SURVEY_ENTER_STRING_OR_FILES_DIRECTION_END,
                                 TAKE_SURVEY_WAIT_END, TAKE_SURVEY_SENDED_NOT_ENOUGH_FILES, TAKE_SURVEY_ENTER_FILES_END,
-                                TAKE_SURVEY_YES_NO_UNEXPECTED_ANSWER)
+                                TAKE_SURVEY_YES_NO_UNEXPECTED_ANSWER, TAKE_SURVEY_STRING_FILES_UNEXPECTED_ANSWER,
+                                TAKE_SURVEY_STRING_FILES_TEXT_AFTER_FILES)
 from states import States
 
 from .base_command import BaseCommand
@@ -51,6 +53,7 @@ class TakeSurvey(BaseCommand):
                                         dump_field_name=RedisTmpFields.DUMP_TAKE_SURVEY.value)
         self.processed_answer = {SURVEY_STEP_TYPE.STRING: self._processed_string_answer,
                                  SURVEY_STEP_TYPE.FILES: self._processed_files_answer,
+                                 SURVEY_STEP_TYPE.STRING_OR_FILES: self._processed_string_or_files_answer,
                                  SURVEY_STEP_TYPE.YES_NO: self._processed_yes_no_unexpected_answer}
 
     async def execute(self,
@@ -91,7 +94,6 @@ class TakeSurvey(BaseCommand):
         await self.aiogram_wrapper.set_state_data(state_context=state,
                                                   field_name=RedisTmpFields.TAKE_SURVEY_VALUE_REQUEST_CHAT_ID.value,
                                                   value=message.chat.id)
-        logger.info(f"save {message.message_id}")
 
     async def _get_message_data(self, state: FSMContext) -> tuple[int, int]:
         request_message_id = await self.aiogram_wrapper.get_state_data(
@@ -102,7 +104,6 @@ class TakeSurvey(BaseCommand):
             state_context=state,
             field_name=RedisTmpFields.TAKE_SURVEY_VALUE_REQUEST_CHAT_ID.value
         )
-        logger.info(f"get {request_message_id}")
         return request_chat_id, request_message_id
 
     async def _get_current_step(self, state_context: FSMContext) -> SurveyStep:
@@ -142,8 +143,12 @@ class TakeSurvey(BaseCommand):
                                                                      text=text,
                                                                      reply_markup=inline_keyboard.as_markup())
         if step.type == SURVEY_STEP_TYPE.FILES:
-            send_message = await self.aiogram_wrapper.answer_massage(message=message,
+            send_message_direction_end = await self.aiogram_wrapper.answer_massage(message=message,
                                                                      text=TAKE_SURVEY_ENTER_FILES_DIRECTION_END,
+                                                                     reply_markup=reply_keyboard)
+        elif step.type == SURVEY_STEP_TYPE.STRING_OR_FILES:
+            send_message_direction_end = await self.aiogram_wrapper.answer_massage(message=message,
+                                                                     text=TAKE_SURVEY_ENTER_STRING_OR_FILES_DIRECTION_END,
                                                                      reply_markup=reply_keyboard)
         await self._save_message_data(state=state_context, message=send_message)
 
@@ -171,6 +176,10 @@ class TakeSurvey(BaseCommand):
         if step.type == SURVEY_STEP_TYPE.FILES:
             send_message_direction_end = await self.aiogram_wrapper.answer_massage(message=message,
                                                                      text=TAKE_SURVEY_ENTER_FILES_DIRECTION_END,
+                                                                     reply_markup=reply_keyboard)
+        elif step.type == SURVEY_STEP_TYPE.STRING_OR_FILES:
+            send_message_direction_end = await self.aiogram_wrapper.answer_massage(message=message,
+                                                                     text=TAKE_SURVEY_ENTER_STRING_OR_FILES_DIRECTION_END,
                                                                      reply_markup=reply_keyboard)
         await self._save_message_data(state=state_context, message=send_message)
 
@@ -227,6 +236,66 @@ class TakeSurvey(BaseCommand):
 
         await _end_processed(survey_answer=survey_answer)
 
+    async def _processed_string_or_files_answer(self, message: Message, state_context: FSMContext, step: SurveyStep):
+        survey_answer = await self.aiogram_wrapper.get_state_data(state_context=state_context,
+                                                                  field_name=RedisTmpFields.TAKE_SURVEY_SURVEY_ANSWER.value)
+        step_id = str(step.id)
+        
+        if message.document:
+            doc = message.document
+            if not doc:
+                send_message = await self.aiogram_wrapper.answer_massage(message=message,
+                                                                         text=TAKE_SURVEY_SEND_NOT_FILE)
+                return
+
+            if step_id not in survey_answer:
+                survey_answer[step_id] = {"answer": [],
+                                          "type": SURVEY_STEP_TYPE.FILES.value}
+
+            if len(survey_answer[step_id]["answer"]) >= self.max_files_count:
+                send_message = await self.aiogram_wrapper.answer_massage(message=message,
+                                                                         text=TAKE_SURVEY_MAXIMUM_NUMBER_FILES)
+                return
+
+            survey_id = await self.aiogram_wrapper.get_state_data(state_context=state_context,
+                                                                  field_name=RedisTmpFields.TAKE_SURVEY_SURVEY_ID.value)
+            file_s3_path = self.db.files_storage.key_builder.key_survey_file(user_id=str(message.chat.id),
+                                                                             survey_id=str(survey_id),
+                                                                             filename=doc.file_name)
+            tmp_file_path = await self.aiogram_wrapper.download_file(message=message)
+            await self.db.files_storage.upload_file(object_name=file_s3_path, file_path=tmp_file_path)
+            survey_answer[step_id]["answer"].append(file_s3_path)
+
+            await self.aiogram_wrapper.set_state_data(state_context=state_context,
+                                                      field_name=RedisTmpFields.TAKE_SURVEY_SURVEY_ANSWER.value,
+                                                      value=survey_answer)
+            
+            text = create_take_survey_file_count_output(len(survey_answer[step_id]["answer"]))
+            send_message = await self.aiogram_wrapper.answer_massage(message=message,
+                                                                     text=text)
+
+        elif message.text and message.text.strip():
+            answer = message.text.strip()
+
+            if step_id in survey_answer and survey_answer[step_id]["type"] == SURVEY_STEP_TYPE.FILES.value:
+                send_message = await self.aiogram_wrapper.answer_massage(message=message,
+                                                                         text=TAKE_SURVEY_STRING_FILES_TEXT_AFTER_FILES)
+                return
+            
+            survey_answer[step_id] = {"answer": answer,
+                                      "type": SURVEY_STEP_TYPE.STRING.value}
+
+            await self.aiogram_wrapper.set_state_data(state_context=state_context,
+                                                      field_name=RedisTmpFields.TAKE_SURVEY_SURVEY_ANSWER.value,
+                                                      value=survey_answer)
+            
+            await self._send_next_ask(message=message, state_context=state_context)
+            
+        else:
+            send_message = await self.aiogram_wrapper.answer_massage(message=message,
+                                                                     text=TAKE_SURVEY_STRING_FILES_UNEXPECTED_ANSWER)
+            return
+
     async def _processed_yes_no_unexpected_answer(self, message: Message, state_context: FSMContext, step: SurveyStep):
         send_message = await self.aiogram_wrapper.answer_massage(message=message,
                                                                  text=TAKE_SURVEY_YES_NO_UNEXPECTED_ANSWER)
@@ -257,10 +326,17 @@ class TakeSurvey(BaseCommand):
         survey_answer = await self.aiogram_wrapper.get_state_data(state_context=state,
                                                                   field_name=RedisTmpFields.TAKE_SURVEY_SURVEY_ANSWER.value)
         step_id = str(current_step.id)
-        if step_id not in survey_answer:
-            send_message = await self.aiogram_wrapper.answer_massage(message=message,
-                                                                     text=TAKE_SURVEY_SENDED_NOT_ENOUGH_FILES)
-            return
+        
+        if current_step.type == SURVEY_STEP_TYPE.FILES:
+            if step_id not in survey_answer:
+                send_message = await self.aiogram_wrapper.answer_massage(message=message,
+                                                                         text=TAKE_SURVEY_SENDED_NOT_ENOUGH_FILES)
+                return
+        elif current_step.type == SURVEY_STEP_TYPE.STRING_OR_FILES:
+            if step_id not in survey_answer:
+                send_message = await self.aiogram_wrapper.answer_massage(message=message,
+                                                                         text=TAKE_SURVEY_SENDED_NOT_ENOUGH_FILES)
+                return
 
         send_message = await self.aiogram_wrapper.answer_massage(message=message,
                                                                  text=TAKE_SURVEY_ENTER_FILES_END,

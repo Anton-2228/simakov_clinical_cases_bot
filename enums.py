@@ -66,6 +66,7 @@ class USER_TYPE(Enum):
 class SURVEY_STEP_TYPE(Enum):
     STRING = "string"
     FILES = "files"
+    STRING_OR_FILES = "string\\_or\\_files"
     YES_NO = "yes\\_no"
 
 class YES_NO(Enum):
