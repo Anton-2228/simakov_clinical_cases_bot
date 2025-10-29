@@ -20,7 +20,7 @@ from scheduler import Scheduler
 from states import States
 from tests_functions._add_user_to_redis import main as add_user_to_redis
 
-log_path = "/logs/test.log"
+log_path = "/logs/bot.log"
 log_dir = os.path.dirname(log_path)
 
 # Проверяем, что /log — именно директория
