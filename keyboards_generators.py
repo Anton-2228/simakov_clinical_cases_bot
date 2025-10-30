@@ -364,7 +364,7 @@ def get_keyboard_for_take_survey_step(step_type: SURVEY_STEP_TYPE) -> tuple[Inli
         builder.row(yes_button, no_button)
 
     return_to_select_take_survey_button = InlineKeyboardButton(
-        text="Преждевременно завершить опрос",
+        text="В главное меню",
         callback_data=TakeSurveyCallbackFactory(action=ListTakeSurveyActions.RETURN_TO_SELECT_TAKE_SURVEY).pack()
     )
     builder.row(return_to_select_take_survey_button)
