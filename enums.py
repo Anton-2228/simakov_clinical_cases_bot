@@ -144,6 +144,7 @@ class ListEditSurveyStepsActions(Enum):
 class ListChangeSurveyStepsActions(Enum):
     KEEP_CURRENT_VALUE = "keep_current_value"
     SELECT_STEP_TYPE = "select_step_type"
+    NOT_NECESSARY_IMAGE = "not_necessary_image"
 
 class ListChangeSurveyActions(Enum):
     KEEP_CURRENT_VALUE = "keep_current_value"
@@ -155,6 +156,7 @@ class ListSetStepsOrderActions(Enum):
 
 class ListAddSurveyStepActions(Enum):
     SELECT_STEP_TYPE = "select_step_type"
+    NOT_NECESSARY_IMAGE = "not_necessary_image"
 
 class ListSelectTakeSurveyActions(Enum):
     TAKE_SELECTION = "take_selection"

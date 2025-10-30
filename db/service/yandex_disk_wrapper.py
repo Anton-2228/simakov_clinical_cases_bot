@@ -8,7 +8,9 @@ from pathlib import Path
 from typing import Dict
 from urllib.parse import quote
 
+import httpx
 from yadisk import AsyncClient
+from yadisk.sessions.async_httpx_session import AsyncHTTPXSession
 from yadisk.types import AsyncFileOrPath
 from yadisk.objects import AsyncResourceLinkObject
 
@@ -27,8 +29,24 @@ logger = logging.getLogger(__name__)
 
 class YandexDiskWrapper(AsyncClient):
     def __init__(self, token: str, root_dir: str, *args, **kwargs):
-       super().__init__(token=token, *args, **kwargs)
-       self.root_dir = root_dir
+        session = AsyncHTTPXSession(
+            timeout=httpx.Timeout(
+                connect=20.0,
+                read=120.0,
+                write=120.0,
+                pool=60.0,
+            ),
+            limits=httpx.Limits(
+                max_connections=10,
+                max_keepalive_connections=5,
+                keepalive_expiry=30.0,
+            ),
+            http2=False,
+            trust_env=True,
+            # transport=httpx.AsyncHTTPTransport(retries=0),  # по желанию
+        )
+        super().__init__(token=token, *args, session=session, **kwargs)
+        self.root_dir = root_dir
 
     async def __aenter__(self):
         await super().__aenter__()

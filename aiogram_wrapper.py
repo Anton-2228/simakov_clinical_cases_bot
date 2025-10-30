@@ -1,4 +1,5 @@
 import asyncio
+import logging
 from collections import defaultdict
 from pathlib import Path
 from typing import Optional, Union
@@ -20,6 +21,9 @@ from models import User
 from output_generators import create_message_to_admins_output
 from resources.messages import MESSAGE_TO_USER
 from states import States
+
+
+logger = logging.getLogger(__name__)
 
 
 class AiogramWrapper:
@@ -61,7 +65,10 @@ class AiogramWrapper:
 
     async def get_state_data(self, state_context: FSMContext, field_name: str):
         data = await state_context.get_data()
-        assert field_name in data, "Несуществующее поле данных"
+        if field_name not in data:
+            logger.info(f"get_state_data Несуществующее поле данных {field_name}")
+            return
+        # assert field_name in data, "Несуществующее поле данных"
         return data[field_name]
 
     async def delete_message(self, message_id: int, chat_id: int):

@@ -71,14 +71,24 @@ class TakeSurvey(BaseCommand):
                                                   field_name=RedisTmpFields.TAKE_SURVEY_SURVEY_ID.value,
                                                   value=survey_id)
         await self.steps_pager.init(state_context=state, elements=steps, page_count=1)
-        keyboard = get_keyboard_for_take_survey()
+
+        await self.aiogram_wrapper.set_state_data(state_context=state,
+                                                  field_name=RedisTmpFields.TAKE_SURVEY_VALUE_REQUEST_MESSAGE_ID.value,
+                                                  value=None)
+        await self.aiogram_wrapper.set_state_data(state_context=state,
+                                                  field_name=RedisTmpFields.TAKE_SURVEY_VALUE_REQUEST_CHAT_ID.value,
+                                                  value=None)
+        # keyboard = get_keyboard_for_take_survey()
         send_message = await self.aiogram_wrapper.answer_massage(message=message,
-                                                                 text=survey.start_message,
-                                                                 reply_markup=keyboard.as_markup())
-        # send_message = await self.aiogram_wrapper.answer_massage(message=message,
-        #                                                          text=TAKE_SURVEY_START,
-        #                                                          reply_markup=keyboard.as_markup())
-        await self._save_message_data(state=state, message=send_message)
+                                                                 text=survey.start_message)
+                                                                 # reply_markup=keyboard.as_markup())
+
+        # await self._save_message_data(state=state, message=send_message)
+
+        await self.manager.aiogram_wrapper.set_state(state_context=state,
+                                                     state=States.PROCESSED_SURVEY)
+        await self.steps_pager.get_start_page(state_context=state)
+        await self._send_current_ask(message=message, state_context=state)
 
     async def _start_survey(self, callback: CallbackQuery, callback_data: TakeSurveyCallbackFactory, state: FSMContext):
         await self.manager.aiogram_wrapper.set_state(state_context=state,
@@ -120,11 +130,12 @@ class TakeSurvey(BaseCommand):
 
     async def _delete_last_message_keyboard(self, state_context: FSMContext):
         request_chat_id, request_message_id = await self._get_message_data(state=state_context)
-        await self.aiogram_wrapper.edit_message_reply_markup(
-            chat_id=int(request_chat_id),
-            message_id=int(request_message_id),
-            reply_markup=None
-        )
+        if request_chat_id and request_message_id:
+            await self.aiogram_wrapper.edit_message_reply_markup(
+                chat_id=int(request_chat_id),
+                message_id=int(request_message_id),
+                reply_markup=None
+            )
 
     async def _send_current_ask(self, message: Message, state_context: FSMContext):
         await self._delete_last_message_keyboard(state_context=state_context)

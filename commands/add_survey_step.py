@@ -33,6 +33,7 @@ class AddSurveyStep(BaseCommand):
         super().__init__(manager, db, aiogram_wrapper)
         self.aiogram_wrapper.register_message_handler(self._enter_value, States.ENTER_SURVEY_STEP_VALUE)
         self.aiogram_wrapper.register_callback(self._set_step_type, AddSurveyStepCallbackFactory.filter(F.action == ListAddSurveyStepActions.SELECT_STEP_TYPE))
+        self.aiogram_wrapper.register_callback(self._not_necessary_image, AddSurveyStepCallbackFactory.filter(F.action == ListAddSurveyStepActions.NOT_NECESSARY_IMAGE))
         self.filed_order = [{"field_name": SURVEY_STEP_VARIABLE_FILEDS.NAME, "text": REQUEST_ENTER_STEP_NAME},
                             {"field_name": SURVEY_STEP_VARIABLE_FILEDS.TEXT, "text": REQUEST_ENTER_STEP_TEXT},
                             {"field_name": SURVEY_STEP_VARIABLE_FILEDS.TYPE, "text": REQUEST_ENTER_STEP_TYPE},
@@ -170,6 +171,17 @@ class AddSurveyStep(BaseCommand):
         new_type = callback_data.step_type
         await self._set_template_field(state=state,
                                        value=new_type)
+        current_field_id = await self._set_next_field_id(state_context=state)
+        if current_field_id == -1:
+            await self._end_processing(message=callback.message, state_context=state)
+            await callback.answer()
+            return
+        await self._send_field_request(state_context=state, message=callback.message, field_id=current_field_id)
+        await callback.answer()
+
+    async def _not_necessary_image(self, callback: CallbackQuery, callback_data: AddSurveyStepCallbackFactory, state: FSMContext):
+        await self._set_template_field(state=state,
+                                       value=None)
         current_field_id = await self._set_next_field_id(state_context=state)
         if current_field_id == -1:
             await self._end_processing(message=callback.message, state_context=state)

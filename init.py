@@ -2,6 +2,7 @@
 from aiogram import Bot, Router, Dispatcher
 from aiogram.client.default import DefaultBotProperties
 from aiogram.enums import ParseMode
+from aiogram.fsm.storage.memory import MemoryStorage
 from aiogram.fsm.storage.redis import RedisStorage as TGRedisStorage
 from aiogram.types import BotCommand
 
@@ -22,6 +23,7 @@ BOT = Bot(token=TELEGRAM_BOT_TOKEN, default=DefaultBotProperties(parse_mode=Pars
 
 REDIS = RedisStorage(host=REDIS_HOST, port=REDIS_PORT)
 STORAGE = TGRedisStorage(redis=REDIS.redis)
+# STORAGE = MemoryStorage()
 
 DISPATCHER = Dispatcher(storage=STORAGE)
 DISPATCHER.include_router(ROUTER)

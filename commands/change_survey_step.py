@@ -34,6 +34,7 @@ class ChangeSurveyStep(BaseCommand):
         self.aiogram_wrapper.register_message_handler(self._enter_new_value, States.ENTER_SURVEY_STEP_NEW_VALUE)
         self.aiogram_wrapper.register_callback(self._keep_current_value, ChangeSurveyStepsCallbackFactory.filter(F.action == ListChangeSurveyStepsActions.KEEP_CURRENT_VALUE))
         self.aiogram_wrapper.register_callback(self._set_step_type, ChangeSurveyStepsCallbackFactory.filter(F.action == ListChangeSurveyStepsActions.SELECT_STEP_TYPE))
+        self.aiogram_wrapper.register_callback(self._not_necessary_image, ChangeSurveyStepsCallbackFactory.filter(F.action == ListChangeSurveyStepsActions.NOT_NECESSARY_IMAGE))
         self.filed_order = [{"field_name": SURVEY_STEP_VARIABLE_FILEDS.NAME, "text": REQUEST_ENTER_NEW_STEP_NAME},
                             {"field_name": SURVEY_STEP_VARIABLE_FILEDS.TEXT, "text": REQUEST_ENTER_NEW_STEP_TEXT},
                             {"field_name": SURVEY_STEP_VARIABLE_FILEDS.TYPE, "text": REQUEST_ENTER_NEW_STEP_TYPE},
@@ -194,5 +195,20 @@ class ChangeSurveyStep(BaseCommand):
         if current_field_id == -1:
             await self._end_processing(message=callback.message, state_context=state)
             return
+        await self._send_field_request(state_context=state, message=callback.message, field_id=current_field_id)
+        await callback.answer()
+
+    async def _not_necessary_image(self, callback: CallbackQuery, callback_data: ChangeSurveyStepsCallbackFactory, state: FSMContext):
+        step_id = await self.aiogram_wrapper.get_state_data(state_context=state,
+                                                            field_name=RedisTmpFields.CHANGE_SURVEY_STEPS_STEP_ID.value)
+        step = await self.db.survey_step.get_survey_step(id=step_id)
+        step.image = None
+        await self.db.survey_step.update_survey_step(survey_step=step)
+
+        current_field_id = await self._set_next_field_id(state_context=state)
+        if current_field_id == -1:
+            await self._end_processing(message=callback.message, state_context=state)
+            return
+
         await self._send_field_request(state_context=state, message=callback.message, field_id=current_field_id)
         await callback.answer()

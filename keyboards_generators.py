@@ -44,7 +44,7 @@ from pagers.pager import PAGING_STATUS
 def get_keyboard_for_user_main_menu() -> InlineKeyboardBuilder:
     builder = InlineKeyboardBuilder()
     builder.button(text="Отправить клинический случай", callback_data=UserMainMenuCallbackFactory(action=ListUserMainMenuActions.TAKE_THE_SURVEY))
-    builder.button(text="Задать вопрос", callback_data=UserMainMenuCallbackFactory(action=ListUserMainMenuActions.SEND_MESSAGE_TO_ADMIN))
+    builder.button(text="Написать в поддержку", callback_data=UserMainMenuCallbackFactory(action=ListUserMainMenuActions.SEND_MESSAGE_TO_ADMIN))
     builder.adjust(1)
     return builder
 
@@ -211,6 +211,13 @@ def get_keyboard_for_change_survey_steps(field: SURVEY_STEP_VARIABLE_FILEDS) -> 
                                             )
 
         builder.row(str_or_files_button, yes_no_button)
+    elif field == SURVEY_STEP_VARIABLE_FILEDS.IMAGE:
+        not_necessary_button = InlineKeyboardButton(text="Изображение не нужно",
+                                                    callback_data=ChangeSurveyStepsCallbackFactory(
+                                                        action=ListChangeSurveyStepsActions.NOT_NECESSARY_IMAGE
+                                                    ).pack()
+                                                    )
+        builder.row(not_necessary_button)
     builder.row(InlineKeyboardButton(text="Оставить текущее", callback_data=ChangeSurveyStepsCallbackFactory(action=ListChangeSurveyStepsActions.KEEP_CURRENT_VALUE).pack()))
     return builder
 
@@ -263,6 +270,13 @@ def get_keyboard_for_add_survey_steps(field: SURVEY_STEP_VARIABLE_FILEDS) -> Inl
                                             )
 
         builder.row(str_or_files_button, yes_no_button)
+    elif field == SURVEY_STEP_VARIABLE_FILEDS.IMAGE:
+        not_necessary_button = InlineKeyboardButton(text="Изображение не нужно",
+                                                    callback_data=AddSurveyStepCallbackFactory(
+                                                        action=ListAddSurveyStepActions.NOT_NECESSARY_IMAGE
+                                                    ).pack()
+                                                    )
+        builder.row(not_necessary_button)
     return builder
 
 def get_keyboard_for_add_survey_field(field: SURVEY_VARIABLE_FIELDS) -> InlineKeyboardBuilder:
