@@ -1,5 +1,6 @@
 import json
 import logging
+import traceback
 from typing import TYPE_CHECKING, Callable, Optional
 
 from aiogram.filters import CommandObject
@@ -384,11 +385,14 @@ class TakeSurvey(BaseCommand):
                                                                    survey_result=survey_result)
             inline_keyboard = get_keyboard_for_send_survey_result_to_admin(link=link)
             for admin in admins:
-                sent_message, new_state = await self.aiogram_wrapper.send_message(
-                    text=text,
-                    reply_markup=inline_keyboard.as_markup(),
-                    chat_id=admin.telegram_id
-                )
+                try:
+                    sent_message, new_state = await self.aiogram_wrapper.send_message(
+                        text=text,
+                        reply_markup=inline_keyboard.as_markup(),
+                        chat_id=admin.telegram_id
+                    )
+                except Exception as e:
+                    logger.info(f"Не удалось отправить уведомление о пройденном опросе админу: {admin.__dict__}; {traceback.format_exc()}")
 
         survey = await self.db.survey.get_survey(id=survey_id)
         send_message = await self.aiogram_wrapper.answer_massage(message=message,
