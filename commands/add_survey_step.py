@@ -20,7 +20,6 @@ from resources.messages import (REQUEST_ENTER_STEP_NAME,
                                 REQUEST_ENTER_STEP_TYPE,
                                 REQUEST_ENTER_STEP_IMAGE, ENTER_STEP_IMAGE_NOT_IMAGE)
 from states import States
-from utils import escape_markdown_v2
 
 from .base_command import BaseCommand
 
@@ -138,11 +137,11 @@ class AddSurveyStep(BaseCommand):
         survey_id = await self.aiogram_wrapper.get_state_data(state_context=state,
                                                               field_name=RedisTmpFields.ADD_SURVEY_STEP_SURVEY_ID.value)
         if self.filed_order[current_field_id]["field_name"] == SURVEY_STEP_VARIABLE_FILEDS.NAME:
-            new_name = escape_markdown_v2(message.text)
+            new_name = message.text
             await self._set_template_field(state=state,
                                            value=new_name)
         elif self.filed_order[current_field_id]["field_name"] == SURVEY_STEP_VARIABLE_FILEDS.TEXT:
-            new_text = escape_markdown_v2(message.text)
+            new_text = message.text
             await self._set_template_field(state=state,
                                            value=new_text)
         elif self.filed_order[current_field_id]["field_name"] == SURVEY_STEP_VARIABLE_FILEDS.TYPE:
