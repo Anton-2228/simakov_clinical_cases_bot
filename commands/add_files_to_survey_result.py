@@ -151,14 +151,15 @@ class AddFilesToSurveyResult(BaseCommand):
         """Возврат к действиям с результатом опроса"""
         survey_result_id = await self.aiogram_wrapper.get_state_data(state_context=state,
                                                                      field_name=RedisTmpFields.ADD_FILES_TO_SURVEY_RESULT_SURVEY_RESULT_ID.value)
-        
-        # Удаляем сообщение с клавиатурой
         await self.aiogram_wrapper.delete_message(message_id=callback.message.message_id,
                                                   chat_id=callback.from_user.id)
-        
-        # Возвращаемся к действиям с результатом опроса
         await self.manager.aiogram_wrapper.set_state(state_context=state,
                                                      state=States.SURVEY_RESULT_ACTIONS)
+        message_to_remove_reply_kb = await self.aiogram_wrapper.answer_massage(message=callback.message,
+                                                                               text="временное сообщение",
+                                                                               reply_markup=ReplyKeyboardRemove())
+        await self.manager.aiogram_wrapper.delete_message(message_id=message_to_remove_reply_kb.message_id,
+                                                          chat_id=callback.from_user.id)
         await self.manager.launch(name="survey_result_actions",
                                   message=callback.message,
                                   state=state,

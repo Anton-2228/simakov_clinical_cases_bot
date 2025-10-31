@@ -409,6 +409,11 @@ class TakeSurvey(BaseCommand):
                                                      state=States.SELECT_TAKE_SURVEY)
         await self.manager.aiogram_wrapper.delete_message(message_id=callback.message.message_id,
                                                           chat_id=callback.from_user.id)
+        message_to_remove_reply_kb = await self.aiogram_wrapper.answer_massage(message=callback.message,
+                                                                               text="временное сообщение",
+                                                                               reply_markup=ReplyKeyboardRemove())
+        await self.manager.aiogram_wrapper.delete_message(message_id=message_to_remove_reply_kb.message_id,
+                                                          chat_id=callback.from_user.id)
         # await self.manager.launch(name="select_take_survey",
         #                           message=callback.message,
         #                           state=state)
