@@ -300,6 +300,12 @@ class TakeSurvey(BaseCommand):
             await self.aiogram_wrapper.set_state_data(state_context=state_context,
                                                       field_name=RedisTmpFields.TAKE_SURVEY_SURVEY_ANSWER.value,
                                                       value=survey_answer)
+
+            temp_message = await self.aiogram_wrapper.answer_massage(message=message,
+                                                                     text="Временное сообщение",
+                                                                     reply_markup=ReplyKeyboardRemove())
+            await self.manager.aiogram_wrapper.delete_message(message_id=temp_message.message_id,
+                                                              chat_id=message.from_user.id)
             
             await self._send_next_ask(message=message, state_context=state_context)
             
