@@ -4,7 +4,7 @@ import os
 from typing import Optional
 
 from aiogram import Dispatcher
-from aiogram.filters import Command, CommandObject, CommandStart
+from aiogram.filters import Command, CommandObject, CommandStart, StateFilter
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message
 
@@ -39,14 +39,14 @@ formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(messag
 console_handler.setFormatter(formatter)
 logger.addHandler(console_handler)
 
-@ROUTER.message(CommandStart())
-async def command_start(message: Message, state: FSMContext, command: Optional[CommandObject] = None) -> None:
-    await MANAGER.launch("start", message, state, command)
-
-@ROUTER.message(Command("main_menu"))
-async def enter_new_authorized_users(message: Message, state: FSMContext, command: Optional[CommandObject] = None) -> None:
-    await MANAGER.aiogram_wrapper.set_state(state, States.MAIN_MENU)
-    await MANAGER.launch("main_menu", message, state, command)
+# @ROUTER.message(CommandStart(), StateFilter("*"))
+# async def command_start(message: Message, state: FSMContext, command: Optional[CommandObject] = None) -> None:
+#     await MANAGER.launch("start", message, state, command)
+#
+# @ROUTER.message(Command("main_menu"), StateFilter("*"))
+# async def enter_new_authorized_users(message: Message, state: FSMContext, command: Optional[CommandObject] = None) -> None:
+#     await MANAGER.aiogram_wrapper.set_state(state, States.MAIN_MENU)
+#     await MANAGER.launch("main_menu", message, state, command)
 
 async def start_polling():
     await BOT.set_my_commands(commands=COMMANDS)

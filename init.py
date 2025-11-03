@@ -1,10 +1,13 @@
+from typing import Optional
 
 from aiogram import Bot, Router, Dispatcher
 from aiogram.client.default import DefaultBotProperties
 from aiogram.enums import ParseMode
+from aiogram.filters import CommandObject, CommandStart, Command
+from aiogram.fsm.context import FSMContext
 from aiogram.fsm.storage.memory import MemoryStorage
 from aiogram.fsm.storage.redis import RedisStorage as TGRedisStorage
-from aiogram.types import BotCommand
+from aiogram.types import BotCommand, Message
 
 from aiogram_wrapper import AiogramWrapper
 from commands import get_admin_commands, get_user_commands
@@ -16,6 +19,7 @@ from db.service.services import Services
 from enums import USER_TYPE
 from environments import REDIS_HOST, REDIS_PORT, TELEGRAM_BOT_TOKEN, MINIO_ENDPOINT, MINIO_ROOT_PASSWORD, \
     MINIO_PROD_BUCKET, MINIO_ROOT_USER
+from states import States
 
 ROUTER = Router()
 
@@ -52,6 +56,17 @@ AIOGRAM_WRAPPER = AiogramWrapper(bot=BOT,
                                  db=DB,
                                  router=ROUTER,
                                  dispatcher=DISPATCHER)
+
+async def command_start(message: Message, state: FSMContext, command: Optional[CommandObject] = None) -> None:
+    await MANAGER.launch("start", message, state, command)
+
+async def enter_new_authorized_users(message: Message, state: FSMContext, command: Optional[CommandObject] = None) -> None:
+    await MANAGER.aiogram_wrapper.set_state(state, States.MAIN_MENU)
+    await MANAGER.launch("main_menu", message, state, command)
+
+AIOGRAM_WRAPPER.register_message_handler(command_start, CommandStart())
+AIOGRAM_WRAPPER.register_message_handler(command_start, Command("main_menu"))
+
 
 MANAGER = Manager(db=DB, aiogram_wrapper=AIOGRAM_WRAPPER)
 MANAGER.update(role=USER_TYPE.CLIENT,
