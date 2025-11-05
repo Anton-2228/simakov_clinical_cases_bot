@@ -82,7 +82,16 @@ class AdminMainMenu(BaseCommand):
     async def _get_dump_users(self, callback: CallbackQuery, callback_data: AdminMainMenuCallbackFactory, state: FSMContext):
         users = await self.db.user.get_users()
         users = [list(json.loads(x.model_dump_json()).values()) for x in users]
-        headers = ["telegram id", "Полное имя", "Роль"]
+        for user in users:
+            try:
+                chat = await self.aiogram_wrapper.bot.get_chat(user[0])
+                if chat.username:
+                    user.insert(1, f"@{chat.username}")
+                    continue
+                user.insert(1, "")
+            except Exception:
+                user.insert(1, "")
+        headers = ["telegram id", "telegram username", "Полное имя", "Роль"]
         file_path = get_tmp_path(filename="users.xlsx")
         file_path = self.xlsx_handler.create_from_list(data=users,
                                                        headers=headers,
