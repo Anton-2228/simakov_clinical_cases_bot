@@ -50,8 +50,8 @@ class TakeSurvey(BaseCommand):
         self.aiogram_wrapper.register_callback(self._return_to_select_take_survey, TakeSurveyCallbackFactory.filter(F.action == ListTakeSurveyActions.RETURN_TO_SELECT_TAKE_SURVEY))
         self.aiogram_wrapper.register_callback(self._start_survey, TakeSurveyCallbackFactory.filter(F.action == ListTakeSurveyActions.START_SURVEY))
         self.aiogram_wrapper.register_callback(self._processed_yes_no_answer, TakeSurveyCallbackFactory.filter(F.action == ListTakeSurveyActions.YES_NO_SELECTION))
-        self.steps_pager = AiogramPager(aiogram_wrapper=aiogram_wrapper,
-                                        dump_field_name=RedisTmpFields.DUMP_TAKE_SURVEY.value)
+        # self.steps_pager = AiogramPager(aiogram_wrapper=aiogram_wrapper,
+        #                                 dump_field_name=RedisTmpFields.DUMP_TAKE_SURVEY.value)
         self.processed_answer = {SURVEY_STEP_TYPE.STRING: self._processed_string_answer,
                                  SURVEY_STEP_TYPE.FILES: self._processed_files_answer,
                                  SURVEY_STEP_TYPE.STRING_OR_FILES: self._processed_string_or_files_answer,
@@ -71,7 +71,12 @@ class TakeSurvey(BaseCommand):
         await self.aiogram_wrapper.set_state_data(state_context=state,
                                                   field_name=RedisTmpFields.TAKE_SURVEY_SURVEY_ID.value,
                                                   value=survey_id)
-        await self.steps_pager.init(state_context=state, elements=steps, page_count=1)
+        if not hasattr(self, "steps_pager"):
+            self.steps_pager = {}
+        if message.chat.id not in self.steps_pager:
+            self.steps_pager[message.chat.id] = AiogramPager(aiogram_wrapper=self.aiogram_wrapper,
+                                                             dump_field_name=RedisTmpFields.DUMP_TAKE_SURVEY.value)
+        await self.steps_pager[message.chat.id].init(state_context=state, elements=steps, page_count=1)
 
         await self.aiogram_wrapper.set_state_data(state_context=state,
                                                   field_name=RedisTmpFields.TAKE_SURVEY_VALUE_REQUEST_MESSAGE_ID.value,
@@ -88,13 +93,13 @@ class TakeSurvey(BaseCommand):
 
         await self.manager.aiogram_wrapper.set_state(state_context=state,
                                                      state=States.PROCESSED_SURVEY)
-        await self.steps_pager.get_start_page(state_context=state)
+        await self.steps_pager[message.chat.id].get_start_page(state_context=state)
         await self._send_current_ask(message=message, state_context=state)
 
     async def _start_survey(self, callback: CallbackQuery, callback_data: TakeSurveyCallbackFactory, state: FSMContext):
         await self.manager.aiogram_wrapper.set_state(state_context=state,
                                                      state=States.PROCESSED_SURVEY)
-        await self.steps_pager.get_start_page(state_context=state)
+        await self.steps_pager[callback.message.chat.id].get_start_page(state_context=state)
         await self._send_current_ask(message=callback.message, state_context=state)
         await callback.answer()
 
@@ -117,14 +122,14 @@ class TakeSurvey(BaseCommand):
         )
         return request_chat_id, request_message_id
 
-    async def _get_current_step(self, state_context: FSMContext) -> SurveyStep:
-        page_number, page_status, current_page = await self.steps_pager.get_current_page(state_context=state_context)
+    async def _get_current_step(self, message: Message, state_context: FSMContext) -> SurveyStep:
+        page_number, page_status, current_page = await self.steps_pager[message.chat.id].get_current_page(state_context=state_context)
         ask = current_page[0]
         current_step = await self.db.survey_step.get_survey_step(id=ask["id"])
         return current_step
 
-    async def _get_next_step(self, state_context: FSMContext) -> SurveyStep:
-        page_number, page_status, current_page = await self.steps_pager.get_next_page(state_context=state_context)
+    async def _get_next_step(self, message: Message, state_context: FSMContext) -> SurveyStep:
+        page_number, page_status, current_page = await self.steps_pager[message.chat.id].get_next_page(state_context=state_context)
         ask = current_page[0]
         current_step = await self.db.survey_step.get_survey_step(id=ask["id"])
         return current_step
@@ -140,7 +145,7 @@ class TakeSurvey(BaseCommand):
 
     async def _send_current_ask(self, message: Message, state_context: FSMContext):
         await self._delete_last_message_keyboard(state_context=state_context)
-        step = await self._get_current_step(state_context=state_context)
+        step = await self._get_current_step(message=message, state_context=state_context)
         text = create_take_survey_step_output(step_type=step.type, step_text=step.text)
         inline_keyboard, reply_keyboard = get_keyboard_for_take_survey_step(step_type=step.type)
         if step.image:
@@ -166,12 +171,12 @@ class TakeSurvey(BaseCommand):
 
     async def _send_next_ask(self, message: Message, state_context: FSMContext):
         await self._delete_last_message_keyboard(state_context=state_context)
-        page_number, page_status, current_page = await self.steps_pager.get_current_page(state_context=state_context)
+        page_number, page_status, current_page = await self.steps_pager[message.chat.id].get_current_page(state_context=state_context)
         if page_status in [PAGING_STATUS.LAST_PAGE, PAGING_STATUS.ONLY_PAGE]:
             await self._finish_take_survey(message=message, state_context=state_context)
             return
 
-        step = await self._get_next_step(state_context=state_context)
+        step = await self._get_next_step(message=message, state_context=state_context)
         text = create_take_survey_step_output(step_type=step.type, step_text=step.text)
         inline_keyboard, reply_keyboard = get_keyboard_for_take_survey_step(step_type=step.type)
         if step.image:
@@ -321,7 +326,7 @@ class TakeSurvey(BaseCommand):
 
     async def _processed_yes_no_answer(self, callback: CallbackQuery, callback_data: TakeSurveyCallbackFactory, state: FSMContext):
         selection_result = callback_data.yes_no_result
-        current_step = await self._get_current_step(state_context=state)
+        current_step = await self._get_current_step(message=callback.message, state_context=state)
         survey_answer = await self.aiogram_wrapper.get_state_data(state_context=state,
                                                                   field_name=RedisTmpFields.TAKE_SURVEY_SURVEY_ANSWER.value)
         survey_answer[current_step.id] = {"answer": selection_result.value,
@@ -334,13 +339,13 @@ class TakeSurvey(BaseCommand):
 
 
     async def _enter_value(self, message: Message, state: FSMContext, command: Optional[CommandObject] = None):
-        current_step = await self._get_current_step(state_context=state)
+        current_step = await self._get_current_step(message=message, state_context=state)
         processed_answer_method: Callable = self.processed_answer[current_step.type]
         assert processed_answer_method is not None, f"Нет обработчика для ответов типа {current_step.type}"
         await processed_answer_method(message=message, state_context=state, step=current_step)
 
     async def _finish_send_files(self, message: Message, state: FSMContext, command: Optional[CommandObject] = None):
-        current_step = await self._get_current_step(state_context=state)
+        current_step = await self._get_current_step(message=message, state_context=state)
         survey_answer = await self.aiogram_wrapper.get_state_data(state_context=state,
                                                                   field_name=RedisTmpFields.TAKE_SURVEY_SURVEY_ANSWER.value)
         step_id = str(current_step.id)

@@ -38,26 +38,12 @@ from .user_main_menu import UserMainMenu
 if TYPE_CHECKING:
     from .manager import Manager
 
-def get_user_commands(manager: "Manager", db: ABCServices, aiogram_wrapper: AiogramWrapper) -> Dict[str, BaseCommand]:
+def get_all_commands(manager: "Manager", db: ABCServices, aiogram_wrapper: AiogramWrapper) -> Dict[str, BaseCommand]:
     commands = {
         "start": Start(manager, db, aiogram_wrapper),
         "registration": Registration(manager, db, aiogram_wrapper),
-        "main_menu": UserMainMenu(manager, db, aiogram_wrapper),
-        "select_take_survey": SelectTakeSurvey(manager, db, aiogram_wrapper),
-        "take_survey": TakeSurvey(manager, db, aiogram_wrapper),
-        "send_message_to_admin": SendMessageToAdmin(manager, db, aiogram_wrapper),
-        "survey_actions": SurveyActions(manager, db, aiogram_wrapper),
-        "select_survey_result": SelectSurveyResult(manager, db, aiogram_wrapper),
-        "survey_result_actions": SurveyResultActions(manager, db, aiogram_wrapper),
-        "add_comments_to_survey_result": AddCommentsToSurveyResult(manager, db, aiogram_wrapper),
-        "add_files_to_survey_result": AddFilesToSurveyResult(manager, db, aiogram_wrapper)
-    }
-    return commands
-
-def get_admin_commands(manager: "Manager", db: ABCServices, aiogram_wrapper: AiogramWrapper) -> Dict[str, BaseCommand]:
-    commands = {
-        "start": Start(manager, db, aiogram_wrapper),
-        "main_menu": AdminMainMenu(manager, db, aiogram_wrapper),
+        "user_main_menu": UserMainMenu(manager, db, aiogram_wrapper),
+        "admin_main_menu": AdminMainMenu(manager, db, aiogram_wrapper),
         "select_take_survey": SelectTakeSurvey(manager, db, aiogram_wrapper),
         "edit_admin_list": EditAdminList(manager, db, aiogram_wrapper),
         "add_user_to_admin_list": AddUserToAdminLit(manager, db, aiogram_wrapper),
@@ -72,6 +58,7 @@ def get_admin_commands(manager: "Manager", db: ABCServices, aiogram_wrapper: Aio
         "set_steps_order": SetStepsOrder(manager, db, aiogram_wrapper),
         "take_survey": TakeSurvey(manager, db, aiogram_wrapper),
         "send_message_to_user": SendMessageToUser(manager, db, aiogram_wrapper),
+        "send_message_to_admin": SendMessageToAdmin(manager, db, aiogram_wrapper),
         "send_message_to_all_users": SendMessageToAllUsers(manager, db, aiogram_wrapper),
         "reply_message_to_client": ReplyMessageToClient(manager, db, aiogram_wrapper),
         "select_user_to_send_message": SelectUserToSendMessage(manager, db, aiogram_wrapper),
@@ -82,5 +69,52 @@ def get_admin_commands(manager: "Manager", db: ABCServices, aiogram_wrapper: Aio
         "add_files_to_survey_result": AddFilesToSurveyResult(manager, db, aiogram_wrapper),
         "unprocessed_survey_results": UnprocessedSurveyResults(manager, db, aiogram_wrapper),
         "unprocessed_survey_result_actions": UnprocessedSurveyResultActions(manager, db, aiogram_wrapper)
+    }
+    return commands
+
+def get_user_commands(all_commands: Dict[str, BaseCommand]) -> Dict[str, BaseCommand]:
+    commands = {
+        "start": all_commands["start"],
+        "registration": all_commands["registration"],
+        "main_menu": all_commands["user_main_menu"],
+        "select_take_survey": all_commands["select_take_survey"],
+        "take_survey": all_commands["take_survey"],
+        "send_message_to_admin": all_commands["send_message_to_admin"],
+        "survey_actions": all_commands["survey_actions"],
+        "select_survey_result": all_commands["select_survey_result"],
+        "survey_result_actions": all_commands["survey_result_actions"],
+        "add_comments_to_survey_result": all_commands["add_comments_to_survey_result"],
+        "add_files_to_survey_result": all_commands["add_files_to_survey_result"],
+    }
+    return commands
+
+def get_admin_commands(all_commands: Dict[str, BaseCommand]) -> Dict[str, BaseCommand]:
+    commands = {
+        "start": all_commands["start"],
+        "main_menu": all_commands["admin_main_menu"],
+        "select_take_survey": all_commands["select_take_survey"],
+        "edit_admin_list": all_commands["edit_admin_list"],
+        "add_user_to_admin_list": all_commands["add_user_to_admin_list"],
+        "delete_user_from_admin_list": all_commands["delete_user_from_admin_list"],
+        "edit_surveys": all_commands["edit_surveys"],
+        "add_survey": all_commands["add_survey"],
+        "edit_survey": all_commands["edit_survey"],
+        "change_survey": all_commands["change_survey"],
+        "edit_survey_step": all_commands["edit_survey_step"],
+        "change_survey_step": all_commands["change_survey_step"],
+        "add_survey_step": all_commands["add_survey_step"],
+        "set_steps_order": all_commands["set_steps_order"],
+        "take_survey": all_commands["take_survey"],
+        "send_message_to_user": all_commands["send_message_to_user"],
+        "send_message_to_all_users": all_commands["send_message_to_all_users"],
+        "reply_message_to_client": all_commands["reply_message_to_client"],
+        "select_user_to_send_message": all_commands["select_user_to_send_message"],
+        "survey_actions": all_commands["survey_actions"],
+        "select_survey_result": all_commands["select_survey_result"],
+        "survey_result_actions": all_commands["survey_result_actions"],
+        "add_comments_to_survey_result": all_commands["add_comments_to_survey_result"],
+        "add_files_to_survey_result": all_commands["add_files_to_survey_result"],
+        "unprocessed_survey_results": all_commands["unprocessed_survey_results"],
+        "unprocessed_survey_result_actions": all_commands["unprocessed_survey_result_actions"],
     }
     return commands

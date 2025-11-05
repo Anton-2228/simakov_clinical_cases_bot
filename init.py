@@ -10,7 +10,7 @@ from aiogram.fsm.storage.redis import RedisStorage as TGRedisStorage
 from aiogram.types import BotCommand, Message
 
 from aiogram_wrapper import AiogramWrapper
-from commands import get_admin_commands, get_user_commands
+from commands import get_admin_commands, get_user_commands, TakeSurvey, get_all_commands
 from commands.manager import Manager
 from db.minio.key_builder import SurveyKeyBuilder, KeyBuilderConfig
 from db.minio.minio import MinioConfig, AsyncMinioClient
@@ -69,10 +69,11 @@ AIOGRAM_WRAPPER.register_message_handler(command_start, Command("main_menu"))
 
 
 MANAGER = Manager(db=DB, aiogram_wrapper=AIOGRAM_WRAPPER)
+all_commands = get_all_commands(MANAGER, DB, AIOGRAM_WRAPPER)
 MANAGER.update(role=USER_TYPE.CLIENT,
-               commands=get_user_commands(manager=MANAGER, db=DB, aiogram_wrapper=AIOGRAM_WRAPPER))
+               commands=get_user_commands(all_commands=all_commands))
 MANAGER.update(role=USER_TYPE.ADMIN,
-               commands=get_admin_commands(manager=MANAGER, db=DB, aiogram_wrapper=AIOGRAM_WRAPPER))
+               commands=get_admin_commands(all_commands=all_commands))
 
 COMMANDS = [
     BotCommand(command="start", description="Запуск бота"),
