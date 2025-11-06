@@ -1,3 +1,4 @@
+import asyncio
 import json
 import logging
 import traceback
@@ -56,6 +57,7 @@ class TakeSurvey(BaseCommand):
                                  SURVEY_STEP_TYPE.FILES: self._processed_files_answer,
                                  SURVEY_STEP_TYPE.STRING_OR_FILES: self._processed_string_or_files_answer,
                                  SURVEY_STEP_TYPE.YES_NO: self._processed_yes_no_unexpected_answer}
+        self.processing_files = {}
 
     async def execute(self,
                       message: Message,
@@ -84,6 +86,8 @@ class TakeSurvey(BaseCommand):
         await self.aiogram_wrapper.set_state_data(state_context=state,
                                                   field_name=RedisTmpFields.TAKE_SURVEY_VALUE_REQUEST_CHAT_ID.value,
                                                   value=None)
+        if message.chat.id not in self.processing_files:
+            self.processing_files[message.chat.id] = asyncio.Semaphore(1)
         # keyboard = get_keyboard_for_take_survey()
         send_message = await self.aiogram_wrapper.answer_massage(message=message,
                                                                  text=survey.start_message)
@@ -224,47 +228,16 @@ class TakeSurvey(BaseCommand):
             send_message = await self.aiogram_wrapper.answer_massage(message=message,
                                                                      text=text)
 
-        doc = message.document
-        if not doc:
-            send_message = await self.aiogram_wrapper.answer_massage(message=message,
-                                                                     text=TAKE_SURVEY_SEND_NOT_FILE)
-            return
-
-        survey_answer = await self.aiogram_wrapper.get_state_data(state_context=state_context,
-                                                                  field_name=RedisTmpFields.TAKE_SURVEY_SURVEY_ANSWER.value)
-        step_id = str(step.id)
-        if step_id not in survey_answer:
-            survey_answer[step_id] = {"answer": [],
-                                      "type": SURVEY_STEP_TYPE.FILES.value}
-
-        if len(survey_answer[step_id]["answer"]) >= self.max_files_count:
-            send_message = await self.aiogram_wrapper.answer_massage(message=message,
-                                                                     text=TAKE_SURVEY_MAXIMUM_NUMBER_FILES)
-            return
-
-        survey_id = await self.aiogram_wrapper.get_state_data(state_context=state_context,
-                                                              field_name=RedisTmpFields.TAKE_SURVEY_SURVEY_ID.value)
-        file_s3_path = self.db.files_storage.key_builder.key_survey_file(user_id=str(message.chat.id),
-                                                                         survey_id=str(survey_id),
-                                                                         filename=doc.file_name)
-        tmp_file_path = await self.aiogram_wrapper.download_file(message=message)
-        await self.db.files_storage.upload_file(object_name=file_s3_path, file_path=tmp_file_path)
-        survey_answer[step_id]["answer"].append(file_s3_path)
-
-        await _end_processed(survey_answer=survey_answer)
-
-    async def _processed_string_or_files_answer(self, message: Message, state_context: FSMContext, step: SurveyStep):
-        survey_answer = await self.aiogram_wrapper.get_state_data(state_context=state_context,
-                                                                  field_name=RedisTmpFields.TAKE_SURVEY_SURVEY_ANSWER.value)
-        step_id = str(step.id)
-        
-        if message.document:
+        async with self.processing_files[message.chat.id]:
             doc = message.document
             if not doc:
                 send_message = await self.aiogram_wrapper.answer_massage(message=message,
                                                                          text=TAKE_SURVEY_SEND_NOT_FILE)
                 return
 
+            survey_answer = await self.aiogram_wrapper.get_state_data(state_context=state_context,
+                                                                      field_name=RedisTmpFields.TAKE_SURVEY_SURVEY_ANSWER.value)
+            step_id = str(step.id)
             if step_id not in survey_answer:
                 survey_answer[step_id] = {"answer": [],
                                           "type": SURVEY_STEP_TYPE.FILES.value}
@@ -283,41 +256,74 @@ class TakeSurvey(BaseCommand):
             await self.db.files_storage.upload_file(object_name=file_s3_path, file_path=tmp_file_path)
             survey_answer[step_id]["answer"].append(file_s3_path)
 
-            await self.aiogram_wrapper.set_state_data(state_context=state_context,
-                                                      field_name=RedisTmpFields.TAKE_SURVEY_SURVEY_ANSWER.value,
-                                                      value=survey_answer)
-            
-            text = create_take_survey_file_count_output(len(survey_answer[step_id]["answer"]))
-            send_message = await self.aiogram_wrapper.answer_massage(message=message,
-                                                                     text=text)
+            await _end_processed(survey_answer=survey_answer)
 
-        elif message.text and message.text.strip():
-            answer = message.text.strip()
+    async def _processed_string_or_files_answer(self, message: Message, state_context: FSMContext, step: SurveyStep):
+        async with self.processing_files[message.chat.id]:
+            survey_answer = await self.aiogram_wrapper.get_state_data(state_context=state_context,
+                                                                      field_name=RedisTmpFields.TAKE_SURVEY_SURVEY_ANSWER.value)
+            step_id = str(step.id)
 
-            if step_id in survey_answer and survey_answer[step_id]["type"] == SURVEY_STEP_TYPE.FILES.value:
+            if message.document:
+                doc = message.document
+                if not doc:
+                    send_message = await self.aiogram_wrapper.answer_massage(message=message,
+                                                                             text=TAKE_SURVEY_SEND_NOT_FILE)
+                    return
+
+                if step_id not in survey_answer:
+                    survey_answer[step_id] = {"answer": [],
+                                              "type": SURVEY_STEP_TYPE.FILES.value}
+
+                if len(survey_answer[step_id]["answer"]) >= self.max_files_count:
+                    send_message = await self.aiogram_wrapper.answer_massage(message=message,
+                                                                             text=TAKE_SURVEY_MAXIMUM_NUMBER_FILES)
+                    return
+
+                survey_id = await self.aiogram_wrapper.get_state_data(state_context=state_context,
+                                                                      field_name=RedisTmpFields.TAKE_SURVEY_SURVEY_ID.value)
+                file_s3_path = self.db.files_storage.key_builder.key_survey_file(user_id=str(message.chat.id),
+                                                                                 survey_id=str(survey_id),
+                                                                                 filename=doc.file_name)
+                tmp_file_path = await self.aiogram_wrapper.download_file(message=message)
+                await self.db.files_storage.upload_file(object_name=file_s3_path, file_path=tmp_file_path)
+                survey_answer[step_id]["answer"].append(file_s3_path)
+
+                await self.aiogram_wrapper.set_state_data(state_context=state_context,
+                                                          field_name=RedisTmpFields.TAKE_SURVEY_SURVEY_ANSWER.value,
+                                                          value=survey_answer)
+
+                text = create_take_survey_file_count_output(len(survey_answer[step_id]["answer"]))
                 send_message = await self.aiogram_wrapper.answer_massage(message=message,
-                                                                         text=TAKE_SURVEY_STRING_FILES_TEXT_AFTER_FILES)
+                                                                         text=text)
+
+            elif message.text and message.text.strip():
+                answer = message.text.strip()
+
+                if step_id in survey_answer and survey_answer[step_id]["type"] == SURVEY_STEP_TYPE.FILES.value:
+                    send_message = await self.aiogram_wrapper.answer_massage(message=message,
+                                                                             text=TAKE_SURVEY_STRING_FILES_TEXT_AFTER_FILES)
+                    return
+
+                survey_answer[step_id] = {"answer": answer,
+                                          "type": SURVEY_STEP_TYPE.STRING.value}
+
+                await self.aiogram_wrapper.set_state_data(state_context=state_context,
+                                                          field_name=RedisTmpFields.TAKE_SURVEY_SURVEY_ANSWER.value,
+                                                          value=survey_answer)
+
+                temp_message = await self.aiogram_wrapper.answer_massage(message=message,
+                                                                         text="Временное сообщение",
+                                                                         reply_markup=ReplyKeyboardRemove())
+                await self.manager.aiogram_wrapper.delete_message(message_id=temp_message.message_id,
+                                                                  chat_id=message.from_user.id)
+
+                await self._send_next_ask(message=message, state_context=state_context)
+
+            else:
+                send_message = await self.aiogram_wrapper.answer_massage(message=message,
+                                                                         text=TAKE_SURVEY_STRING_FILES_UNEXPECTED_ANSWER)
                 return
-            
-            survey_answer[step_id] = {"answer": answer,
-                                      "type": SURVEY_STEP_TYPE.STRING.value}
-
-            await self.aiogram_wrapper.set_state_data(state_context=state_context,
-                                                      field_name=RedisTmpFields.TAKE_SURVEY_SURVEY_ANSWER.value,
-                                                      value=survey_answer)
-
-            temp_message = await self.aiogram_wrapper.answer_massage(message=message,
-                                                                     text="Временное сообщение",
-                                                                     reply_markup=ReplyKeyboardRemove())
-            await self.manager.aiogram_wrapper.delete_message(message_id=temp_message.message_id,
-                                                              chat_id=message.from_user.id)
-            
-            await self._send_next_ask(message=message, state_context=state_context)
-            
-        else:
-            send_message = await self.aiogram_wrapper.answer_massage(message=message,
-                                                                     text=TAKE_SURVEY_STRING_FILES_UNEXPECTED_ANSWER)
-            return
 
     async def _processed_yes_no_unexpected_answer(self, message: Message, state_context: FSMContext, step: SurveyStep):
         send_message = await self.aiogram_wrapper.answer_massage(message=message,
