@@ -169,6 +169,7 @@ class ListTakeSurveyActions(Enum):
     RETURN_TO_SELECT_TAKE_SURVEY = "return_to_select_take_survey"
     START_SURVEY = "start_survey"
     YES_NO_SELECTION = "yes_no_selection"
+    YES_SELECTION = "yes_selection"
 
 class ListSurveyActionsActions(Enum):
     TAKE_SURVEY = "take_survey"

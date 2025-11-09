@@ -35,7 +35,7 @@ from enums import (SURVEY_STEP_TYPE, SURVEY_STEP_VARIABLE_FILEDS, SURVEY_VARIABL
                    ListSendMessageToAdminActions, ListReplyMessageToClientActions, ListSendMessageToUserActions,
                    ListSendMessageToAllUsersActions,
                    ListSelectUserToSendMessageActions, ListSelectSurveyResultActions, ListSurveyResultActionsActions,
-                   ListAddCommentsActions, ListAddFilesActions, ListUnprocessedSurveyResultsActions, 
+                   ListAddCommentsActions, ListAddFilesActions, ListUnprocessedSurveyResultsActions,
                    ListUnprocessedSurveyResultActions, YES_NO)
 from models import User
 from pagers.pager import PAGING_STATUS
@@ -374,6 +374,13 @@ def get_keyboard_for_take_survey_step(step_type: SURVEY_STEP_TYPE) -> tuple[Inli
                                                     yes_no_result=YES_NO.NO).pack()
         )
         builder.row(yes_button, no_button)
+    elif step_type == SURVEY_STEP_TYPE.YES:
+        yes_button = InlineKeyboardButton(
+            text="Да",
+            callback_data=TakeSurveyCallbackFactory(action=ListTakeSurveyActions.YES_NO_SELECTION,
+                                                    yes_no_result=YES_NO.YES).pack()
+        )
+        builder.row(yes_button)
 
     return_to_select_take_survey_button = InlineKeyboardButton(
         text="В главное меню",

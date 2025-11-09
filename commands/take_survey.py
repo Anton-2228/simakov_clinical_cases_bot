@@ -31,7 +31,7 @@ from resources.messages import (TAKE_SURVEY_MAXIMUM_NUMBER_FILES,
                                 TAKE_SURVEY_ENTER_STRING_OR_FILES_DIRECTION_END,
                                 TAKE_SURVEY_WAIT_END, TAKE_SURVEY_SENDED_NOT_ENOUGH_FILES, TAKE_SURVEY_ENTER_FILES_END,
                                 TAKE_SURVEY_YES_NO_UNEXPECTED_ANSWER, TAKE_SURVEY_STRING_FILES_UNEXPECTED_ANSWER,
-                                TAKE_SURVEY_STRING_FILES_TEXT_AFTER_FILES)
+                                TAKE_SURVEY_STRING_FILES_TEXT_AFTER_FILES, TAKE_SURVEY_YES_UNEXPECTED_ANSWER)
 from states import States
 
 from .base_command import BaseCommand
@@ -51,12 +51,14 @@ class TakeSurvey(BaseCommand):
         self.aiogram_wrapper.register_callback(self._return_to_select_take_survey, TakeSurveyCallbackFactory.filter(F.action == ListTakeSurveyActions.RETURN_TO_SELECT_TAKE_SURVEY))
         self.aiogram_wrapper.register_callback(self._start_survey, TakeSurveyCallbackFactory.filter(F.action == ListTakeSurveyActions.START_SURVEY))
         self.aiogram_wrapper.register_callback(self._processed_yes_no_answer, TakeSurveyCallbackFactory.filter(F.action == ListTakeSurveyActions.YES_NO_SELECTION))
+        self.aiogram_wrapper.register_callback(self._processed_yes_answer, TakeSurveyCallbackFactory.filter(F.action == ListTakeSurveyActions.YES_SELECTION))
         # self.steps_pager = AiogramPager(aiogram_wrapper=aiogram_wrapper,
         #                                 dump_field_name=RedisTmpFields.DUMP_TAKE_SURVEY.value)
         self.processed_answer = {SURVEY_STEP_TYPE.STRING: self._processed_string_answer,
                                  SURVEY_STEP_TYPE.FILES: self._processed_files_answer,
                                  SURVEY_STEP_TYPE.STRING_OR_FILES: self._processed_string_or_files_answer,
-                                 SURVEY_STEP_TYPE.YES_NO: self._processed_yes_no_unexpected_answer}
+                                 SURVEY_STEP_TYPE.YES_NO: self._processed_yes_no_unexpected_answer,
+                                 SURVEY_STEP_TYPE.YES: self._processed_yes_unexpected_answer}
         self.processing_files = {}
 
     async def execute(self,
@@ -330,6 +332,11 @@ class TakeSurvey(BaseCommand):
                                                                  text=TAKE_SURVEY_YES_NO_UNEXPECTED_ANSWER)
         return
 
+    async def _processed_yes_unexpected_answer(self, message: Message, state_context: FSMContext, step: SurveyStep):
+        send_message = await self.aiogram_wrapper.answer_massage(message=message,
+                                                                 text=TAKE_SURVEY_YES_UNEXPECTED_ANSWER)
+        return
+
     async def _processed_yes_no_answer(self, callback: CallbackQuery, callback_data: TakeSurveyCallbackFactory, state: FSMContext):
         selection_result = callback_data.yes_no_result
         current_step = await self._get_current_step(message=callback.message, state_context=state)
@@ -343,6 +350,18 @@ class TakeSurvey(BaseCommand):
         await self._send_next_ask(message=callback.message, state_context=state)
         await callback.answer()
 
+    async def _processed_yes_answer(self, callback: CallbackQuery, callback_data: TakeSurveyCallbackFactory, state: FSMContext):
+        selection_result = callback_data.yes_result
+        current_step = await self._get_current_step(message=callback.message, state_context=state)
+        survey_answer = await self.aiogram_wrapper.get_state_data(state_context=state,
+                                                                  field_name=RedisTmpFields.TAKE_SURVEY_SURVEY_ANSWER.value)
+        survey_answer[current_step.id] = {"answer": selection_result.value,
+                                          "type": SURVEY_STEP_TYPE.YES.value}
+        await self.aiogram_wrapper.set_state_data(state_context=state,
+                                                  field_name=RedisTmpFields.TAKE_SURVEY_SURVEY_ANSWER.value,
+                                                  value=survey_answer)
+        await self._send_next_ask(message=callback.message, state_context=state)
+        await callback.answer()
 
     async def _enter_value(self, message: Message, state: FSMContext, command: Optional[CommandObject] = None):
         current_step = await self._get_current_step(message=message, state_context=state)
