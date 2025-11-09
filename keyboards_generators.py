@@ -204,13 +204,19 @@ def get_keyboard_for_change_survey_steps(field: SURVEY_STEP_VARIABLE_FILEDS) -> 
                                                        action=ListChangeSurveyStepsActions.SELECT_STEP_TYPE,
                                                        step_type=SURVEY_STEP_TYPE.STRING_OR_FILES).pack()
                                                    )
+        builder.row(str_or_files_button)
         yes_no_button = InlineKeyboardButton(text="Да/Нет",
                                              callback_data=ChangeSurveyStepsCallbackFactory(
                                                 action=ListChangeSurveyStepsActions.SELECT_STEP_TYPE,
                                                 step_type=SURVEY_STEP_TYPE.YES_NO).pack()
                                             )
+        yes_button = InlineKeyboardButton(text="Да",
+                                             callback_data=ChangeSurveyStepsCallbackFactory(
+                                                action=ListChangeSurveyStepsActions.SELECT_STEP_TYPE,
+                                                step_type=SURVEY_STEP_TYPE.YES).pack()
+                                            )
 
-        builder.row(str_or_files_button, yes_no_button)
+        builder.row(yes_no_button, yes_button)
     elif field == SURVEY_STEP_VARIABLE_FILEDS.IMAGE:
         not_necessary_button = InlineKeyboardButton(text="Изображение не нужно",
                                                     callback_data=ChangeSurveyStepsCallbackFactory(
@@ -263,13 +269,19 @@ def get_keyboard_for_add_survey_steps(field: SURVEY_STEP_VARIABLE_FILEDS) -> Inl
                                                        action=ListAddSurveyStepActions.SELECT_STEP_TYPE,
                                                        step_type=SURVEY_STEP_TYPE.STRING_OR_FILES).pack()
                                                    )
+        builder.row(str_or_files_button)
         yes_no_button = InlineKeyboardButton(text="Да/Нет",
                                              callback_data=AddSurveyStepCallbackFactory(
                                                 action=ListAddSurveyStepActions.SELECT_STEP_TYPE,
                                                 step_type=SURVEY_STEP_TYPE.YES_NO).pack()
                                             )
+        yes_button = InlineKeyboardButton(text="Да",
+                                             callback_data=AddSurveyStepCallbackFactory(
+                                                action=ListAddSurveyStepActions.SELECT_STEP_TYPE,
+                                                step_type=SURVEY_STEP_TYPE.YES).pack()
+                                            )
 
-        builder.row(str_or_files_button, yes_no_button)
+        builder.row(yes_no_button, yes_button)
     elif field == SURVEY_STEP_VARIABLE_FILEDS.IMAGE:
         not_necessary_button = InlineKeyboardButton(text="Изображение не нужно",
                                                     callback_data=AddSurveyStepCallbackFactory(
