@@ -16,6 +16,7 @@ from db.service.survey_steps.postgres_survey_steps_service import \
     PostgresSurveyStepService
 from db.service.survey_steps.survey_steps_service import SurveyStepService
 from db.service.user.async_user_service import AsyncUserService
+from db.service.user.postgres_user_service import PostgresUserService
 from db.service.user.redis_user_service import RedisUserService
 from db.service.user.user_service import UserService
 from db.service.message.async_message_service import AsyncMessageService
@@ -32,7 +33,8 @@ class Services(ABCServices):
                  minio_client: AsyncMinioClient):
         self.redis_client = redis_client
         self.minio_client = minio_client
-        self.user_service = RedisUserService(redis_client)
+        # self.user_service = RedisUserService(redis_client)
+        self.user_service = PostgresUserService()
         self.survey_steps_service = PostgresSurveyStepService()
         self.survey_service = PostgresSurveyService()
         self.survey_result_service = PostgresSurveyResultService()

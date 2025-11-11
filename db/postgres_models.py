@@ -7,7 +7,7 @@ from sqlalchemy.dialects.postgresql import ENUM as PgEnum
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from db.postgres import Base
-from enums import SURVEY_STEP_TYPE, SURVEY_RESULT_COMMENT_TYPE
+from enums import SURVEY_STEP_TYPE, SURVEY_RESULT_COMMENT_TYPE, USER_TYPE
 
 
 class MessageStatus(Enum):
@@ -23,6 +23,13 @@ class MessageType(Enum):
 class SurveyResultStatus(Enum):
     NOT_PROCESSED = "not_processed"
     PROCESSED = "processed"
+
+class UsersORM(Base):
+    __tablename__ = "users"
+
+    telegram_id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
+    full_name: Mapped[str]
+    user_type: Mapped[USER_TYPE] = mapped_column(PgEnum(USER_TYPE, name="user_type", create_type=True))
 
 class SurveyORM(Base):
     __tablename__ = "surveys"

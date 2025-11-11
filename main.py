@@ -56,19 +56,20 @@ async def start_polling():
 async def create_test_date():
     await STORAGE.redis.client().flushdb()
     await DB.minio_client.ensure_bucket(bucket=DB.minio_client.default_bucket)
+
+    await drop_tables()
+    await create_tables()
+
     user = User(telegram_id=173202775,
                 full_name="Зинченко Антон Андреевич",
                 user_type=USER_TYPE.ADMIN)
-    user_id = await DB.user.save_user(user=user)
     async with YANDEX_DISK_SESSION() as yd:
         await yd.mkdir("Зинченко Антон Андреевич")
+    user_id = await DB.user.save_user(user=user)
     # user = User(telegram_id=5613751001,
     #             full_name="Абоба Хуй",
     #             user_type=USER_TYPE.CLIENT)
     # user_id = await DB.user.save_user(user=user)
-
-    await drop_tables()
-    await create_tables()
 
     survey = Survey(name="clinical cases",
                     start_message="Опаааа, стартовое сообщение опроса",
