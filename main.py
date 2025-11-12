@@ -175,6 +175,8 @@ async def create_test_date():
 async def main():
     if TEST_MODE == "True":
         await create_test_date()
+    await create_tables()
+    await DB.minio_client.ensure_bucket(bucket=DB.minio_client.default_bucket)
     # scheduler = Scheduler()
     # regular_tasks = RegularTasks(db=DB, aiogram_wrapper=AIOGRAM_WRAPPER, manager=MANAGER)
     # scheduler.register_fetcher_interval(fetch_job=regular_tasks.send_messages_to_admins, seconds=5)
