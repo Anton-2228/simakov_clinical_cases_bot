@@ -169,10 +169,14 @@ class TakeSurvey(BaseCommand):
             send_message_direction_end = await self.aiogram_wrapper.answer_massage(message=message,
                                                                      text=TAKE_SURVEY_ENTER_FILES_DIRECTION_END,
                                                                      reply_markup=reply_keyboard)
+            await self.manager.aiogram_wrapper.delete_message(message_id=send_message_direction_end.message_id,
+                                                              chat_id=message.chat.id)
         elif step.type == SURVEY_STEP_TYPE.STRING_OR_FILES:
             send_message_direction_end = await self.aiogram_wrapper.answer_massage(message=message,
                                                                      text=TAKE_SURVEY_ENTER_STRING_OR_FILES_DIRECTION_END,
                                                                      reply_markup=reply_keyboard)
+            await self.manager.aiogram_wrapper.delete_message(message_id=send_message_direction_end.message_id,
+                                                              chat_id=message.chat.id)
         await self._save_message_data(state=state_context, message=send_message)
 
     async def _send_next_ask(self, message: Message, state_context: FSMContext):
@@ -200,10 +204,14 @@ class TakeSurvey(BaseCommand):
             send_message_direction_end = await self.aiogram_wrapper.answer_massage(message=message,
                                                                      text=TAKE_SURVEY_ENTER_FILES_DIRECTION_END,
                                                                      reply_markup=reply_keyboard)
+            await self.manager.aiogram_wrapper.delete_message(message_id=send_message_direction_end.message_id,
+                                                              chat_id=message.chat.id)
         elif step.type == SURVEY_STEP_TYPE.STRING_OR_FILES:
             send_message_direction_end = await self.aiogram_wrapper.answer_massage(message=message,
                                                                      text=TAKE_SURVEY_ENTER_STRING_OR_FILES_DIRECTION_END,
                                                                      reply_markup=reply_keyboard)
+            await self.manager.aiogram_wrapper.delete_message(message_id=send_message_direction_end.message_id,
+                                                              chat_id=message.chat.id)
         await self._save_message_data(state=state_context, message=send_message)
 
     async def _processed_string_answer(self, message: Message, state_context: FSMContext, step: SurveyStep):
