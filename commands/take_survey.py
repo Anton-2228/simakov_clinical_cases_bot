@@ -208,6 +208,11 @@ class TakeSurvey(BaseCommand):
 
     async def _processed_string_answer(self, message: Message, state_context: FSMContext, step: SurveyStep):
         answer = message.text
+        survey_id = await self.aiogram_wrapper.get_state_data(state_context=state_context,
+                                                              field_name=RedisTmpFields.TAKE_SURVEY_SURVEY_ID.value)
+        logger.info(
+            f"Пользователь {message.chat.id} в опросе {survey_id} на шаге {step.id} ответил {answer}")
+
         if not answer:
             send_message = await self.aiogram_wrapper.answer_massage(message=message,
                                                                      text=TAKE_SURVEY_SEND_NOT_TEXT)
@@ -251,6 +256,7 @@ class TakeSurvey(BaseCommand):
 
             survey_id = await self.aiogram_wrapper.get_state_data(state_context=state_context,
                                                                   field_name=RedisTmpFields.TAKE_SURVEY_SURVEY_ID.value)
+            logger.info(f"Пользователь {message.chat.id} в опросе {survey_id} на шаге {step.id} прикрепил файл {doc.file_name}")
             file_s3_path = self.db.files_storage.key_builder.key_survey_file(user_id=str(message.chat.id),
                                                                              survey_id=str(survey_id),
                                                                              filename=doc.file_name)
@@ -284,6 +290,7 @@ class TakeSurvey(BaseCommand):
 
                 survey_id = await self.aiogram_wrapper.get_state_data(state_context=state_context,
                                                                       field_name=RedisTmpFields.TAKE_SURVEY_SURVEY_ID.value)
+                logger.info(f"Пользователь {message.chat.id} в опросе {survey_id} на шаге {step.id} прикрепил файл {doc.file_name}")
                 file_s3_path = self.db.files_storage.key_builder.key_survey_file(user_id=str(message.chat.id),
                                                                                  survey_id=str(survey_id),
                                                                                  filename=doc.file_name)
@@ -306,6 +313,10 @@ class TakeSurvey(BaseCommand):
                     send_message = await self.aiogram_wrapper.answer_massage(message=message,
                                                                              text=TAKE_SURVEY_STRING_FILES_TEXT_AFTER_FILES)
                     return
+
+                survey_id = await self.aiogram_wrapper.get_state_data(state_context=state_context,
+                                                                      field_name=RedisTmpFields.TAKE_SURVEY_SURVEY_ID.value)
+                logger.info(f"Пользователь {message.chat.id} в опросе {survey_id} на шаге {step.id} ответил {answer}")
 
                 survey_answer[step_id] = {"answer": answer,
                                           "type": SURVEY_STEP_TYPE.STRING.value}
@@ -342,6 +353,9 @@ class TakeSurvey(BaseCommand):
         current_step = await self._get_current_step(message=callback.message, state_context=state)
         survey_answer = await self.aiogram_wrapper.get_state_data(state_context=state,
                                                                   field_name=RedisTmpFields.TAKE_SURVEY_SURVEY_ANSWER.value)
+        survey_id = await self.aiogram_wrapper.get_state_data(state_context=state,
+                                                              field_name=RedisTmpFields.TAKE_SURVEY_SURVEY_ID.value)
+        logger.info(f"Пользователь {callback.message.chat.id} в опросе {survey_id} на шаге {current_step.id} нажал кнопку {selection_result}")
         survey_answer[current_step.id] = {"answer": selection_result.value,
                                           "type": SURVEY_STEP_TYPE.YES_NO.value}
         await self.aiogram_wrapper.set_state_data(state_context=state,
@@ -355,6 +369,10 @@ class TakeSurvey(BaseCommand):
         current_step = await self._get_current_step(message=callback.message, state_context=state)
         survey_answer = await self.aiogram_wrapper.get_state_data(state_context=state,
                                                                   field_name=RedisTmpFields.TAKE_SURVEY_SURVEY_ANSWER.value)
+        survey_id = await self.aiogram_wrapper.get_state_data(state_context=state,
+                                                              field_name=RedisTmpFields.TAKE_SURVEY_SURVEY_ID.value)
+        logger.info(f"Пользователь {callback.message.chat.id} в опросе {survey_id} на шаге {current_step.id} нажал кнопку {selection_result}")
+
         survey_answer[current_step.id] = {"answer": selection_result.value,
                                           "type": SURVEY_STEP_TYPE.YES.value}
         await self.aiogram_wrapper.set_state_data(state_context=state,
