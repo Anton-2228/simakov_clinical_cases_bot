@@ -125,11 +125,17 @@ class ChangeSurvey(BaseCommand):
         
         if self.field_order[current_field_id]["field_name"] == SURVEY_VARIABLE_FIELDS.START_MESSAGE:
             new_start_message = message.text
+            res_check = await self.aiogram_wrapper._check_validity_of_message(message=message, text=new_start_message)
+            if res_check:
+                return
             survey = await self.db.survey.get_survey(id=survey_id)
             survey.start_message = new_start_message
             await self.db.survey.update_survey(survey=survey)
         elif self.field_order[current_field_id]["field_name"] == SURVEY_VARIABLE_FIELDS.FINISH_MESSAGE:
             new_finish_message = message.text
+            res_check = await self.aiogram_wrapper._check_validity_of_message(message=message, text=new_finish_message)
+            if res_check:
+                return
             survey = await self.db.survey.get_survey(id=survey_id)
             survey.finish_message = new_finish_message
             await self.db.survey.update_survey(survey=survey)

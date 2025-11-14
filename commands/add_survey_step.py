@@ -138,10 +138,16 @@ class AddSurveyStep(BaseCommand):
                                                               field_name=RedisTmpFields.ADD_SURVEY_STEP_SURVEY_ID.value)
         if self.filed_order[current_field_id]["field_name"] == SURVEY_STEP_VARIABLE_FILEDS.NAME:
             new_name = message.text
+            res_check = await self.aiogram_wrapper._check_validity_of_message(message=message, text=new_name)
+            if res_check:
+                return
             await self._set_template_field(state=state,
                                            value=new_name)
         elif self.filed_order[current_field_id]["field_name"] == SURVEY_STEP_VARIABLE_FILEDS.TEXT:
             new_text = message.text
+            res_check = await self.aiogram_wrapper._check_validity_of_message(message=message, text=new_text)
+            if res_check:
+                return
             await self._set_template_field(state=state,
                                            value=new_text)
         elif self.filed_order[current_field_id]["field_name"] == SURVEY_STEP_VARIABLE_FILEDS.TYPE:

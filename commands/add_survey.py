@@ -122,6 +122,9 @@ class AddSurvey(BaseCommand):
         
         if self.field_order[current_field_id]["field_name"] == SURVEY_VARIABLE_FIELDS.NAME:
             survey_name = message.text.strip()
+            res_check = await self.aiogram_wrapper._check_validity_of_message(message=message, text=survey_name)
+            if res_check:
+                return
             if len(survey_name) > 30:
                 keyboard = get_keyboard_for_add_survey_field(field=self.field_order[current_field_id]["field_name"])
                 send_message = await self.aiogram_wrapper.answer_massage(message=message,
@@ -132,9 +135,15 @@ class AddSurvey(BaseCommand):
             await self._set_template_field(state=state, value=survey_name)
         elif self.field_order[current_field_id]["field_name"] == SURVEY_VARIABLE_FIELDS.START_MESSAGE:
             start_message = message.text.strip()
+            res_check = await self.aiogram_wrapper._check_validity_of_message(message=message, text=start_message)
+            if res_check:
+                return
             await self._set_template_field(state=state, value=start_message)
         elif self.field_order[current_field_id]["field_name"] == SURVEY_VARIABLE_FIELDS.FINISH_MESSAGE:
             finish_message = message.text.strip()
+            res_check = await self.aiogram_wrapper._check_validity_of_message(message=message, text=finish_message)
+            if res_check:
+                return
             await self._set_template_field(state=state, value=finish_message)
 
         current_field_id = await self._set_next_field_id(state_context=state)

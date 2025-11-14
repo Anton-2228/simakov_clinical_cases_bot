@@ -151,11 +151,17 @@ class ChangeSurveyStep(BaseCommand):
                                                               field_name=RedisTmpFields.CHANGE_SURVEY_STEPS_SURVEY_ID.value)
         if self.filed_order[current_field_id]["field_name"] == SURVEY_STEP_VARIABLE_FILEDS.NAME:
             new_name = message.text
+            res_check = await self.aiogram_wrapper._check_validity_of_message(message=message, text=new_name)
+            if res_check:
+                return
             step = await self.db.survey_step.get_survey_step(id=step_id)
             step.name = new_name
             await self.db.survey_step.update_survey_step(survey_step=step)
         elif self.filed_order[current_field_id]["field_name"] == SURVEY_STEP_VARIABLE_FILEDS.TEXT:
             new_text = message.text
+            res_check = await self.aiogram_wrapper._check_validity_of_message(message=message, text=new_text)
+            if res_check:
+                return
             step = await self.db.survey_step.get_survey_step(id=step_id)
             step.text = new_text
             await self.db.survey_step.update_survey_step(survey_step=step)

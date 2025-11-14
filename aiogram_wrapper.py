@@ -19,7 +19,7 @@ from db.service.abc_services import ABCServices
 from keyboards_generators import get_keyboard_for_reply_message_to_client
 from models import User
 from output_generators import create_message_to_admins_output
-from resources.messages import MESSAGE_TO_USER
+from resources.messages import MESSAGE_TO_USER, BROKEN_MARKDOWN
 from states import States
 
 
@@ -406,3 +406,11 @@ class AiogramWrapper:
 
     def register_message_handler(self, handler, *filters, **kwargs):
         self.router.message.register(handler, *filters, **kwargs)
+
+    async def _check_validity_of_message(self, message: Message, text: str) -> Optional[Message]:
+        try:
+            m = await message.answer(text=text)
+            await self.delete_message(message_id=m.message_id, chat_id=m.chat.id)
+        except Exception as e:
+            error_message = await message.answer(text=BROKEN_MARKDOWN)
+            return error_message
