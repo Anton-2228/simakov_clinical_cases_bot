@@ -228,4 +228,4 @@ class YandexDiskWrapper(AsyncClient):
         return f"https://disk.yandex.ru/client/disk/{encoded_path}"
 
 def YANDEX_DISK_SESSION():
-    return YandexDiskWrapper(token=YANDEX_DISK_TOKEN, root_dir="/test")
+    return YandexDiskWrapper(token=YANDEX_DISK_TOKEN, root_dir="/surveys results")
