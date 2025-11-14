@@ -84,8 +84,17 @@ class YandexDiskWrapper(AsyncClient):
             *args,
             **kwargs
     ) -> AsyncResourceLinkObject:
-        dst_path = Path(self.root_dir) / dst_path
-        return await super().upload(path_or_file, str(dst_path), *args, **kwargs)
+        # убеждаемся, что все поддиректории существуют
+        dst_path_obj = Path(dst_path)
+        dir_path = dst_path_obj.parent
+        if str(dir_path) not in ("", "."):
+            current = Path()
+            for part in dir_path.parts:
+                current /= part
+                await self.mkdir(str(current))
+
+        full_dst_path = Path(self.root_dir) / dst_path_obj
+        return await super().upload(path_or_file, str(full_dst_path), *args, **kwargs)
 
     async def create_user_dir(self, full_name):
         await self.mkdir(full_name)
