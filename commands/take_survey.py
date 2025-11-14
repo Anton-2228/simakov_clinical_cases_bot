@@ -398,11 +398,13 @@ class TakeSurvey(BaseCommand):
             if step_id not in survey_answer:
                 send_message = await self.aiogram_wrapper.answer_massage(message=callback.message,
                                                                          text=TAKE_SURVEY_SENDED_NOT_ENOUGH_FILES)
+                await callback.answer()
                 return
         elif current_step.type == SURVEY_STEP_TYPE.STRING_OR_FILES:
             if step_id not in survey_answer:
                 send_message = await self.aiogram_wrapper.answer_massage(message=callback.message,
                                                                          text=TAKE_SURVEY_SENDED_NOT_ENOUGH_FILES)
+                await callback.answer()
                 return
 
         send_message = await self.aiogram_wrapper.answer_massage(message=callback.message,
