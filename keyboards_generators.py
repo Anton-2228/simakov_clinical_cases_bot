@@ -355,13 +355,23 @@ def get_keyboard_for_take_survey_step(step_type: SURVEY_STEP_TYPE) -> tuple[Inli
 
     reply_kb = None
     if step_type == SURVEY_STEP_TYPE.FILES:
-        reply_builder = ReplyKeyboardBuilder()
-        reply_builder.row(KeyboardButton(text="✅готово"))
-        reply_kb = reply_builder.as_markup(resize_keyboard=True)
+        # reply_builder = ReplyKeyboardBuilder()
+        # reply_builder.row(KeyboardButton(text="✅готово"))
+        # reply_kb = reply_builder.as_markup(resize_keyboard=True)
+        finish_send_files_button = InlineKeyboardButton(
+            text="✅готово",
+            callback_data=TakeSurveyCallbackFactory(action=ListTakeSurveyActions.FINISH_SEND_FILES).pack()
+        )
+        builder.row(finish_send_files_button)
     elif step_type == SURVEY_STEP_TYPE.STRING_OR_FILES:
-        reply_builder = ReplyKeyboardBuilder()
-        reply_builder.row(KeyboardButton(text="✅готово"))
-        reply_kb = reply_builder.as_markup(resize_keyboard=True)
+        # reply_builder/ = ReplyKeyboardBuilder()
+        # reply_builder.row(KeyboardButton(text="✅готово"))
+        # reply_kb = reply_builder.as_markup(resize_keyboard=True)
+        finish_send_files_button = InlineKeyboardButton(
+            text="✅готово",
+            callback_data=TakeSurveyCallbackFactory(action=ListTakeSurveyActions.FINISH_SEND_FILES).pack()
+        )
+        builder.row(finish_send_files_button)
     elif step_type == SURVEY_STEP_TYPE.YES_NO:
         yes_button = InlineKeyboardButton(
             text="Да",
