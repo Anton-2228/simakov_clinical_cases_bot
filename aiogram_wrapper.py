@@ -79,6 +79,8 @@ class AiogramWrapper:
             await self.bot.delete_message(chat_id=chat_id, message_id=message_id)
 
     async def answer_massage(self, message: Message, *args, **kwargs) -> SendMessage:
+        if "disable_web_page_preview" not in kwargs:
+            kwargs["disable_web_page_preview"] = True
         send_message = await message.answer(*args, **kwargs)
         return send_message
 
@@ -90,7 +92,7 @@ class AiogramWrapper:
                           chat_id: int,
                           text: str,
                           reply_markup: Optional[InlineKeyboardMarkup] = None,
-                          disable_web_page_preview: Optional[bool] = None) -> tuple[Message, FSMContext]:
+                          disable_web_page_preview: Optional[bool] = True) -> tuple[Message, FSMContext]:
         message = await self.bot.send_message(
             chat_id=chat_id,
             text=text,

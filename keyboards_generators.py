@@ -359,7 +359,7 @@ def get_keyboard_for_take_survey_step(step_type: SURVEY_STEP_TYPE) -> tuple[Inli
         # reply_builder.row(KeyboardButton(text="✅готово"))
         # reply_kb = reply_builder.as_markup(resize_keyboard=True)
         finish_send_files_button = InlineKeyboardButton(
-            text="✅готово",
+            text="✅ Готово",
             callback_data=TakeSurveyCallbackFactory(action=ListTakeSurveyActions.FINISH_SEND_FILES).pack()
         )
         builder.row(finish_send_files_button)
@@ -368,7 +368,7 @@ def get_keyboard_for_take_survey_step(step_type: SURVEY_STEP_TYPE) -> tuple[Inli
         # reply_builder.row(KeyboardButton(text="✅готово"))
         # reply_kb = reply_builder.as_markup(resize_keyboard=True)
         finish_send_files_button = InlineKeyboardButton(
-            text="✅готово",
+            text="✅ Готово",
             callback_data=TakeSurveyCallbackFactory(action=ListTakeSurveyActions.FINISH_SEND_FILES).pack()
         )
         builder.row(finish_send_files_button)
@@ -654,7 +654,7 @@ def get_keyboard_for_add_files() -> InlineKeyboardBuilder:
     builder.row(return_button)
     
     reply_builder = ReplyKeyboardBuilder()
-    reply_builder.row(KeyboardButton(text="✅готово"))
+    reply_builder.row(KeyboardButton(text="✅ Готово"))
     reply_kb = reply_builder.as_markup(resize_keyboard=True)
 
     return builder, reply_kb
