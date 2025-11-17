@@ -31,7 +31,8 @@ from resources.messages import (TAKE_SURVEY_MAXIMUM_NUMBER_FILES,
                                 TAKE_SURVEY_ENTER_STRING_OR_FILES_DIRECTION_END,
                                 TAKE_SURVEY_WAIT_END, TAKE_SURVEY_SENDED_NOT_ENOUGH_FILES, TAKE_SURVEY_ENTER_FILES_END,
                                 TAKE_SURVEY_YES_NO_UNEXPECTED_ANSWER, TAKE_SURVEY_STRING_FILES_UNEXPECTED_ANSWER,
-                                TAKE_SURVEY_STRING_FILES_TEXT_AFTER_FILES, TAKE_SURVEY_YES_UNEXPECTED_ANSWER)
+                                TAKE_SURVEY_STRING_FILES_TEXT_AFTER_FILES, TAKE_SURVEY_YES_UNEXPECTED_ANSWER,
+                                TAKE_SURVEY_SENDED_NOT_ENOUGH_FILES_OR_STRING)
 from states import States
 
 from .base_command import BaseCommand
@@ -403,7 +404,7 @@ class TakeSurvey(BaseCommand):
         elif current_step.type == SURVEY_STEP_TYPE.STRING_OR_FILES:
             if step_id not in survey_answer:
                 send_message = await self.aiogram_wrapper.answer_massage(message=callback.message,
-                                                                         text=TAKE_SURVEY_SENDED_NOT_ENOUGH_FILES)
+                                                                         text=TAKE_SURVEY_SENDED_NOT_ENOUGH_FILES_OR_STRING)
                 await callback.answer()
                 return
 

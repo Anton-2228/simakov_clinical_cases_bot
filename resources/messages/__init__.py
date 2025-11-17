@@ -59,6 +59,7 @@ TAKE_SURVEY_COUNT_FILES = load_txt(Path(__file__).parent / "TAKE_SURVEY_COUNT_FI
 TAKE_SURVEY_MAXIMUM_NUMBER_FILES = load_txt(Path(__file__).parent / "errors/TAKE_SURVEY_MAXIMUM_NUMBER_FILES.txt")
 TAKE_SURVEY_SEND_NOT_TEXT = load_txt(Path(__file__).parent / "errors/TAKE_SURVEY_SEND_NOT_TEXT.txt")
 TAKE_SURVEY_SENDED_NOT_ENOUGH_FILES = load_txt(Path(__file__).parent / "errors/TAKE_SURVEY_SENDED_NOT_ENOUGH_FILES.txt")
+TAKE_SURVEY_SENDED_NOT_ENOUGH_FILES_OR_STRING = load_txt(Path(__file__).parent / "errors/TAKE_SURVEY_SENDED_NOT_ENOUGH_FILES_OR_STRING.txt")
 TAKE_SURVEY_YES_NO_UNEXPECTED_ANSWER = load_txt(Path(__file__).parent / "errors/TAKE_SURVEY_YES_NO_UNEXPECTED_ANSWER.txt")
 TAKE_SURVEY_YES_UNEXPECTED_ANSWER = load_txt(Path(__file__).parent / "errors/TAKE_SURVEY_YES_UNEXPECTED_ANSWER.txt")
 TAKE_SURVEY_STRING_FILES_UNEXPECTED_ANSWER = load_txt(Path(__file__).parent / "errors/TAKE_SURVEY_STRING_FILES_UNEXPECTED_ANSWER.txt")
