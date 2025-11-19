@@ -72,7 +72,10 @@ class AiogramWrapper:
         return data[field_name]
 
     async def delete_message(self, message_id: int, chat_id: int):
-        await self.bot.delete_message(chat_id=chat_id, message_id=message_id)
+        try:
+            await self.bot.delete_message(chat_id=chat_id, message_id=message_id)
+        except:
+            logger.info(f"Не смогли удалить сообщение {chat_id}, {message_id}")
 
     async def delete_messages(self, message_ids: list[int], chat_id: int):
         for message_id in message_ids:
@@ -109,9 +112,12 @@ class AiogramWrapper:
         return message, state
 
     async def edit_message_reply_markup(self, chat_id: int, message_id: int, reply_markup: Optional[InlineKeyboardMarkup]):
-        await self.bot.edit_message_reply_markup(chat_id=chat_id,
-                                                 message_id=message_id,
-                                                 reply_markup=reply_markup)
+        try:
+            await self.bot.edit_message_reply_markup(chat_id=chat_id,
+                                                     message_id=message_id,
+                                                     reply_markup=reply_markup)
+        except:
+            logger.info(f"Не смогли отредактировать клавиатуру у сообщения {chat_id}, {message_id}")
 
     # Пока что хуй забил, гемора много
     async def edit_message(self,
