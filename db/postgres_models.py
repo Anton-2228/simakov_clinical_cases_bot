@@ -30,6 +30,7 @@ class UsersORM(Base):
     telegram_id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
     full_name: Mapped[str]
     user_type: Mapped[USER_TYPE] = mapped_column(PgEnum(USER_TYPE, name="user_type", create_type=True))
+    created_at: Mapped[datetime] = mapped_column(server_default=text("TIMEZONE('utc-3', now())"))
 
 class SurveyORM(Base):
     __tablename__ = "surveys"

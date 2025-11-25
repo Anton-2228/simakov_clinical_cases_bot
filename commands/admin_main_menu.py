@@ -91,7 +91,7 @@ class AdminMainMenu(BaseCommand):
                 user.insert(1, "")
             except Exception:
                 user.insert(1, "")
-        headers = ["telegram id", "telegram username", "Полное имя", "Роль"]
+        headers = ["telegram id", "telegram username", "Полное имя", "Роль", "Дата регистрации"]
         file_path = get_tmp_path(filename="users.xlsx")
         file_path = self.xlsx_handler.create_from_list(data=users,
                                                        headers=headers,

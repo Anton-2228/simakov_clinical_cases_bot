@@ -13,7 +13,8 @@ class UserMapper(ABCMapper):
         return User(
             telegram_id=entity.telegram_id,
             full_name=entity.full_name,
-            user_type=entity.user_type
+            user_type=entity.user_type,
+            created_at=entity.created_at
         )
 
     @staticmethod
@@ -24,6 +25,7 @@ class UserMapper(ABCMapper):
         return UsersORM(
             telegram_id=dto.telegram_id,
             full_name=dto.full_name,
-            user_type=dto.user_type
+            user_type=dto.user_type,
+            created_at=dto.created_at
         )
 

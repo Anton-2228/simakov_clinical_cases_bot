@@ -38,7 +38,7 @@ class AsyncMinioClient:
         self.key_builder = key_builder
         self._cfg = cfg
         self._client = Minio(
-            cfg.endpoint,
+            endpoint=cfg.endpoint,
             access_key=cfg.access_key,
             secret_key=cfg.secret_key,
             secure=cfg.secure,
