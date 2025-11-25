@@ -1,4 +1,5 @@
 import logging
+from datetime import datetime
 from typing import TYPE_CHECKING, Optional
 
 from aiogram.filters import CommandObject
@@ -34,7 +35,27 @@ class SelectUserToSendMessage(BaseCommand):
                                        dump_field_name=RedisTmpFields.DUMP_SELECT_USER_TO_SEND_MESSAGE.value)
 
     async def execute(self, message: Message, state: FSMContext, command: Optional[CommandObject] = None, **kwargs):
+        async def sort_users_by_last_survey(users: list) -> list:
+            survey_results = await self.db.survey_result.get_all_survey_results()
+
+            last_survey_by_user: dict[int, datetime] = {}
+
+            for result in survey_results:
+                if result.created_at is None:
+                    continue
+                uid = result.user_id
+                prev = last_survey_by_user.get(uid)
+                if prev is None or result.created_at > prev:
+                    last_survey_by_user[uid] = result.created_at
+
+            return sorted(
+                users,
+                key=lambda u: last_survey_by_user.get(getattr(u, "telegram_id"), datetime.min),
+                reverse=True,
+            )
+
         users = await self.db.user.get_users()
+        users = await sort_users_by_last_survey(users)
         me = None
         for user in users:
             if user.telegram_id == message.chat.id:
