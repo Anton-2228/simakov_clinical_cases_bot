@@ -11,7 +11,7 @@ from aiogram_wrapper import AiogramWrapper
 from callbacks_factories import AdminMainMenuCallbackFactory
 from db.service.abc_services import ABCServices
 from enums import ListAdminMainMenuActions
-from environments import TARGETED_SURVEY_ID
+from environments import TARGETED_SURVEY_ID, TARGETED_SURVEY_EMAIL_STEP
 from keyboards_generators import get_keyboard_for_admin_main_menu
 from resources.messages import ADMIN_MAIN_MENU_MESSAGE
 from states import States
@@ -80,6 +80,16 @@ class AdminMainMenu(BaseCommand):
         await callback.answer()
 
     async def _get_dump_users(self, callback: CallbackQuery, callback_data: AdminMainMenuCallbackFactory, state: FSMContext):
+        async def _get_user_emails(user_id: int):
+            survey_results = await self.db.survey_result.get_survey_results_by_user_and_survey(user_id=user_id,
+                                                                                               survey_id=int(TARGETED_SURVEY_ID))
+            emails = []
+            for survey_result in survey_results:
+                for step_result in survey_result.survey_step_results:
+                    if step_result.survey_step_id == int(TARGETED_SURVEY_EMAIL_STEP):
+                        emails.append(str(json.loads(step_result.result)["answer"]))
+            return list(set(emails))
+
         users = await self.db.user.get_users()
         users = [list(json.loads(x.model_dump_json()).values()) for x in users]
         for user in users:
@@ -91,8 +101,11 @@ class AdminMainMenu(BaseCommand):
                     user.insert(1, "")
             except Exception:
                 user.insert(1, "")
-            user[4] = str(user[4]).replace('T', ' ').split('.')[0]
-        headers = ["telegram id", "telegram username", "Полное имя", "Роль", "Дата регистрации"]
+            emails = await _get_user_emails(int(user[0]))
+            merged_emails = '; '.join(emails)
+            user.insert(3, merged_emails)
+            user[5] = str(user[5]).replace('T', ' ').split('.')[0]
+        headers = ["telegram id", "telegram username", "Полное имя", "Почты", "Роль", "Дата регистрации"]
         file_path = get_tmp_path(filename="users.xlsx")
         file_path = self.xlsx_handler.create_from_list(data=users,
                                                        headers=headers,

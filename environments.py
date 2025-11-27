@@ -12,6 +12,8 @@ assert TELEGRAM_BOT_TOKEN is not None, "TELEGRAM_BOT_TOKEN not initialized"
 
 TARGETED_SURVEY_ID=os.getenv("TARGETED_SURVEY_ID")
 assert TARGETED_SURVEY_ID is not None, "TARGETED_SURVEY_ID not initialized"
+TARGETED_SURVEY_EMAIL_STEP=os.getenv("TARGETED_SURVEY_EMAIL_STEP")
+assert TARGETED_SURVEY_EMAIL_STEP is not None, "TARGETED_SURVEY_EMAIL_STEP not initialized"
 
 REDIS_HOST=os.getenv("REDIS_HOST")
 assert REDIS_HOST is not None, "REDIS_HOST not initialized"
