@@ -87,10 +87,11 @@ class AdminMainMenu(BaseCommand):
                 chat = await self.aiogram_wrapper.bot.get_chat(user[0])
                 if chat.username:
                     user.insert(1, f"@{chat.username}")
-                    continue
-                user.insert(1, "")
+                else:
+                    user.insert(1, "")
             except Exception:
                 user.insert(1, "")
+            user[4] = str(user[4]).replace('T', ' ').split('.')[0]
         headers = ["telegram id", "telegram username", "Полное имя", "Роль", "Дата регистрации"]
         file_path = get_tmp_path(filename="users.xlsx")
         file_path = self.xlsx_handler.create_from_list(data=users,
