@@ -34,7 +34,7 @@ class AdminMainMenu(BaseCommand):
         self.aiogram_wrapper.register_callback(self._edit_admin_list, AdminMainMenuCallbackFactory.filter(F.action == ListAdminMainMenuActions.EDIT_ADMIN_LIST))
         self.aiogram_wrapper.register_callback(self._get_dump_users, AdminMainMenuCallbackFactory.filter(F.action == ListAdminMainMenuActions.GET_DUMP_USERS))
         self.aiogram_wrapper.register_callback(self._send_message_to_user, AdminMainMenuCallbackFactory.filter(F.action == ListAdminMainMenuActions.SEND_MESSAGE_TO_USER))
-        self.aiogram_wrapper.register_callback(self._unprocessed_survey_results, AdminMainMenuCallbackFactory.filter(F.action == ListAdminMainMenuActions.UNPROCESSED_SURVEY_RESULTS))
+        # self.aiogram_wrapper.register_callback(self._unprocessed_survey_results, AdminMainMenuCallbackFactory.filter(F.action == ListAdminMainMenuActions.UNPROCESSED_SURVEY_RESULTS))
 
     async def execute(self, message: Message, state: FSMContext, command: Optional[CommandObject] = None, **kwargs):
         await self.manager.aiogram_wrapper.set_state(state_context=state,
@@ -124,12 +124,12 @@ class AdminMainMenu(BaseCommand):
                                   state=state)
         await callback.answer()
 
-    async def _unprocessed_survey_results(self, callback: CallbackQuery, callback_data: AdminMainMenuCallbackFactory, state: FSMContext):
-        await self.aiogram_wrapper.set_state(state_context=state,
-                                             state=States.UNPROCESSED_SURVEY_RESULTS)
-        await self.manager.aiogram_wrapper.delete_message(message_id=callback.message.message_id,
-                                                          chat_id=callback.from_user.id)
-        await self.manager.launch(name="unprocessed_survey_results",
-                                  message=callback.message,
-                                  state=state)
-        await callback.answer()
+    # async def _unprocessed_survey_results(self, callback: CallbackQuery, callback_data: AdminMainMenuCallbackFactory, state: FSMContext):
+    #     await self.aiogram_wrapper.set_state(state_context=state,
+    #                                          state=States.UNPROCESSED_SURVEY_RESULTS)
+    #     await self.manager.aiogram_wrapper.delete_message(message_id=callback.message.message_id,
+    #                                                       chat_id=callback.from_user.id)
+    #     await self.manager.launch(name="unprocessed_survey_results",
+    #                               message=callback.message,
+    #                               state=state)
+    #     await callback.answer()
