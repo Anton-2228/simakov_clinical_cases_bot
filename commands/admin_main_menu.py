@@ -9,7 +9,9 @@ from magic_filter import F
 
 from aiogram_wrapper import AiogramWrapper
 from callbacks_factories import AdminMainMenuCallbackFactory
+from db.postgres_models import SurveyResultStatus
 from db.service.abc_services import ABCServices
+from db.service.yandex_disk_wrapper import YANDEX_DISK_SESSION
 from enums import ListAdminMainMenuActions
 from environments import TARGETED_SURVEY_ID, TARGETED_SURVEY_EMAIL_STEP
 from keyboards_generators import get_keyboard_for_admin_main_menu
@@ -33,6 +35,7 @@ class AdminMainMenu(BaseCommand):
         self.aiogram_wrapper.register_callback(self._edit_surveys, AdminMainMenuCallbackFactory.filter(F.action == ListAdminMainMenuActions.EDIT_SURVEYS))
         self.aiogram_wrapper.register_callback(self._edit_admin_list, AdminMainMenuCallbackFactory.filter(F.action == ListAdminMainMenuActions.EDIT_ADMIN_LIST))
         self.aiogram_wrapper.register_callback(self._get_dump_users, AdminMainMenuCallbackFactory.filter(F.action == ListAdminMainMenuActions.GET_DUMP_USERS))
+        self.aiogram_wrapper.register_callback(self._get_dump_survey_results, AdminMainMenuCallbackFactory.filter(F.action == ListAdminMainMenuActions.GET_DUMP_SURVEY_RESULTS))
         self.aiogram_wrapper.register_callback(self._send_message_to_user, AdminMainMenuCallbackFactory.filter(F.action == ListAdminMainMenuActions.SEND_MESSAGE_TO_USER))
         # self.aiogram_wrapper.register_callback(self._unprocessed_survey_results, AdminMainMenuCallbackFactory.filter(F.action == ListAdminMainMenuActions.UNPROCESSED_SURVEY_RESULTS))
 
@@ -108,6 +111,40 @@ class AdminMainMenu(BaseCommand):
         headers = ["telegram id", "telegram username", "Полное имя", "Почты", "Роль", "Дата регистрации"]
         file_path = get_tmp_path(filename="users.xlsx")
         file_path = self.xlsx_handler.create_from_list(data=users,
+                                                       headers=headers,
+                                                       file_path=file_path)
+        await self.aiogram_wrapper.send_file(chat_id=callback.message.chat.id,
+                                             file_path=file_path)
+        await callback.answer()
+
+    async def _get_dump_survey_results(self, callback: CallbackQuery, callback_data: AdminMainMenuCallbackFactory, state: FSMContext):
+        async def _get_user_emails(user_id: int):
+            survey_results = await self.db.survey_result.get_survey_results_by_user_and_survey(user_id=user_id,
+                                                                                               survey_id=int(TARGETED_SURVEY_ID))
+            emails = []
+            for survey_result in survey_results:
+                for step_result in survey_result.survey_step_results:
+                    if step_result.survey_step_id == int(TARGETED_SURVEY_EMAIL_STEP):
+                        emails.append(str(json.loads(step_result.result)["answer"]))
+            return list(set(emails))
+
+        users = await self.db.user.get_users()
+        dump = []
+        async with YANDEX_DISK_SESSION() as yd:
+            for user in users:
+                survey_results = await self.db.survey_result.get_survey_results_by_user(user_id=user.telegram_id)
+                for survey_result in survey_results:
+                    row = []
+                    row.append(user.full_name)
+                    link = await yd.get_folder_link(services=self.db, survey_result=survey_result)
+                    row.append(link)
+                    row.append("да" if SurveyResultStatus.ACCEPTED_PUBLICATION in survey_result.statuses else "нет")
+                    row.append("да" if SurveyResultStatus.ACCEPTED_ARCHIVE in survey_result.statuses else "нет")
+                    row.append("да" if SurveyResultStatus.NOT_ACCEPTED in survey_result.statuses else "нет")
+                    dump.append(row)
+        headers = ["Полное имя", "Ссылка на результат", "Принято к публикации", "Принято в архив", "Не принято"]
+        file_path = get_tmp_path(filename="survey_results.xlsx")
+        file_path = self.xlsx_handler.create_from_list(data=dump,
                                                        headers=headers,
                                                        file_path=file_path)
         await self.aiogram_wrapper.send_file(chat_id=callback.message.chat.id,

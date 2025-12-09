@@ -98,6 +98,7 @@ class ListAdminMainMenuActions(Enum):
     EDIT_SURVEYS = "edit_surveys"
     EDIT_ADMIN_LIST = "edit_admin_list"
     GET_DUMP_USERS = "get_dump_users"
+    GET_DUMP_SURVEY_RESULTS = "get_dump_survey_results"
     SEND_MESSAGE_TO_USER = "send_message_to_user"
     UNPROCESSED_SURVEY_RESULTS = "unprocessed_survey_results"
 

@@ -54,6 +54,7 @@ def get_keyboard_for_admin_main_menu() -> InlineKeyboardBuilder:
     builder.button(text="Отредактировать опросы", callback_data=AdminMainMenuCallbackFactory(action=ListAdminMainMenuActions.EDIT_SURVEYS))
     builder.button(text="Обновить список админов", callback_data=AdminMainMenuCallbackFactory(action=ListAdminMainMenuActions.EDIT_ADMIN_LIST))
     builder.button(text="Получить таблицу с пользователями", callback_data=AdminMainMenuCallbackFactory(action=ListAdminMainMenuActions.GET_DUMP_USERS))
+    builder.button(text="Получить таблицу с результатами опросов", callback_data=AdminMainMenuCallbackFactory(action=ListAdminMainMenuActions.GET_DUMP_SURVEY_RESULTS))
     builder.button(text="Написать сообщение пользователю", callback_data=AdminMainMenuCallbackFactory(action=ListAdminMainMenuActions.SEND_MESSAGE_TO_USER))
     # builder.button(text="Необработанные результаты опросов", callback_data=AdminMainMenuCallbackFactory(action=ListAdminMainMenuActions.UNPROCESSED_SURVEY_RESULTS))
     builder.adjust(1)
