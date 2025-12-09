@@ -19,6 +19,7 @@ from db.service.abc_services import ABCServices
 from dtos import SurveyResult, SurveyResultComments
 from enums import SURVEY_STEP_TYPE, SURVEY_RESULT_COMMENT_TYPE
 from environments import YANDEX_DISK_TOKEN
+from models import User
 from resources.result_survey import TXT_STEP_RESULTS_SURVEY, TXT_RESULTS_SURVEY
 from utils import get_tmp_path
 
@@ -99,7 +100,7 @@ class YandexDiskWrapper(AsyncClient):
     async def create_user_dir(self, full_name):
         await self.mkdir(full_name)
 
-    def _create_string_answers(self, survey_result: SurveyResult):
+    def _create_string_answers(self, survey_result: SurveyResult, user: User):
         def _get_survey_step(step_id: int):
             for step in survey.survey_steps:
                 if int(step.id) == int(step_id):
@@ -116,9 +117,9 @@ class YandexDiskWrapper(AsyncClient):
             answer = result["answer"]
             text_answers += f"{TXT_STEP_RESULTS_SURVEY.format(answer=answer)}\n"
 
-        return TXT_RESULTS_SURVEY.format(answers=text_answers)
+        return TXT_RESULTS_SURVEY.format(full_name=user.full_name, answers=text_answers)
 
-    async def add_survey_result(self, services: ABCServices, survey_result: SurveyResult):
+    async def add_survey_result(self, services: ABCServices, survey_result: SurveyResult, user: User):
         async def _check_exists(dst_dir: str, filename: str):
             while True:
                 try:
@@ -133,7 +134,7 @@ class YandexDiskWrapper(AsyncClient):
             return filename
 
         async def _add_string_result(dst_dir: str):
-            string_answers = self._create_string_answers(survey_result)
+            string_answers = self._create_string_answers(survey_result, user)
             temp_file_path = get_tmp_path()
             with open(temp_file_path, 'w') as f:
                 f.write(string_answers)

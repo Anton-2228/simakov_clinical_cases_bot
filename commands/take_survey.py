@@ -434,9 +434,10 @@ class TakeSurvey(BaseCommand):
             step_result = await self.db.survey_step_result.save_survey_step_result(survey_step_result=step_result)
 
         survey_result = await self.db.survey_result.get_survey_result(id=survey_result.id)
+        user = await self.db.user.get_user(telegram_id=survey_result.user_id)
 
         async with YANDEX_DISK_SESSION() as yd:
-            await yd.add_survey_result(services=self.db, survey_result=survey_result)
+            await yd.add_survey_result(services=self.db, survey_result=survey_result, user=user)
             link = await yd.get_folder_link(services=self.db, survey_result=survey_result)
             admins = await self.db.user.get_users_by_type(user_type=USER_TYPE.ADMIN)
             current_user = await self.db.user.get_user(telegram_id=message.chat.id)
