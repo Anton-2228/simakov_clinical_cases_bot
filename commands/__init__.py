@@ -7,6 +7,7 @@ from commands.start import Start
 from db.service.abc_services import ABCServices
 from .add_comments_to_survey_result import AddCommentsToSurveyResult
 from .add_files_to_survey_result import AddFilesToSurveyResult
+from .processing_survey_results import ProcessingSurveyResults
 from .unprocessed_survey_results import UnprocessedSurveyResults
 from .unprocessed_survey_result_actions import UnprocessedSurveyResultActions
 
@@ -68,7 +69,8 @@ def get_all_commands(manager: "Manager", db: ABCServices, aiogram_wrapper: Aiogr
         "add_comments_to_survey_result": AddCommentsToSurveyResult(manager, db, aiogram_wrapper),
         "add_files_to_survey_result": AddFilesToSurveyResult(manager, db, aiogram_wrapper),
         "unprocessed_survey_results": UnprocessedSurveyResults(manager, db, aiogram_wrapper),
-        "unprocessed_survey_result_actions": UnprocessedSurveyResultActions(manager, db, aiogram_wrapper)
+        "unprocessed_survey_result_actions": UnprocessedSurveyResultActions(manager, db, aiogram_wrapper),
+        "processing_survey_results": ProcessingSurveyResults(manager, db, aiogram_wrapper)
     }
     return commands
 
@@ -116,5 +118,6 @@ def get_admin_commands(all_commands: Dict[str, BaseCommand]) -> Dict[str, BaseCo
         "add_files_to_survey_result": all_commands["add_files_to_survey_result"],
         "unprocessed_survey_results": all_commands["unprocessed_survey_results"],
         "unprocessed_survey_result_actions": all_commands["unprocessed_survey_result_actions"],
+        "processing_survey_results": all_commands["processing_survey_results"]
     }
     return commands

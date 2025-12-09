@@ -3,7 +3,7 @@ from enum import Enum
 from typing import Optional
 
 from sqlalchemy import ForeignKey, String, Text, BigInteger, text
-from sqlalchemy.dialects.postgresql import ENUM as PgEnum
+from sqlalchemy.dialects.postgresql import ENUM as PgEnum, ARRAY
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from db.postgres import Base
@@ -21,8 +21,9 @@ class MessageType(Enum):
     TO_USER = "to_user"
 
 class SurveyResultStatus(Enum):
-    NOT_PROCESSED = "not_processed"
-    PROCESSED = "processed"
+    ACCEPTED_PUBLICATION = "accepted_publication"
+    ACCEPTED_ARCHIVE = "accepted_archive"
+    NOT_ACCEPTED = "not_accepted"
 
 class UsersORM(Base):
     __tablename__ = "users"
@@ -66,7 +67,7 @@ class SurveyResultORM(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     user_id: Mapped[int] = mapped_column(BigInteger)
     survey_id: Mapped[int] = mapped_column(ForeignKey("surveys.id", ondelete="CASCADE"))
-    status: Mapped[SurveyResultStatus] = mapped_column(PgEnum(SurveyResultStatus, name="survey_result_status", create_type=True))
+    statuses: Mapped[list[SurveyResultStatus]] = mapped_column(ARRAY(PgEnum(SurveyResultStatus, name="survey_result_status", create_type=True)))
     created_at: Mapped[datetime] = mapped_column(server_default=text("TIMEZONE('utc-3', now())"))
 
     survey: Mapped["SurveyORM"] = relationship()

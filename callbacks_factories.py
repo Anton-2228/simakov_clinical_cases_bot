@@ -15,7 +15,7 @@ from enums import (SURVEY_STEP_TYPE, SURVEY_STEP_VARIABLE_FILEDS, SURVEY_VARIABL
                    ListSelectUserToSendMessageActions, ListSurveyActionsActions,
                    ListSelectSurveyResultActions, ListSurveyResultActionsActions,
                    ListAddCommentsActions, ListAddFilesActions, ListUnprocessedSurveyResultsActions,
-                   ListUnprocessedSurveyResultActions, YES_NO)
+                   ListUnprocessedSurveyResultActions, YES_NO, ListProcessingSurveyResultsActions)
 
 
 class UserMainMenuCallbackFactory(CallbackData, prefix="umm"): # user_main_menu
@@ -110,3 +110,7 @@ class UnprocessedSurveyResultsCallbackFactory(CallbackData, prefix="usr"): # unp
 
 class UnprocessedSurveyResultCallbackFactory(CallbackData, prefix="usra"): # unprocessed_survey_result_actions
     action: ListUnprocessedSurveyResultActions
+
+class ProcessingSurveyResultCallbackFactory(CallbackData, prefix="psr"): # add_user_to_admin_list
+    action: ListProcessingSurveyResultsActions
+    survey_result_id: Optional[int]

@@ -76,16 +76,16 @@ class PostgresSurveyResultService(AsyncSurveyResultService):
                                                           selectinload(SurveyResultORM.survey_step_results)))
             return SurveyResultMapper.to_dto(updated_result)
 
-    async def get_unprocessed_survey_results(self) -> List[SurveyResult]:
-        async with SESSION_FACTORY() as session:
-            result = await session.scalars(
-                select(SurveyResultORM)
-                .where(SurveyResultORM.status == SurveyResultStatus.NOT_PROCESSED)
-                .options(selectinload(SurveyResultORM.survey).selectinload(SurveyORM.survey_steps),
-                         selectinload(SurveyResultORM.survey_step_results))
-            )
-            survey_results = result.all()
-            return [SurveyResultMapper.to_dto(survey_result) for survey_result in survey_results]
+    # async def get_unprocessed_survey_results(self) -> List[SurveyResult]:
+    #     async with SESSION_FACTORY() as session:
+    #         result = await session.scalars(
+    #             select(SurveyResultORM)
+    #             .where(SurveyResultORM.statuses == SurveyResultStatus.NOT_PROCESSED)
+    #             .options(selectinload(SurveyResultORM.survey).selectinload(SurveyORM.survey_steps),
+    #                      selectinload(SurveyResultORM.survey_step_results))
+    #         )
+    #         survey_results = result.all()
+    #         return [SurveyResultMapper.to_dto(survey_result) for survey_result in survey_results]
 
     async def delete_survey_result(self, id: int) -> None:
         async with SESSION_FACTORY() as session:

@@ -30,7 +30,7 @@ class SurveyResult(BaseModel):
     user_id: int
     survey_id: int
     created_at: Optional[datetime] = None
-    status: SurveyResultStatus
+    statuses: list[SurveyResultStatus]
     survey: Optional[Survey] = None
     survey_step_results: Optional[list["SurveyStepResult"]] = None
 

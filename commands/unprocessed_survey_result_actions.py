@@ -73,7 +73,7 @@ class UnprocessedSurveyResultActions(BaseCommand):
                                                                      field_name=RedisTmpFields.UNPROCESSED_SURVEY_RESULT_ACTIONS_SURVEY_RESULT_ID.value)
         
         survey_result = await self.db.survey_result.get_survey_result(id=survey_result_id)
-        survey_result.status = SurveyResultStatus.PROCESSED
+        survey_result.statuses = SurveyResultStatus.PROCESSED
         await self.db.survey_result.update_survey_result(survey_result)
         
         await self.manager.aiogram_wrapper.delete_message(message_id=callback.message.message_id,

@@ -22,7 +22,7 @@ from callbacks_factories import (AddSurveyCallbackFactory,
                                  SelectUserToSendMessageCallbackFactory, SelectSurveyResultCallbackFactory,
                                  SurveyResultActionsCallbackFactory, AddCommentsCallbackFactory,
                                  AddFilesCallbackFactory, UnprocessedSurveyResultsCallbackFactory,
-                                 UnprocessedSurveyResultCallbackFactory)
+                                 UnprocessedSurveyResultCallbackFactory, ProcessingSurveyResultCallbackFactory)
 from enums import (SURVEY_STEP_TYPE, SURVEY_STEP_VARIABLE_FILEDS, SURVEY_VARIABLE_FIELDS,
                    ListAddSurveyListActions, ListAddSurveyStepActions,
                    ListAddUserToAdminListActions, ListAdminMainMenuActions,
@@ -36,7 +36,7 @@ from enums import (SURVEY_STEP_TYPE, SURVEY_STEP_VARIABLE_FILEDS, SURVEY_VARIABL
                    ListSendMessageToAllUsersActions,
                    ListSelectUserToSendMessageActions, ListSelectSurveyResultActions, ListSurveyResultActionsActions,
                    ListAddCommentsActions, ListAddFilesActions, ListUnprocessedSurveyResultsActions,
-                   ListUnprocessedSurveyResultActions, YES_NO)
+                   ListUnprocessedSurveyResultActions, YES_NO, ListProcessingSurveyResultsActions)
 from models import User
 from pagers.pager import PAGING_STATUS
 
@@ -659,12 +659,33 @@ def get_keyboard_for_add_files() -> InlineKeyboardBuilder:
 
     return builder, reply_kb
 
-def get_keyboard_for_send_survey_result_to_admin(link: str) -> InlineKeyboardBuilder:
+def get_keyboard_for_send_survey_result_to_admin(survey_result_id: int, link: str) -> InlineKeyboardBuilder:
     builder = InlineKeyboardBuilder()
 
     link_button = InlineKeyboardButton(
         text="Ссылка на результат",
         url=link
+    )
+    builder.row(link_button)
+
+    link_button = InlineKeyboardButton(
+        text="Принято к публикации",
+        callback_data=ProcessingSurveyResultCallbackFactory(action=ListProcessingSurveyResultsActions.ACCEPTED_PUBLICATION,
+                                                            survey_result_id=survey_result_id).pack()
+    )
+    builder.row(link_button)
+
+    link_button = InlineKeyboardButton(
+        text="Принято в архив",
+        callback_data=ProcessingSurveyResultCallbackFactory(action=ListProcessingSurveyResultsActions.ACCEPTED_ARCHIVE,
+                                                            survey_result_id=survey_result_id).pack()
+    )
+    builder.row(link_button)
+
+    link_button = InlineKeyboardButton(
+        text="Не принято",
+        callback_data=ProcessingSurveyResultCallbackFactory(action=ListProcessingSurveyResultsActions.NOT_ACCEPTED,
+                                                            survey_result_id=survey_result_id).pack()
     )
     builder.row(link_button)
 

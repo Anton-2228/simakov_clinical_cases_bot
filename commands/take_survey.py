@@ -424,7 +424,7 @@ class TakeSurvey(BaseCommand):
                                                               field_name=RedisTmpFields.TAKE_SURVEY_SURVEY_ID.value)
         survey_result = SurveyResult(survey_id=int(survey_id),
                                      user_id=message.chat.id,
-                                     status=SurveyResultStatus.NOT_PROCESSED)
+                                     statuses=[])
         survey_result = await self.db.survey_result.save_survey_result(survey_result=survey_result)
         for step_id in survey_answer:
             step_answer = json.dumps(survey_answer[step_id], ensure_ascii=False, indent=2)
@@ -442,7 +442,7 @@ class TakeSurvey(BaseCommand):
             current_user = await self.db.user.get_user(telegram_id=message.chat.id)
             text = create_send_info_about_new_survey_result_output(user=current_user,
                                                                    survey_result=survey_result)
-            inline_keyboard = get_keyboard_for_send_survey_result_to_admin(link=link)
+            inline_keyboard = get_keyboard_for_send_survey_result_to_admin(survey_result_id=survey_result.id, link=link)
             for admin in admins:
                 try:
                     sent_message, new_state = await self.aiogram_wrapper.send_message(

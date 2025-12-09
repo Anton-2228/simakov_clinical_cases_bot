@@ -59,14 +59,14 @@ class AsyncSurveyResultService(ABC):
             список всех результатов опросов
         """
 
-    @abstractmethod
-    async def get_unprocessed_survey_results(self) -> List[SurveyResult]:
-        """
-        Метод получает все необработанные результаты опросов из базы данных
-
-        :return:
-            список всех необработанных результатов опросов
-        """
+    # @abstractmethod
+    # async def get_unprocessed_survey_results(self) -> List[SurveyResult]:
+    #     """
+    #     Метод получает все необработанные результаты опросов из базы данных
+    #
+    #     :return:
+    #         список всех необработанных результатов опросов
+    #     """
 
     @abstractmethod
     async def update_survey_result(self, survey_result: SurveyResult) -> SurveyResult:

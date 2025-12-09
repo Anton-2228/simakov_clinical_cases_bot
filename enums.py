@@ -229,3 +229,8 @@ class ListUnprocessedSurveyResultActions(Enum):
     CONFIRM_MARK_AS_PROCESSED = "confirm_mark_as_processed"
     REJECT_MARK_AS_PROCESSED = "reject_mark_as_processed"
     RETURN_TO_UNPROCESSED_RESULTS = "return_to_unprocessed_results"
+
+class ListProcessingSurveyResultsActions(Enum):
+    ACCEPTED_PUBLICATION = "accepted_publication"
+    ACCEPTED_ARCHIVE = "accepted_archive"
+    NOT_ACCEPTED = "not_accepted"

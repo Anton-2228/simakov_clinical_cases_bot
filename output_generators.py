@@ -1,5 +1,6 @@
 import json
 
+from db.postgres_models import SurveyResultStatus
 from dtos import SurveyStep, SurveyStepResult, SurveyResult, SurveyResultComments
 from enums import SURVEY_STEP_TYPE, SURVEY_RESULT_COMMENT_TYPE
 from models import User
@@ -14,7 +15,7 @@ from resources.messages import (ADD_SURVEY_STEP,
                                 SEE_ANSWERS_FILES,
                                 SEND_INFO_ABOUT_NEW_SURVEY_RESULT, ADD_FILES_TO_SURVEY_RESULT_COUNT_FILES,
                                 SEE_COMMENTS_FILES, SEE_COMMENTS_STRING, TAKE_SURVEY_ENTER_YES_NO,
-                                TAKE_SURVEY_ENTER_STRING_OR_FILES, TAKE_SURVEY_ENTER_YES)
+                                TAKE_SURVEY_ENTER_STRING_OR_FILES, TAKE_SURVEY_ENTER_YES, RESULT_SURVEY_PROCESSED)
 from utils import load_json
 
 
@@ -144,3 +145,17 @@ def create_unprocessed_survey_results_output(survey_results: list) -> str:
         text_message += f"ID: {survey_result['telegram_id']}\n"
         text_message += f"Опрос: {survey_result['survey_name']}\n\n"
     return text_message
+
+def create_processed_survey_results_output(accepts: list[SurveyResultStatus]) -> str:
+    accepts = set(accepts)
+    text_accepts = ""
+    for accept in accepts:
+        if accept == SurveyResultStatus.ACCEPTED_PUBLICATION:
+            text_accepts += '"публикации";'
+        elif accept == SurveyResultStatus.ACCEPTED_ARCHIVE:
+            text_accepts += '"архив";'
+        elif accept == SurveyResultStatus.NOT_ACCEPTED:
+            text_accepts += '"не принято";'
+        assert text_accepts is not None, f"Нет генератора сообщения для типа доступа {accept}"
+
+    return RESULT_SURVEY_PROCESSED.format(accepts=text_accepts)
