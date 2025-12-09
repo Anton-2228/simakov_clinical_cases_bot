@@ -64,6 +64,7 @@ TAKE_SURVEY_YES_NO_UNEXPECTED_ANSWER = load_txt(Path(__file__).parent / "errors/
 TAKE_SURVEY_YES_UNEXPECTED_ANSWER = load_txt(Path(__file__).parent / "errors/TAKE_SURVEY_YES_UNEXPECTED_ANSWER.txt")
 TAKE_SURVEY_STRING_FILES_UNEXPECTED_ANSWER = load_txt(Path(__file__).parent / "errors/TAKE_SURVEY_STRING_FILES_UNEXPECTED_ANSWER.txt")
 TAKE_SURVEY_STRING_FILES_TEXT_AFTER_FILES = load_txt(Path(__file__).parent / "errors/TAKE_SURVEY_STRING_FILES_TEXT_AFTER_FILES.txt")
+TAKE_SURVEY_STRING_FILES_SHORT_TEXT = load_txt(Path(__file__).parent / "errors/TAKE_SURVEY_STRING_FILES_SHORT_TEXT.txt")
 SEND_MESSAGE_TO_ADMIN = load_txt(Path(__file__).parent / "send_messages/SEND_MESSAGE_TO_ADMIN.txt")
 SEND_MESSAGE_TO_ADMIN_FINISH = load_txt(Path(__file__).parent / "send_messages/SEND_MESSAGE_TO_ADMIN_FINISH.txt")
 SEND_MESSAGE_TO_USER = load_txt(Path(__file__).parent / "send_messages/SEND_MESSAGE_TO_USER.txt")

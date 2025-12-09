@@ -32,7 +32,7 @@ from resources.messages import (TAKE_SURVEY_MAXIMUM_NUMBER_FILES,
                                 TAKE_SURVEY_WAIT_END, TAKE_SURVEY_SENDED_NOT_ENOUGH_FILES, TAKE_SURVEY_ENTER_FILES_END,
                                 TAKE_SURVEY_YES_NO_UNEXPECTED_ANSWER, TAKE_SURVEY_STRING_FILES_UNEXPECTED_ANSWER,
                                 TAKE_SURVEY_STRING_FILES_TEXT_AFTER_FILES, TAKE_SURVEY_YES_UNEXPECTED_ANSWER,
-                                TAKE_SURVEY_SENDED_NOT_ENOUGH_FILES_OR_STRING)
+                                TAKE_SURVEY_SENDED_NOT_ENOUGH_FILES_OR_STRING, TAKE_SURVEY_STRING_FILES_SHORT_TEXT)
 from states import States
 
 from .base_command import BaseCommand
@@ -314,6 +314,11 @@ class TakeSurvey(BaseCommand):
                 if step_id in survey_answer and survey_answer[step_id]["type"] == SURVEY_STEP_TYPE.FILES.value:
                     send_message = await self.aiogram_wrapper.answer_massage(message=message,
                                                                              text=TAKE_SURVEY_STRING_FILES_TEXT_AFTER_FILES)
+                    return
+
+                if len(answer) < 5:
+                    send_message = await self.aiogram_wrapper.answer_massage(message=message,
+                                                                             text=TAKE_SURVEY_STRING_FILES_SHORT_TEXT)
                     return
 
                 survey_id = await self.aiogram_wrapper.get_state_data(state_context=state_context,
