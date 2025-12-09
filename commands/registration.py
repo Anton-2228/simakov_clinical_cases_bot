@@ -44,7 +44,5 @@ class Registration(BaseCommand):
                     full_name=full_name,
                     user_type=USER_TYPE.CLIENT)
         await self.db.user.save_user(user=user)
-        async with YANDEX_DISK_SESSION() as yd:
-            await yd.create_user_dir(user.full_name)
         await self.aiogram_wrapper.clear_state(state_context=state)
         await self.manager.launch(name="start", message=message, state=state, command=command)
