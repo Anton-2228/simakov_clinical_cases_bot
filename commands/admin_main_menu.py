@@ -18,7 +18,7 @@ from keyboards_generators import get_keyboard_for_admin_main_menu
 from resources.messages import ADMIN_MAIN_MENU_MESSAGE
 from states import States
 from utils import get_tmp_path
-from xlsx_handler import XLSXHandler
+from xlsx_handler import XLSXHandler, CellData
 
 from .base_command import BaseCommand
 
@@ -135,16 +135,24 @@ class AdminMainMenu(BaseCommand):
                 survey_results = await self.db.survey_result.get_survey_results_by_user(user_id=user.telegram_id)
                 for survey_result in survey_results:
                     row = []
-                    row.append(user.full_name)
+                    row.append(CellData(value=user.full_name))
                     link = await yd.get_folder_link(services=self.db, survey_result=survey_result)
-                    row.append(link)
-                    row.append("да" if SurveyResultStatus.ACCEPTED_PUBLICATION in survey_result.statuses else "нет")
-                    row.append("да" if SurveyResultStatus.ACCEPTED_ARCHIVE in survey_result.statuses else "нет")
-                    row.append("да" if SurveyResultStatus.NOT_ACCEPTED in survey_result.statuses else "нет")
+                    row.append(CellData(value=link))
+                    row.append(CellData(value="да" if SurveyResultStatus.ACCEPTED_PUBLICATION in survey_result.statuses else "нет",
+                                        color="00FF00" if SurveyResultStatus.ACCEPTED_PUBLICATION in survey_result.statuses else None))
+                    row.append(CellData(value="да" if SurveyResultStatus.ACCEPTED_ARCHIVE in survey_result.statuses else "нет",
+                                        color="00FF00" if SurveyResultStatus.ACCEPTED_ARCHIVE in survey_result.statuses else None))
+                    row.append(CellData(value="да" if SurveyResultStatus.NOT_ACCEPTED in survey_result.statuses else "нет",
+                                        color="00FF00" if SurveyResultStatus.NOT_ACCEPTED in survey_result.statuses else None))
                     dump.append(row)
         headers = ["Полное имя", "Ссылка на результат", "Принято к публикации", "Принято в архив", "Не принято"]
         file_path = get_tmp_path(filename="survey_results.xlsx")
         file_path = self.xlsx_handler.create_from_list(data=dump,
+                                                       column_widths={0:25,
+                                                                      1:25,
+                                                                      2:25,
+                                                                      3:25,
+                                                                      4:25},
                                                        headers=headers,
                                                        file_path=file_path)
         await self.aiogram_wrapper.send_file(chat_id=callback.message.chat.id,
