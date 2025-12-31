@@ -91,3 +91,5 @@ ADD_FILED_TO_SURVEY_RESULT_WAIT_END = load_txt(Path(__file__).parent / "ADD_FILE
 BROKEN_MARKDOWN = load_txt(Path(__file__).parent / "errors/BROKEN_MARKDOWN.txt")
 SET_RESULT_SURVEY_STATUS_STATUS_ALREADY_EXIST = load_txt(Path(__file__).parent / "errors/SET_RESULT_SURVEY_STATUS_STATUS_ALREADY_EXIST.txt")
 RESULT_SURVEY_PROCESSED = load_txt(Path(__file__).parent / "RESULT_SURVEY_PROCESSED.txt")
+MESSAGE_TO_USER_ODD_CLINICAL_SURVEY = load_txt(Path(__file__).parent / "send_messages/MESSAGE_TO_USER_ODD_CLINICAL_SURVEY.txt")
+MESSAGE_TO_USER_EVEN_CLINICAL_SURVEY = load_txt(Path(__file__).parent / "send_messages/MESSAGE_TO_USER_EVEN_CLINICAL_SURVEY.txt")

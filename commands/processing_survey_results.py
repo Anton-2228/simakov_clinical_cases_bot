@@ -13,11 +13,13 @@ from db.postgres_models import SurveyResultStatus
 from db.service.abc_services import ABCServices
 from enums import (USER_TYPE, ListAddUserToAdminListActions,
                    RedisTmpFields, ListProcessingSurveyResultsActions)
+from environments import TARGETED_SURVEY_ID
 from keyboards_generators import get_keyboard_for_add_user_to_admin_list
 from output_generators import create_processed_survey_results_output
 from resources.messages import (ENTER_NEW_ADMIN_NOT_REGISTERED_USER_MESSAGE,
                                 ENTER_NEW_ADMIN_NOT_VALID_TG_ID_MESSAGE,
-                                REQUEST_ENTER_NEW_ADMIN_MESSAGE, SET_RESULT_SURVEY_STATUS_STATUS_ALREADY_EXIST)
+                                REQUEST_ENTER_NEW_ADMIN_MESSAGE, SET_RESULT_SURVEY_STATUS_STATUS_ALREADY_EXIST,
+                                MESSAGE_TO_USER_ODD_CLINICAL_SURVEY, MESSAGE_TO_USER_EVEN_CLINICAL_SURVEY)
 from states import States
 
 from .base_command import BaseCommand
@@ -44,11 +46,23 @@ class ProcessingSurveyResults(BaseCommand):
                                                                                    text=SET_RESULT_SURVEY_STATUS_STATUS_ALREADY_EXIST)
             await callback.answer()
             return
-        survey_result.statuses = [SurveyResultStatus.ACCEPTED_PUBLICATION]
+        survey_result.statuses = [SurveyResultStatus.ACCEPTED_PUBLICATION, SurveyResultStatus.ACCEPTED_ARCHIVE]
         await self.db.survey_result.update_survey_result(survey_result=survey_result)
         text = create_processed_survey_results_output(survey_result.statuses)
         await self.aiogram_wrapper.answer_massage(message=callback.message,
                                                   text=text)
+        all_survey_results = await self.db.survey_result.get_survey_results_by_user_and_survey(user_id=survey_result.user_id,
+                                                                                               survey_id=int(TARGETED_SURVEY_ID))
+        count_accepted_to_publication = 0
+        for survey_result_ in all_survey_results:
+            if SurveyResultStatus.ACCEPTED_PUBLICATION in survey_result_.statuses:
+                count_accepted_to_publication += 1
+        if count_accepted_to_publication % 2 == 1:
+            await self.aiogram_wrapper.send_message(chat_id=survey_result.user_id,
+                                                    text=MESSAGE_TO_USER_ODD_CLINICAL_SURVEY)
+        elif count_accepted_to_publication % 2 == 0:
+            await self.aiogram_wrapper.send_message(chat_id=survey_result.user_id,
+                                                    text=MESSAGE_TO_USER_EVEN_CLINICAL_SURVEY)
         await callback.answer()
 
     async def _accept_archive(self, callback: CallbackQuery, callback_data: ProcessingSurveyResultCallbackFactory, state: FSMContext):
@@ -58,7 +72,7 @@ class ProcessingSurveyResults(BaseCommand):
                                                                                    text=SET_RESULT_SURVEY_STATUS_STATUS_ALREADY_EXIST)
             await callback.answer()
             return
-        survey_result.statuses = [SurveyResultStatus.ACCEPTED_PUBLICATION, SurveyResultStatus.ACCEPTED_ARCHIVE]
+        survey_result.statuses = [SurveyResultStatus.ACCEPTED_ARCHIVE]
         await self.db.survey_result.update_survey_result(survey_result=survey_result)
         text = create_processed_survey_results_output(survey_result.statuses)
         await self.aiogram_wrapper.answer_massage(message=callback.message,
