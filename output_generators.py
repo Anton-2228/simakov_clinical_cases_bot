@@ -15,7 +15,8 @@ from resources.messages import (ADD_SURVEY_STEP,
                                 SEE_ANSWERS_FILES,
                                 SEND_INFO_ABOUT_NEW_SURVEY_RESULT, ADD_FILES_TO_SURVEY_RESULT_COUNT_FILES,
                                 SEE_COMMENTS_FILES, SEE_COMMENTS_STRING, TAKE_SURVEY_ENTER_YES_NO,
-                                TAKE_SURVEY_ENTER_STRING_OR_FILES, TAKE_SURVEY_ENTER_YES, RESULT_SURVEY_PROCESSED)
+                                TAKE_SURVEY_ENTER_STRING_OR_FILES, TAKE_SURVEY_ENTER_YES, RESULT_SURVEY_PROCESSED,
+                                MESSAGE_TO_ADMIN_EVEN_CLINICAL_SURVEY)
 from utils import load_json
 
 
@@ -159,3 +160,8 @@ def create_processed_survey_results_output(accepts: list[SurveyResultStatus]) ->
         assert text_accepts is not None, f"Нет генератора сообщения для типа доступа {accept}"
 
     return RESULT_SURVEY_PROCESSED.format(accepts=text_accepts)
+
+def create_message_to_admin_even_clinical_cases_output(user: User, count_clinical_cases: int) -> str:
+    text_message = MESSAGE_TO_ADMIN_EVEN_CLINICAL_SURVEY.format(user=f"{user.full_name}(ID: {user.telegram_id})",
+                                                                count_clinical_cases=count_clinical_cases)
+    return text_message

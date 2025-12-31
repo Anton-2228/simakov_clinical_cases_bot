@@ -15,7 +15,7 @@ from enums import (USER_TYPE, ListAddUserToAdminListActions,
                    RedisTmpFields, ListProcessingSurveyResultsActions)
 from environments import TARGETED_SURVEY_ID
 from keyboards_generators import get_keyboard_for_add_user_to_admin_list
-from output_generators import create_processed_survey_results_output
+from output_generators import create_processed_survey_results_output, create_message_to_admin_even_clinical_cases_output
 from resources.messages import (ENTER_NEW_ADMIN_NOT_REGISTERED_USER_MESSAGE,
                                 ENTER_NEW_ADMIN_NOT_VALID_TG_ID_MESSAGE,
                                 REQUEST_ENTER_NEW_ADMIN_MESSAGE, SET_RESULT_SURVEY_STATUS_STATUS_ALREADY_EXIST,
@@ -63,6 +63,12 @@ class ProcessingSurveyResults(BaseCommand):
         elif count_accepted_to_publication % 2 == 0:
             await self.aiogram_wrapper.send_message(chat_id=survey_result.user_id,
                                                     text=MESSAGE_TO_USER_EVEN_CLINICAL_SURVEY)
+            admins = await self.db.user.get_users_by_type(user_type=USER_TYPE.ADMIN)
+            user = await self.db.user.get_user(telegram_id=callback.message.chat.id)
+            message_to_admin = create_message_to_admin_even_clinical_cases_output(user=user, count_clinical_cases=count_accepted_to_publication)
+            for admin in admins:
+                await self.aiogram_wrapper.send_message(chat_id=admin.telegram_id,
+                                                        text=message_to_admin)
         await callback.answer()
 
     async def _accept_archive(self, callback: CallbackQuery, callback_data: ProcessingSurveyResultCallbackFactory, state: FSMContext):

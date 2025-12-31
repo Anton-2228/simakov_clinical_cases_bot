@@ -93,3 +93,4 @@ SET_RESULT_SURVEY_STATUS_STATUS_ALREADY_EXIST = load_txt(Path(__file__).parent /
 RESULT_SURVEY_PROCESSED = load_txt(Path(__file__).parent / "RESULT_SURVEY_PROCESSED.txt")
 MESSAGE_TO_USER_ODD_CLINICAL_SURVEY = load_txt(Path(__file__).parent / "send_messages/MESSAGE_TO_USER_ODD_CLINICAL_SURVEY.txt")
 MESSAGE_TO_USER_EVEN_CLINICAL_SURVEY = load_txt(Path(__file__).parent / "send_messages/MESSAGE_TO_USER_EVEN_CLINICAL_SURVEY.txt")
+MESSAGE_TO_ADMIN_EVEN_CLINICAL_SURVEY = load_txt(Path(__file__).parent / "send_messages/MESSAGE_TO_ADMIN_EVEN_CLINICAL_SURVEY.txt")
