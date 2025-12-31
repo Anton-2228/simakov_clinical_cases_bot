@@ -148,7 +148,7 @@ class AdminMainMenu(BaseCommand):
         headers = ["Полное имя", "Ссылка на результат", "Принято к публикации", "Принято в архив", "Не принято"]
         file_path = get_tmp_path(filename="survey_results.xlsx")
         file_path = self.xlsx_handler.create_from_list(data=dump,
-                                                       column_widths={0:25,
+                                                       column_widths={0:40,
                                                                       1:25,
                                                                       2:25,
                                                                       3:25,
