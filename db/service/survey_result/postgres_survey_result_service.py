@@ -29,7 +29,16 @@ class PostgresSurveyResultService(AsyncSurveyResultService):
                                                 .where(SurveyResultORM.id == id)
                                                 .options(selectinload(SurveyResultORM.survey).selectinload(SurveyORM.survey_steps),
                                                          selectinload(SurveyResultORM.survey_step_results)))
-            return SurveyResultMapper.to_dto(survey_result)
+            survey_result_dto = SurveyResultMapper.to_dto(survey_result)
+            survey_result_dto.survey.survey_steps.sort(key=lambda x: x.position)
+            sorted_steps_results = []
+            for survey_step in survey_result_dto.survey.survey_steps:
+                for survey_step_result in survey_result_dto.survey_step_results:
+                    if survey_step_result.survey_step_id != survey_step.id:
+                        continue
+                    sorted_steps_results.append(survey_step_result)
+            survey_result_dto.survey_step_results = sorted_steps_results
+            return survey_result_dto
 
     async def get_survey_results_by_user(self, user_id: int) -> List[SurveyResult]:
         async with SESSION_FACTORY() as session:
