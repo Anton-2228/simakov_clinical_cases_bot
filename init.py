@@ -2,6 +2,7 @@ from typing import Optional
 
 from aiogram import Bot, Router, Dispatcher
 from aiogram.client.default import DefaultBotProperties
+from aiogram.client.session.aiohttp import AiohttpSession
 from aiogram.enums import ParseMode
 from aiogram.filters import CommandObject, CommandStart, Command
 from aiogram.fsm.context import FSMContext
@@ -18,12 +19,15 @@ from db.redis import RedisStorage
 from db.service.services import Services
 from enums import USER_TYPE
 from environments import REDIS_HOST, REDIS_PORT, TELEGRAM_BOT_TOKEN, MINIO_ENDPOINT, MINIO_ROOT_PASSWORD, \
-    MINIO_PROD_BUCKET, MINIO_ROOT_USER
+    MINIO_PROD_BUCKET, MINIO_ROOT_USER, TELEGRAM_PROXY_URL
 from states import States
 
 ROUTER = Router()
 
-BOT = Bot(token=TELEGRAM_BOT_TOKEN, default=DefaultBotProperties(parse_mode=ParseMode.MARKDOWN))
+SESSION = AiohttpSession(proxy=TELEGRAM_PROXY_URL) if TELEGRAM_PROXY_URL else None
+
+BOT = Bot(token=TELEGRAM_BOT_TOKEN, session=SESSION,
+          default=DefaultBotProperties(parse_mode=ParseMode.MARKDOWN))
 
 REDIS = RedisStorage(host=REDIS_HOST, port=REDIS_PORT)
 STORAGE = TGRedisStorage(redis=REDIS.redis)
